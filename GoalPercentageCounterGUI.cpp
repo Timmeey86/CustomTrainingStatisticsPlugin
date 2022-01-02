@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "GoalPercentageCounter.h"
 
-/* Plugin Settings Window code here
 std::string GoalPercentageCounter::GetPluginName() {
-	return "GoalPercentageCounter";
+	return "Goal Percentage Counter";
 }
 
 void GoalPercentageCounter::SetImGuiContext(uintptr_t ctx) {
@@ -14,9 +13,14 @@ void GoalPercentageCounter::SetImGuiContext(uintptr_t ctx) {
 // This will show up in bakkesmod when the plugin is loaded at
 //  f2 -> plugins -> GoalPercentageCounter
 void GoalPercentageCounter::RenderSettings() {
-	ImGui::TextUnformatted("GoalPercentageCounter plugin settings");
+	ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
+	if (ImGui::Button("Reset Statistics"))
+	{
+		gameWrapper->Execute([this](GameWrapper* wrapper) {
+			cvarManager->executeCommand("goalpercentagecounter_reset");
+		});
+	}
 }
-*/
 
 /*
 // Do ImGui rendering here

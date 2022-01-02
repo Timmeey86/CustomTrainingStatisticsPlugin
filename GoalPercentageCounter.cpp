@@ -2,7 +2,7 @@
 #include "GoalPercentageCounter.h"
 
 
-BAKKESMOD_PLUGIN(GoalPercentageCounter, "Calculates the percentage of scored goals in relation to the number of times the reset button was pressed", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
+BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
 
 std::shared_ptr<CVarManagerWrapper> _globalCvarManager;
 
@@ -24,7 +24,7 @@ void GoalPercentageCounter::onLoad()
 
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
 	});
-
+	
 	// Allow resetting statistics to zero attempts/goals
 	cvarManager->registerNotifier("goalpercentagecounter_reset", [this](const std::vector<std::string>&)
 	{
@@ -115,7 +115,7 @@ void GoalPercentageCounter::recalculateStats(bool isGoal, double& successPercent
 	if (_stats.Attempts > 0) 
 	{
 		// Calculate the success percentage in percent, including two decimal digits
-		successPercentage = round((_stats.Goals / _stats.Attempts) * 10000) / 100;
+		successPercentage = round(((double)_stats.Goals / (double)_stats.Attempts) * 10000.0) / 100.0;
 	}
 }
 
