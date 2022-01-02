@@ -5,6 +5,7 @@
 BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
 
 std::shared_ptr<CVarManagerWrapper> _globalCvarManager;
+bool _goalReplayIsActive = false;
 
 void GoalPercentageCounter::onLoad()
 {
@@ -14,6 +15,7 @@ void GoalPercentageCounter::onLoad()
 	// React to scored goals
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
+		if (_goalReplayIsActive) { return; }
 
 		update(true, false); // This is a goal, and it is not a stat reset
 	});
@@ -21,6 +23,7 @@ void GoalPercentageCounter::onLoad()
 	// React to car spawns
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
+		if (_goalReplayIsActive) { return; }
 
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
 	});
@@ -33,7 +36,14 @@ void GoalPercentageCounter::onLoad()
 		update(false, true); // This is not a goal, and it is a stat reset
 	}, "Reset the statistics.", PERMISSION_ALL);
 
-	// TODO: Allow resetting somehow
+	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
+
+	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [](const std::string&) {
+		_goalReplayIsActive = true;
+	});
+	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [](const std::string&) {
+		_goalReplayIsActive = false;
+	});
 
 
 	//cvarManager->registerNotifier("my_aweseome_notifier", [&](std::vector<std::string> args) {
