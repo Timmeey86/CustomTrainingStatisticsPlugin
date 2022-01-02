@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GoalPercentageCounter.h"
-
+#include <sstream>
+#include <iomanip>
 
 BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
 
@@ -37,7 +38,6 @@ void GoalPercentageCounter::onLoad()
 	}, "Reset the statistics.", PERMISSION_ALL);
 
 	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
-
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [](const std::string&) {
 		_goalReplayIsActive = true;
 	});
@@ -45,37 +45,8 @@ void GoalPercentageCounter::onLoad()
 		_goalReplayIsActive = false;
 	});
 
-
-	//cvarManager->registerNotifier("my_aweseome_notifier", [&](std::vector<std::string> args) {
-	//	cvarManager->log("Hello notifier!");
-	//}, "", 0);
-
-	//auto cvar = cvarManager->registerCvar("template_cvar", "hello-cvar", "just a example of a cvar");
-	//auto cvar2 = cvarManager->registerCvar("template_cvar2", "0", "just a example of a cvar with more settings", true, true, -10, true, 10 );
-
-	//cvar.addOnValueChanged([this](std::string cvarName, CVarWrapper newCvar) {
-	//	cvarManager->log("the cvar with name: " + cvarName + " changed");
-	//	cvarManager->log("the new value is:" + newCvar.getStringValue());
-	//});
-
-	//cvar2.addOnValueChanged(std::bind(&GoalPercentageCounter::YourPluginMethod, this, _1, _2));
-
-	// enabled decleared in the header
-	//enabled = std::make_shared<bool>(false);
-	//cvarManager->registerCvar("TEMPLATE_Enabled", "0", "Enable the TEMPLATE plugin", true, true, 0, true, 1).bindTo(enabled);
-
-	//cvarManager->registerNotifier("NOTIFIER", [this](std::vector<std::string> params){FUNCTION();}, "DESCRIPTION", PERMISSION_ALL);
-	//cvarManager->registerCvar("CVAR", "DEFAULTVALUE", "DESCRIPTION", true, true, MINVAL, true, MAXVAL);//.bindTo(CVARVARIABLE);
-	//gameWrapper->HookEvent("FUNCTIONNAME", std::bind(&TEMPLATE::FUNCTION, this));
-	//gameWrapper->HookEventWithCallerPost<ActorWrapper>("FUNCTIONNAME", std::bind(&GoalPercentageCounter::FUNCTION, this, _1, _2, _3));
-	//gameWrapper->RegisterDrawable(bind(&TEMPLATE::Render, this, std::placeholders::_1));
-
-
-	//gameWrapper->HookEvent("Function TAGame.Ball_TA.Explode", [this](std::string eventName) {
-	//	cvarManager->log("Your hook got called and the ball went POOF");
-	//});
-	// You could also use std::bind here
-	//gameWrapper->HookEvent("Function TAGame.Ball_TA.Explode", std::bind(&GoalPercentageCounter::YourPluginMethod, this);
+	// Enable rendering of output
+	gameWrapper->RegisterDrawable(std::bind(&GoalPercentageCounter::render, this, std::placeholders::_1));
 }
 
 void GoalPercentageCounter::onUnload()
@@ -101,14 +72,7 @@ void GoalPercentageCounter::update(bool isGoal, bool isReset)
 		// The function was called after resetting a shot or scoring a goal => Update statistics
 		recalculateStats(isGoal, successPercentage);
 	}
-	// else: Update the UI but don't recalculate anything
-
-	// TBD
-	_globalCvarManager->log("Attempts: " + std::to_string(_stats.Attempts));
-	_globalCvarManager->log("Goals: " + std::to_string(_stats.Goals));
-	_globalCvarManager->log("Longest Goal Streak: " + std::to_string(_stats.LongestGoalStreak));
-	_globalCvarManager->log("Longest Miss Streak: " + std::to_string(_stats.LongestMissStreak));
-	_globalCvarManager->log("Success Rate: " + std::to_string(successPercentage));
+	_stats.SuccessPercentage = successPercentage;
 }
 void GoalPercentageCounter::recalculateStats(bool isGoal, double& successPercentage)
 {
@@ -164,4 +128,32 @@ void GoalPercentageCounter::handleShotReset()
 			_stats.LongestMissStreak = _stats.MissStreakCounter;
 		}
 	}
+}
+
+void GoalPercentageCounter::render(CanvasWrapper canvas) const
+{
+	LinearColor colors;
+	colors.R = 255;
+	colors.G = 255;
+	colors.B = 150;
+	colors.A = 255;
+	canvas.SetColor(colors);
+
+	canvas.SetPosition(Vector2F{ 5.0, 200.0 });
+	canvas.DrawString("Attempts: " + std::to_string(_stats.Attempts), 2.0f, 1.5f, false);
+
+	canvas.SetPosition(Vector2F{ 5.0, 220.0 });
+	canvas.DrawString("Goals: " + std::to_string(_stats.Goals), 2.0f, 1.5f, false);
+
+	canvas.SetPosition(Vector2F{ 5.0, 240.0 });
+	canvas.DrawString("Longest Goal Streak: " + std::to_string(_stats.LongestGoalStreak), 2.0f, 1.5f, false);
+
+	canvas.SetPosition(Vector2F{ 5.0, 260.0 });
+	canvas.DrawString("Longest Miss Streak: " + std::to_string(_stats.LongestMissStreak), 2.0f, 1.5f, false);
+
+	canvas.SetPosition(Vector2F{ 5.0, 280.0 });
+	std::ostringstream successRateStream;
+	successRateStream << std::fixed << std::setprecision(2) << _stats.SuccessPercentage;
+	auto successRateString = successRateStream.str();
+	canvas.DrawString("Success Rate: " + successRateString, 2.0f, 1.5f, false);
 }

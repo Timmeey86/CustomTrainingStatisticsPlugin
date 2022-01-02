@@ -11,5 +11,6 @@ public:
 	int LongestGoalStreak = 0;
 	int LongestMissStreak = 0;
 	bool IgnoreNextShotReset = false;
+	double SuccessPercentage = .0;
 };
 

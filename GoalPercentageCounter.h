@@ -24,6 +24,8 @@ class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public B
 
 private:
 
+	void render(CanvasWrapper canvas) const; // Copy is intentional since we don't want to modify the object owned by the caller.
+
 	void reset();
 	void update(bool isGoal, bool isReset);
 	void recalculateStats(bool isGoal, double& successRate);
