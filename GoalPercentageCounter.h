@@ -28,13 +28,13 @@ private:
 
 	void reset();
 	void update(bool isGoal, bool isReset);
-	void recalculateStats(bool isGoal);
+	void registerAttempt(bool isGoal);
+	void recalculatePercentages();
 	void handleGoal();
 	void handleShotReset();
 
 	CounterStats _stats;
 	bool _goalReplayIsActive = false;
-	bool _isFirstSpawn = false;
 	bool _enabled = true;
 
 };

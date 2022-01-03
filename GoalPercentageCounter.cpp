@@ -25,13 +25,22 @@ void GoalPercentageCounter::onLoad()
 		update(true, false); // This is a goal, and it is not a stat reset
 	});
 
-	// React to car spawns
+	// Count every shot as soon as any button is being pressed
 	gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 		if (_goalReplayIsActive) { return; }
 		if (!_enabled) { return; }
 
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
+	});
+
+	// Update statistics on each car spawn
+	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this](const std::string&) {
+		if (!gameWrapper->IsInCustomTraining()) { return; }
+		if (!_enabled) { return; }
+
+		// Update percentages, but do not modify attempts or goals
+		recalculatePercentages();
 	});
 	
 	// Allow resetting statistics to zero attempts/goals manually
@@ -48,7 +57,6 @@ void GoalPercentageCounter::onLoad()
 		if (!_enabled) { return; }
 		reset();
 		update(false, true); // This is not a goal, and it is a stat reset
-		_isFirstSpawn = true;
 	});
 
 	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
@@ -81,31 +89,48 @@ void GoalPercentageCounter::reset()
 	_stats.IgnoreNextShotReset = false;
 	_stats.SuccessPercentage = 0;
 	_stats.PeakSuccessPercentage = 0;
+	_stats.Last50Shots.clear();
+	_stats.Last50ShotsPercentage = 0;
 }
 void GoalPercentageCounter::update(bool isGoal, bool isReset)
 {
 	if (!isReset)
 	{
 		// The function was called after resetting a shot or scoring a goal => Update statistics
-		recalculateStats(isGoal);
+		registerAttempt(isGoal);
 	}
+	recalculatePercentages();
 }
-void GoalPercentageCounter::recalculateStats(bool isGoal)
+
+double getPercentageValue(double attempts, double goals)
 {
+	return round((goals / attempts) * 10000.0) / 100.0;
+}
+void GoalPercentageCounter::registerAttempt(bool isGoal)
+{
+	_globalCvarManager->log("Registering attempt: " + std::to_string(isGoal));
 	if (isGoal)
 	{
+		if (!_stats.Last50Shots.empty())
+		{
+			_stats.Last50Shots.back() = true; // Replace the current attempt with a goal entry
+		}
 		handleGoal();
 	}
 	else
 	{
+		_stats.Last50Shots.push_back(false);
 		handleShotReset();
 	}
+}
 
+void GoalPercentageCounter::recalculatePercentages()
+{
 	auto successPercentage = .0;
 	if (_stats.Attempts > 0)
 	{
 		// Calculate the success percentage in percent, including two decimal digits
-		successPercentage = round(((double)_stats.Goals / (double)_stats.Attempts) * 10000.0) / 100.0;
+		successPercentage = getPercentageValue(_stats.Attempts, _stats.Goals);
 	}
 	_stats.SuccessPercentage = successPercentage;
 
@@ -114,6 +139,20 @@ void GoalPercentageCounter::recalculateStats(bool isGoal)
 	{
 		_stats.PeakSuccessPercentage = _stats.SuccessPercentage;
 	}
+
+	// Update the percentage for the last 50 shots
+	// Ignore the event if this is a reset after a goal
+	while (_stats.Last50Shots.size() > 50)
+	{
+		_stats.Last50Shots.pop_front();
+	}
+	successPercentage = .0;
+	if (!_stats.Last50Shots.empty())
+	{
+		auto numberOfGoals = std::count(_stats.Last50Shots.begin(), _stats.Last50Shots.end(), true);
+		successPercentage = getPercentageValue((double)_stats.Last50Shots.size(), (double)numberOfGoals);
+	}
+	_stats.Last50ShotsPercentage = successPercentage;
 }
 
 void GoalPercentageCounter::handleGoal()
@@ -133,13 +172,6 @@ void GoalPercentageCounter::handleGoal()
 
 void GoalPercentageCounter::handleShotReset()
 {
-	if (_isFirstSpawn)
-	{
-		// Do not count the initial spawn as an attempt, but rather count the attempt once the car was reset
-		_isFirstSpawn = false;
-		return;
-	}
-
 	// Count the shot attempt in any case
 	_stats.Attempts++;
 
@@ -199,7 +231,7 @@ void GoalPercentageCounter::render(CanvasWrapper canvas) const
 	canvas.SetColor(colors);
 
 	canvas.SetPosition(Vector2F{ 5.0, 195.0 });
-	canvas.FillBox(Vector2F{ 400.0, 170.0 });
+	canvas.FillBox(Vector2F{ 400.0, 190.0 });
 
 	// Now draw the text on top of it
 	colors.R = 255;
@@ -216,4 +248,5 @@ void GoalPercentageCounter::render(CanvasWrapper canvas) const
 	drawIntStat(canvas, 300.0, "Longest Goal Streak:", _stats.LongestGoalStreak);
 	drawIntStat(canvas, 320.0, "Longest Miss Streak:", _stats.LongestMissStreak);
 	drawPercentageStat(canvas, 340.0, "Peak Success Rate:", _stats.PeakSuccessPercentage);
+	drawPercentageStat(canvas, 360.0, "Last 50 Shots:", _stats.Last50ShotsPercentage);
 }

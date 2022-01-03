@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 // Stores statistics about scored goals, number of attempts, success percentage etc
 class CounterStats
 {
@@ -13,5 +15,7 @@ public:
 	bool IgnoreNextShotReset = false;
 	double SuccessPercentage = .0;
 	double PeakSuccessPercentage = .0;
+	std::list<bool> Last50Shots;
+	double Last50ShotsPercentage = .0;
 };
 
