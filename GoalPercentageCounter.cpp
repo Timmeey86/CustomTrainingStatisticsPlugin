@@ -26,7 +26,7 @@ void GoalPercentageCounter::onLoad()
 	});
 
 	// React to car spawns
-	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this](const std::string&) {
+	gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 		if (_goalReplayIsActive) { return; }
 		if (!_enabled) { return; }
@@ -101,22 +101,18 @@ void GoalPercentageCounter::recalculateStats(bool isGoal)
 		handleShotReset();
 	}
 
-	if (!isGoal)
+	auto successPercentage = .0;
+	if (_stats.Attempts > 0)
 	{
-		// Update the peak success percentage only after a shot reset since the attempt would be missing for the calculation otherwise
-		auto successPercentage = .0;
-		if (_stats.Attempts > 0)
-		{
-			// Calculate the success percentage in percent, including two decimal digits
-			successPercentage = round(((double)_stats.Goals / (double)_stats.Attempts) * 10000.0) / 100.0;
-		}
-		_stats.SuccessPercentage = successPercentage;
+		// Calculate the success percentage in percent, including two decimal digits
+		successPercentage = round(((double)_stats.Goals / (double)_stats.Attempts) * 10000.0) / 100.0;
+	}
+	_stats.SuccessPercentage = successPercentage;
 
-		// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
-		if (_stats.Attempts > 20 && _stats.SuccessPercentage > _stats.PeakSuccessPercentage)
-		{
-			_stats.PeakSuccessPercentage = _stats.SuccessPercentage;
-		}
+	// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
+	if (_stats.Attempts > 20 && _stats.SuccessPercentage > _stats.PeakSuccessPercentage)
+	{
+		_stats.PeakSuccessPercentage = _stats.SuccessPercentage;
 	}
 }
 
