@@ -12,5 +12,6 @@ public:
 	int LongestMissStreak = 0;
 	bool IgnoreNextShotReset = false;
 	double SuccessPercentage = .0;
+	double PeakSuccessPercentage = .0;
 };
 
