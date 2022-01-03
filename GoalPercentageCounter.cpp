@@ -7,11 +7,15 @@ BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_versio
 
 std::shared_ptr<CVarManagerWrapper> _globalCvarManager;
 bool _goalReplayIsActive = false;
+bool _isFirstSpawn = false;
 
 void GoalPercentageCounter::onLoad()
 {
 	_globalCvarManager = cvarManager;
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
+
+	// TODO: Auto Reset when changing training packs
+	// TODO: Do not draw canvas while not in custom training
 
 	// React to scored goals
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](const std::string&) {
@@ -29,13 +33,20 @@ void GoalPercentageCounter::onLoad()
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
 	});
 	
-	// Allow resetting statistics to zero attempts/goals
+	// Allow resetting statistics to zero attempts/goals manually
 	cvarManager->registerNotifier("goalpercentagecounter_reset", [this](const std::vector<std::string>&)
 	{
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 		reset();
 		update(false, true); // This is not a goal, and it is a stat reset
 	}, "Reset the statistics.", PERMISSION_ALL);
+
+	// Reset automatically when loading a new training pack, or when resetting it
+	gameWrapper->HookEventPost("Function TAGame.GameEvent_TrainingEditor_TA.OnInit", [this](const std::string&) {
+		reset();
+		update(false, true); // This is not a goal, and it is a stat reset
+		_isFirstSpawn = true;
+	});
 
 	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [](const std::string&) {
@@ -47,6 +58,8 @@ void GoalPercentageCounter::onLoad()
 
 	// Enable rendering of output
 	gameWrapper->RegisterDrawable(std::bind(&GoalPercentageCounter::render, this, std::placeholders::_1));
+
+
 }
 
 void GoalPercentageCounter::onUnload()
@@ -110,6 +123,13 @@ void GoalPercentageCounter::handleGoal()
 
 void GoalPercentageCounter::handleShotReset()
 {
+	if (_isFirstSpawn)
+	{
+		// Do not count the initial spawn as an attempt, but rather count the attempt once the car was reset
+		_isFirstSpawn = false;
+		return;
+	}
+
 	// Count the shot attempt in any case
 	_stats.Attempts++;
 
@@ -132,6 +152,8 @@ void GoalPercentageCounter::handleShotReset()
 
 void GoalPercentageCounter::render(CanvasWrapper canvas) const
 {
+	if (!gameWrapper->IsInCustomTraining()) { return; }
+
 	LinearColor colors;
 	colors.R = 255;
 	colors.G = 255;
