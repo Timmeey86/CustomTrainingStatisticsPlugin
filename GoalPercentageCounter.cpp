@@ -76,6 +76,8 @@ void GoalPercentageCounter::reset()
 	_stats.LongestGoalStreak = 0;
 	_stats.LongestMissStreak = 0;
 	_stats.IgnoreNextShotReset = false;
+	_stats.SuccessPercentage = 0;
+	_stats.PeakSuccessPercentage = 0;
 }
 void GoalPercentageCounter::update(bool isGoal, bool isReset)
 {
@@ -161,6 +163,24 @@ std::string to_percentage_string(double value)
 	return stream.str();
 }
 
+void drawStat(CanvasWrapper canvas, float yOffset, const std::string& label, const std::string& value)
+{
+	canvas.SetPosition(Vector2F{ 10.0, yOffset });
+	canvas.DrawString(label, 2.0f, 1.5f, false);
+	canvas.SetPosition(Vector2F{ 290.0, yOffset });
+	canvas.DrawString(value, 2.0f, 1.5f, false);
+}
+
+void drawIntStat(CanvasWrapper canvas, float yOffset, const std::string& label, int value)
+{
+	drawStat(canvas, yOffset, label, std::to_string(value));
+}
+
+void drawPercentageStat(CanvasWrapper canvas, float yOffset, const std::string& label, double percentageValue)
+{
+	drawStat(canvas, yOffset, label, to_percentage_string(percentageValue));
+}
+
 void GoalPercentageCounter::render(CanvasWrapper canvas) const
 {
 	if (!gameWrapper->IsInCustomTraining()) { return; }
@@ -183,27 +203,12 @@ void GoalPercentageCounter::render(CanvasWrapper canvas) const
 	colors.A = 255;
 	canvas.SetColor(colors);
 
-	canvas.SetPosition(Vector2F{ 10.0, 200.0 });
-	canvas.DrawString("Attempts:" + std::to_string(_stats.Attempts), 2.0f, 1.5f, false);
-
-	canvas.SetPosition(Vector2F{ 10.0, 220.0 });
-	canvas.DrawString("Goals: " + std::to_string(_stats.Goals), 2.0f, 1.5f, false);
-
-	canvas.SetPosition(Vector2F{ 10.0, 240.0 });
-	canvas.DrawString("Current Goal Streak: " + std::to_string(_stats.GoalStreakCounter), 2.0f, 1.5f, false);
-
-	canvas.SetPosition(Vector2F{ 10.0, 260.0 });
-	canvas.DrawString("Current Miss Streak: " + std::to_string(_stats.MissStreakCounter), 2.0f, 1.5f, false);
-
-	canvas.SetPosition(Vector2F{ 10.0, 280.0 });
-	canvas.DrawString("Success Rate: " + to_percentage_string(_stats.SuccessPercentage), 2.0f, 1.5f, false);
-
-	canvas.SetPosition(Vector2F{ 10.0, 300.0 });
-	canvas.DrawString("Longest Goal Streak: " + std::to_string(_stats.LongestGoalStreak), 2.0f, 1.5f, false);
-
-	canvas.SetPosition(Vector2F{ 10.0, 320.0 });
-	canvas.DrawString("Longest Miss Streak: " + std::to_string(_stats.LongestMissStreak), 2.0f, 1.5f, false);
-
-	canvas.SetPosition(Vector2F{ 10.0, 340.0 });
-	canvas.DrawString("Peak Success Rate: " + to_percentage_string(_stats.PeakSuccessPercentage), 2.0f, 1.5f, false);
+	drawIntStat(canvas, 200.0, "Attempts:", _stats.Attempts);
+	drawIntStat(canvas, 220.0, "Goals:", _stats.Goals);
+	drawIntStat(canvas, 240.0, "Current Goal Streak:", _stats.GoalStreakCounter);
+	drawIntStat(canvas, 260.0, "Current Miss Streak:", _stats.MissStreakCounter);
+	drawPercentageStat(canvas, 280.0, "Total Success Rate:", _stats.SuccessPercentage);
+	drawIntStat(canvas, 300.0, "Longest Goal Streak:", _stats.LongestGoalStreak);
+	drawIntStat(canvas, 320.0, "Longest Miss Streak:", _stats.LongestMissStreak);
+	drawPercentageStat(canvas, 340.0, "Peak Success Rate:", _stats.PeakSuccessPercentage);
 }
