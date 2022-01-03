@@ -28,7 +28,7 @@ private:
 
 	void reset();
 	void update(bool isGoal, bool isReset);
-	void recalculateStats(bool isGoal, double& successRate);
+	void recalculateStats(bool isGoal);
 	void handleGoal();
 	void handleShotReset();
 

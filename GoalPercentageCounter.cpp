@@ -84,19 +84,13 @@ void GoalPercentageCounter::reset()
 }
 void GoalPercentageCounter::update(bool isGoal, bool isReset)
 {
-	double successPercentage = .0;
 	if (!isReset)
 	{
 		// The function was called after resetting a shot or scoring a goal => Update statistics
-		recalculateStats(isGoal, successPercentage);
-	}
-	_stats.SuccessPercentage = successPercentage;
-	if (_stats.SuccessPercentage > _stats.PeakSuccessPercentage)
-	{
-		_stats.PeakSuccessPercentage = _stats.SuccessPercentage;
+		recalculateStats(isGoal);
 	}
 }
-void GoalPercentageCounter::recalculateStats(bool isGoal, double& successPercentage)
+void GoalPercentageCounter::recalculateStats(bool isGoal)
 {
 	if (isGoal)
 	{
@@ -107,11 +101,22 @@ void GoalPercentageCounter::recalculateStats(bool isGoal, double& successPercent
 		handleShotReset();
 	}
 
-	successPercentage = 0;
-	if (_stats.Attempts > 0) 
+	if (!isGoal)
 	{
-		// Calculate the success percentage in percent, including two decimal digits
-		successPercentage = round(((double)_stats.Goals / (double)_stats.Attempts) * 10000.0) / 100.0;
+		// Update the peak success percentage only after a shot reset since the attempt would be missing for the calculation otherwise
+		auto successPercentage = .0;
+		if (_stats.Attempts > 0)
+		{
+			// Calculate the success percentage in percent, including two decimal digits
+			successPercentage = round(((double)_stats.Goals / (double)_stats.Attempts) * 10000.0) / 100.0;
+		}
+		_stats.SuccessPercentage = successPercentage;
+
+		// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
+		if (_stats.Attempts > 20 && _stats.SuccessPercentage > _stats.PeakSuccessPercentage)
+		{
+			_stats.PeakSuccessPercentage = _stats.SuccessPercentage;
+		}
 	}
 }
 
