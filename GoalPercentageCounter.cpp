@@ -89,6 +89,7 @@ void GoalPercentageCounter::reset()
 	_stats.IgnoreNextShotReset = false;
 	_stats.SuccessPercentage = 0;
 	_stats.PeakSuccessPercentage = 0;
+	_stats.PeakShotNumber = 0;
 	_stats.Last50Shots.clear();
 	_stats.Last50ShotsPercentage = 0;
 }
@@ -138,6 +139,7 @@ void GoalPercentageCounter::recalculatePercentages()
 	if (_stats.Attempts > 20 && _stats.SuccessPercentage > _stats.PeakSuccessPercentage)
 	{
 		_stats.PeakSuccessPercentage = _stats.SuccessPercentage;
+		_stats.PeakShotNumber = _stats.Attempts;
 	}
 
 	// Update the percentage for the last 50 shots
@@ -231,7 +233,7 @@ void GoalPercentageCounter::render(CanvasWrapper canvas) const
 	canvas.SetColor(colors);
 
 	canvas.SetPosition(Vector2F{ 5.0, 195.0 });
-	canvas.FillBox(Vector2F{ 400.0, 190.0 });
+	canvas.FillBox(Vector2F{ 400.0, 210.0 });
 
 	// Now draw the text on top of it
 	colors.R = 255;
@@ -248,5 +250,6 @@ void GoalPercentageCounter::render(CanvasWrapper canvas) const
 	drawIntStat(canvas, 300.0, "Longest Goal Streak:", _stats.LongestGoalStreak);
 	drawIntStat(canvas, 320.0, "Longest Miss Streak:", _stats.LongestMissStreak);
 	drawPercentageStat(canvas, 340.0, "Peak Success Rate:", _stats.PeakSuccessPercentage);
-	drawPercentageStat(canvas, 360.0, "Last 50 Shots:", _stats.Last50ShotsPercentage);
+	drawIntStat(canvas, 360.0, "Peak At Shot#:", _stats.PeakShotNumber);
+	drawPercentageStat(canvas, 380.0, "Last 50 Shots:", _stats.Last50ShotsPercentage);
 }

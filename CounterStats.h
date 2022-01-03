@@ -15,6 +15,7 @@ public:
 	bool IgnoreNextShotReset = false;
 	double SuccessPercentage = .0;
 	double PeakSuccessPercentage = .0;
+	int PeakShotNumber = 0;
 	std::list<bool> Last50Shots;
 	double Last50ShotsPercentage = .0;
 };
