@@ -20,4 +20,14 @@ void GoalPercentageCounter::RenderSettings() {
 			cvarManager->executeCommand("goalpercentagecounter_reset");
 		});
 	}
+
+	CVarWrapper enableCvar = cvarManager->getCvar("goalpercentagecounter_enabled");
+	if (!enableCvar) { return; }
+	bool enabled = enableCvar.getBoolValue();
+	if (ImGui::Checkbox("Enable plugin", &enabled)) {
+		enableCvar.setValue(enabled);
+	}
+	if (ImGui::IsItemHovered()) {
+		ImGui::SetTooltip("Toggle Goal Percentage Counter Plugin");
+	}
 }

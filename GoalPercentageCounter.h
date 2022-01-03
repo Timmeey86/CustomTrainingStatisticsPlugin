@@ -33,6 +33,9 @@ private:
 	void handleShotReset();
 
 	CounterStats _stats;
+	bool _goalReplayIsActive = false;
+	bool _isFirstSpawn = false;
+	bool _enabled = true;
 
 };
 

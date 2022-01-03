@@ -6,21 +6,21 @@
 BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
 
 std::shared_ptr<CVarManagerWrapper> _globalCvarManager;
-bool _goalReplayIsActive = false;
-bool _isFirstSpawn = false;
 
 void GoalPercentageCounter::onLoad()
 {
 	_globalCvarManager = cvarManager;
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
-
-	// TODO: Auto Reset when changing training packs
-	// TODO: Do not draw canvas while not in custom training
+	cvarManager->registerCvar("goalpercentagecounter_enabled", "1", "Enable Plugin", true, true, 0, true, 1)
+		.addOnValueChanged([this](std::string oldValue, CVarWrapper cvar) {
+		_enabled = cvar.getBoolValue();
+	});
 
 	// React to scored goals
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 		if (_goalReplayIsActive) { return; }
+		if (!_enabled) { return; }
 
 		update(true, false); // This is a goal, and it is not a stat reset
 	});
@@ -29,6 +29,7 @@ void GoalPercentageCounter::onLoad()
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 		if (_goalReplayIsActive) { return; }
+		if (!_enabled) { return; }
 
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
 	});
@@ -37,22 +38,24 @@ void GoalPercentageCounter::onLoad()
 	cvarManager->registerNotifier("goalpercentagecounter_reset", [this](const std::vector<std::string>&)
 	{
 		if (!gameWrapper->IsInCustomTraining()) { return; }
+		// Note: Reset is allowed even with the plugin disabled (because why not?)
 		reset();
 		update(false, true); // This is not a goal, and it is a stat reset
 	}, "Reset the statistics.", PERMISSION_ALL);
 
 	// Reset automatically when loading a new training pack, or when resetting it
 	gameWrapper->HookEventPost("Function TAGame.GameEvent_TrainingEditor_TA.OnInit", [this](const std::string&) {
+		if (!_enabled) { return; }
 		reset();
 		update(false, true); // This is not a goal, and it is a stat reset
 		_isFirstSpawn = true;
 	});
 
 	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
-	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [](const std::string&) {
+	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](const std::string&) {
 		_goalReplayIsActive = true;
 	});
-	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [](const std::string&) {
+	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](const std::string&) {
 		_goalReplayIsActive = false;
 	});
 
@@ -184,6 +187,7 @@ void drawPercentageStat(CanvasWrapper canvas, float yOffset, const std::string& 
 void GoalPercentageCounter::render(CanvasWrapper canvas) const
 {
 	if (!gameWrapper->IsInCustomTraining()) { return; }
+	if (!_enabled) { return; }
 
 	// Draw a panel so we can read the text on all kinds of maps
 	LinearColor colors;
