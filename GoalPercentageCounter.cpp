@@ -154,26 +154,37 @@ void GoalPercentageCounter::render(CanvasWrapper canvas) const
 {
 	if (!gameWrapper->IsInCustomTraining()) { return; }
 
+	// Draw a panel so we can read the text on all kinds of maps
 	LinearColor colors;
+	colors.R = 100;
+	colors.G = 100;
+	colors.B = 100;
+	colors.A = 200;
+	canvas.SetColor(colors);
+
+	canvas.SetPosition(Vector2F{ 5.0, 195.0 });
+	canvas.FillBox(Vector2F{ 330.0, 110.0 });
+
+	// Now draw the text on top of it
 	colors.R = 255;
 	colors.G = 255;
-	colors.B = 150;
+	colors.B = 255;
 	colors.A = 255;
 	canvas.SetColor(colors);
 
-	canvas.SetPosition(Vector2F{ 5.0, 200.0 });
+	canvas.SetPosition(Vector2F{ 10.0, 200.0 });
 	canvas.DrawString("Attempts: " + std::to_string(_stats.Attempts), 2.0f, 1.5f, false);
 
-	canvas.SetPosition(Vector2F{ 5.0, 220.0 });
+	canvas.SetPosition(Vector2F{ 10.0, 220.0 });
 	canvas.DrawString("Goals: " + std::to_string(_stats.Goals), 2.0f, 1.5f, false);
 
-	canvas.SetPosition(Vector2F{ 5.0, 240.0 });
+	canvas.SetPosition(Vector2F{ 10.0, 240.0 });
 	canvas.DrawString("Longest Goal Streak: " + std::to_string(_stats.LongestGoalStreak), 2.0f, 1.5f, false);
 
-	canvas.SetPosition(Vector2F{ 5.0, 260.0 });
+	canvas.SetPosition(Vector2F{ 10.0, 260.0 });
 	canvas.DrawString("Longest Miss Streak: " + std::to_string(_stats.LongestMissStreak), 2.0f, 1.5f, false);
 
-	canvas.SetPosition(Vector2F{ 5.0, 280.0 });
+	canvas.SetPosition(Vector2F{ 10.0, 280.0 });
 	std::ostringstream successRateStream;
 	successRateStream << std::fixed << std::setprecision(2) << _stats.SuccessPercentage;
 	auto successRateString = successRateStream.str();
