@@ -135,13 +135,6 @@ void GoalPercentageCounter::recalculatePercentages()
 	}
 	_stats.SuccessPercentage = successPercentage;
 
-	// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
-	if (_stats.Attempts > 20 && _stats.SuccessPercentage > _stats.PeakSuccessPercentage)
-	{
-		_stats.PeakSuccessPercentage = _stats.SuccessPercentage;
-		_stats.PeakShotNumber = _stats.Attempts;
-	}
-
 	// Update the percentage for the last 50 shots
 	// Ignore the event if this is a reset after a goal
 	while (_stats.Last50Shots.size() > 50)
@@ -155,6 +148,13 @@ void GoalPercentageCounter::recalculatePercentages()
 		successPercentage = getPercentageValue((double)_stats.Last50Shots.size(), (double)numberOfGoals);
 	}
 	_stats.Last50ShotsPercentage = successPercentage;
+
+	// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
+	if (_stats.Attempts > 20 && _stats.Last50ShotsPercentage > _stats.PeakSuccessPercentage)
+	{
+		_stats.PeakSuccessPercentage = _stats.Last50ShotsPercentage;
+		_stats.PeakShotNumber = _stats.Attempts;
+	}
 }
 
 void GoalPercentageCounter::handleGoal()
