@@ -14,7 +14,11 @@ This is a plugin for https://www.bakkesmod.com/index.php which gathers statistic
 - The plugin can currently only be used for training mechanics which end with you scoring the ball. For counting things like the number of flip resets you made, there are already other existing plugins.
 
 # How to Install Manually
-*Until the Bakkesmod Plugin moderators have finished source reviewing this plugin, this is the only way of installing*
+
+Note: The plug-in is much easier to install through the official Bakkesmod website:
+https://bakkesplugins.com/plugins/view/302
+
+The following guide is if you want a newer update earlier
 
 1. Press the "tags" link on the right-hand side of this page (scroll to the top):
    ![](./img/GitHubReleaseSection.png)
