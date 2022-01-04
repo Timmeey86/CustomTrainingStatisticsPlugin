@@ -30,6 +30,8 @@ This is a plugin for https://www.bakkesmod.com/index.php which gathers statistic
 1. After installing, you can always enable or disable the overlay in the Bakkesmode Settings dialog (`F2`) in the `Plugins` section
 1. Statistics reset automatically when restarting the training pack or switching to another. You can also manually reset statistics in the Bakkesmod Settings dialog at any given time.
 
+Note that "Peak Success Rate" is only being calculated after the 20th attempt. This is intentional in order to avoid lucky early shots affecting the peak rate too much.
+
 # Compiling manually
 
 If you want to compile this yourself, you need a Visual Studio 2019 or newer, and Bakkesmod installed. It should be possible to simply clone the repo, open the solution and compile it. Note that when compiling from Visual Studio, a post-compile hook will automatically update the plugin within Bakkesmod. This even works when already in custom training.
