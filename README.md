@@ -1,6 +1,7 @@
 # Goal Percentage Counter (Bakkesmod Plugin for Rocket League)
 
 This is a plugin for https://www.bakkesmod.com/index.php which gathers statistics about your success during custom training:
+
 ![](./img/GoalPercentageCounterBanner.png)
 
 # Supported Use Cases
@@ -15,7 +16,7 @@ This is a plugin for https://www.bakkesmod.com/index.php which gathers statistic
 # How to Install Manually
 *Until the Bakkesmod Plugin moderators have finished source reviewing this plugin, this is the only way of installing*
 
-1. Press the "tags" link on the right-hand side of this page:
+1. Press the "tags" link on the right-hand side of this page (scroll to the top):
    ![](./img/GitHubReleaseSection.png)
 1. Unfold the "Assets" section on the newest tag:
    ![](./img/GitHubReleasePage.png)
