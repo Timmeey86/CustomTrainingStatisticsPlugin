@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GoalPercentageCounter", "GoalPercentageCounter.vcxproj", "{93CB2A1E-FDC0-4724-859B-655FB10A11D5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GoalPercentageCounter", "Plugin\GoalPercentageCounter.vcxproj", "{93CB2A1E-FDC0-4724-859B-655FB10A11D5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GoalPercentageCounterTest", "Test\GoalPercentageCounterTest\GoalPercentageCounterTest.vcxproj", "{FE24F6E2-3A67-4D45-9CCF-604DE06A3F4B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{93CB2A1E-FDC0-4724-859B-655FB10A11D5} = {93CB2A1E-FDC0-4724-859B-655FB10A11D5}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,6 +17,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{93CB2A1E-FDC0-4724-859B-655FB10A11D5}.Release|x64.ActiveCfg = Release|x64
 		{93CB2A1E-FDC0-4724-859B-655FB10A11D5}.Release|x64.Build.0 = Release|x64
+		{FE24F6E2-3A67-4D45-9CCF-604DE06A3F4B}.Release|x64.ActiveCfg = Release|x64
+		{FE24F6E2-3A67-4D45-9CCF-604DE06A3F4B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
