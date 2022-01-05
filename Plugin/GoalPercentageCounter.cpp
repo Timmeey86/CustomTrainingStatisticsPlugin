@@ -86,7 +86,7 @@ void GoalPercentageCounter::reset()
 	_stats.MissStreakCounter = 0;
 	_stats.LongestGoalStreak = 0;
 	_stats.LongestMissStreak = 0;
-	_stats.IgnoreNextShotReset = false;
+	_stats.PreviousAttemptWasAGoal = false;
 	_stats.SuccessPercentage = 0;
 	_stats.PeakSuccessPercentage = 0;
 	_stats.PeakShotNumber = 0;
@@ -164,7 +164,7 @@ void GoalPercentageCounter::handleGoal()
 	_stats.Goals++;
 
 	// If we press reset after a goal, we mustn't treat it as a miss.
-	_stats.IgnoreNextShotReset = true;
+	_stats.PreviousAttemptWasAGoal = true;
 
 	if (_stats.GoalStreakCounter > _stats.LongestGoalStreak)
 	{
@@ -177,10 +177,10 @@ void GoalPercentageCounter::handleShotReset()
 	// Count the shot attempt in any case
 	_stats.Attempts++;
 
-	if (_stats.IgnoreNextShotReset)
+	if (_stats.PreviousAttemptWasAGoal)
 	{
 		// A goal was scored, and then reset was pressed. No further action required, but do not ignore any further resets.
-		_stats.IgnoreNextShotReset = false;
+		_stats.PreviousAttemptWasAGoal = false;
 	}
 	else
 	{
