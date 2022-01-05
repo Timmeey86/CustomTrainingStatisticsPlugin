@@ -22,6 +22,9 @@
     <Filter Include="imgui\implementation">
       <UniqueIdentifier>{d46c4711-0bdc-484c-bb4c-5526d80f7f5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Settings">
+      <UniqueIdentifier>{c314c668-82f4-46a5-bf45-75ffa62ae23b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounter.cpp">
@@ -63,9 +66,6 @@
     <ClCompile Include="imgui\imguivariouscontrols.cpp">
       <Filter>imgui\implementation</Filter>
     </ClCompile>
-    <ClCompile Include="GoalPercentageCounterGUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="fmt\src\format.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -74,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="CounterStats.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\PluginSettingsUI.cpp">
+      <Filter>Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="CounterStats.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\PluginSettingsUI.h">
+      <Filter>Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

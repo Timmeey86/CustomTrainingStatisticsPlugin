@@ -9,6 +9,18 @@ std::shared_ptr<CVarManagerWrapper> _globalCvarManager;
 
 void GoalPercentageCounter::onLoad()
 {
+	// Define a function which can trigger a command manually
+	auto commandExecutionFunction = [this](const std::string& commandName) {
+		gameWrapper->Execute([this, commandName](const GameWrapper*) {
+			cvarManager->executeCommand(commandName);
+		});
+	};
+	// Define a function which is able to retrieve a cvar without having to know the cvar manager
+	auto cvarRetrievalFunction = [this](const std::string& variableName) { return cvarManager->getCvar(variableName); };
+
+	initPluginSettingsUi(commandExecutionFunction, cvarRetrievalFunction);
+		
+
 	_globalCvarManager = cvarManager;
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 	cvarManager->registerCvar("goalpercentagecounter_enabled", "1", "Enable Plugin", true, true, 0, true, 1)

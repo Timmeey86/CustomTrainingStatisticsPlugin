@@ -7,22 +7,16 @@
 #include "version.h"
 #include "CounterStats.h"
 
+#include "Settings/PluginSettingsUI.h"
+
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
-
-class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public BakkesMod::Plugin::PluginSettingsWindow
+class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public PluginSettingsUI
 {
 
 	//Boilerplate
 	virtual void onLoad(); // REFACTOR register hooks
 	virtual void onUnload(); // REFACTOR just logging
-
-	// REFACTOR - Move to own header - Settings UI
-
-	// Inherited via PluginSettingsWindow
-	void RenderSettings() override; 
-	std::string GetPluginName() override;
-	void SetImGuiContext(uintptr_t ctx) override;
 
 private:
 
