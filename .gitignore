@@ -351,3 +351,5 @@ MigrationBackup/
 *.dll
 *.exp
 *.lib
+/Test/gtest.dir
+/Test/gmock.dir
