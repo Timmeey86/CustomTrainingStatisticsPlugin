@@ -8,6 +8,13 @@
 int main()
 {
     std::cout << "Hello World!\n";
+
+    RUN_ALL_TESTS();
+}
+
+TEST(Dummy, SampleTest)
+{
+    EXPECT_TRUE(true);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
