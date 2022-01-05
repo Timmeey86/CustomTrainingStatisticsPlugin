@@ -78,7 +78,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)fmt\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,7 +91,9 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CounterStats.cpp" />
+    <ClCompile Include="Calculation\StatUpdater.cpp" />
+    <ClCompile Include="Core\EventListener.cpp" />
+    <ClCompile Include="Display\StatDisplay.cpp" />
     <ClCompile Include="fmt\src\format.cc" />
     <ClCompile Include="fmt\src\os.cc" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -110,10 +112,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GoalPercentageCounter.cpp" />
-    <ClCompile Include="GoalPercentageCounterGUI.cpp" />
+    <ClCompile Include="Settings\PluginSettingsUI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CounterStats.h" />
+    <ClInclude Include="Calculation\StatUpdater.h" />
+    <ClInclude Include="Core\EventListener.h" />
+    <ClInclude Include="Core\IStatDisplay.h" />
+    <ClInclude Include="Core\IStatUpdater.h" />
+    <ClInclude Include="Data\CalculatedData.h" />
+    <ClInclude Include="Data\PlayerStats.h" />
+    <ClInclude Include="Data\PluginState.h" />
+    <ClInclude Include="Display\StatDisplay.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imguivariouscontrols.h" />
@@ -129,6 +138,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="GoalPercentageCounter.h" />
+    <ClInclude Include="Settings\PluginSettingsUI.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>

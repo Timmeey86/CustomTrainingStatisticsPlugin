@@ -1,132 +1,173 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="imgui">
+    <Filter Include="Settings">
+      <UniqueIdentifier>{c314c668-82f4-46a5-bf45-75ffa62ae23b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{c58d54ae-eaf6-4462-8ec7-450bbe37a0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{036d273e-0d20-43a4-af79-60fc66e6d63f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Calculation">
+      <UniqueIdentifier>{da30f185-5ef0-4c57-99da-6836adf9f873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Plugin Files\imgui">
       <UniqueIdentifier>{396e4dda-4fe2-4588-9756-a364a57aa8c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui\headers">
+    <Filter Include="Plugin Files\imgui\headers">
       <UniqueIdentifier>{ae0c99c9-78de-41f1-8c8d-e6eb860af833}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui\implementation">
+    <Filter Include="Plugin Files\imgui\implementation">
       <UniqueIdentifier>{d46c4711-0bdc-484c-bb4c-5526d80f7f5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Display">
+      <UniqueIdentifier>{f859f8b9-60c4-4046-ba11-b9cc4b109104}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounter.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Plugin Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Plugin Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_additions.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_dx11.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_win32.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_rangeslider.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_searchablecombo.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_timeline.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>imgui\implementation</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imguivariouscontrols.cpp">
-      <Filter>imgui\implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="GoalPercentageCounterGUI.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Plugin Files\imgui\implementation</Filter>
     </ClCompile>
     <ClCompile Include="fmt\src\format.cc">
-      <Filter>Source Files</Filter>
+      <Filter>Plugin Files</Filter>
     </ClCompile>
     <ClCompile Include="fmt\src\os.cc">
-      <Filter>Source Files</Filter>
+      <Filter>Plugin Files</Filter>
     </ClCompile>
-    <ClCompile Include="CounterStats.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Settings\PluginSettingsUI.cpp">
+      <Filter>Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\EventListener.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Calculation\StatUpdater.cpp">
+      <Filter>Calculation</Filter>
+    </ClCompile>
+    <ClCompile Include="Display\StatDisplay.cpp">
+      <Filter>Display</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GoalPercentageCounter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imgui_rangeslider.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_searchablecombo.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_timeline.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imguivariouscontrols.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_additions.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_dx11.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_win32.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>imgui\headers</Filter>
+      <Filter>Plugin Files\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\PluginSettingsUI.h">
+      <Filter>Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\PluginState.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\PlayerStats.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\CalculatedData.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\EventListener.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IStatUpdater.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IStatDisplay.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation\StatUpdater.h">
+      <Filter>Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalPercentageCounter.h">
+      <Filter>Plugin Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Plugin Files</Filter>
     </ClInclude>
     <ClInclude Include="version.h">
-      <Filter>Header Files</Filter>
+      <Filter>Plugin Files</Filter>
     </ClInclude>
-    <ClInclude Include="CounterStats.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Display\StatDisplay.h">
+      <Filter>Display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
