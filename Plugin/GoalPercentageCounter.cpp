@@ -13,14 +13,14 @@ void GoalPercentageCounter::onLoad()
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 	cvarManager->registerCvar("goalpercentagecounter_enabled", "1", "Enable Plugin", true, true, 0, true, 1)
 		.addOnValueChanged([this](std::string oldValue, CVarWrapper cvar) {
-		_enabled = cvar.getBoolValue();
+		_stats.Enabled = cvar.getBoolValue();
 	});
 
 	// React to scored goals
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
-		if (_goalReplayIsActive) { return; }
-		if (!_enabled) { return; }
+		if (_stats.GoalReplayIsActive) { return; }
+		if (!_stats.Enabled) { return; }
 
 		update(true, false); // This is a goal, and it is not a stat reset
 	});
@@ -28,8 +28,8 @@ void GoalPercentageCounter::onLoad()
 	// Count every shot as soon as any button is being pressed
 	gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
-		if (_goalReplayIsActive) { return; }
-		if (!_enabled) { return; }
+		if (_stats.GoalReplayIsActive) { return; }
+		if (!_stats.Enabled) { return; }
 
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
 	});
@@ -37,7 +37,7 @@ void GoalPercentageCounter::onLoad()
 	// Update statistics on each car spawn
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
-		if (!_enabled) { return; }
+		if (!_stats.Enabled) { return; }
 
 		// Update percentages, but do not modify attempts or goals
 		recalculatePercentages();
@@ -54,17 +54,17 @@ void GoalPercentageCounter::onLoad()
 
 	// Reset automatically when loading a new training pack, or when resetting it
 	gameWrapper->HookEventPost("Function TAGame.GameEvent_TrainingEditor_TA.OnInit", [this](const std::string&) {
-		if (!_enabled) { return; }
+		if (!_stats.Enabled) { return; }
 		reset();
 		update(false, true); // This is not a goal, and it is a stat reset
 	});
 
 	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](const std::string&) {
-		_goalReplayIsActive = true;
+		_stats.GoalReplayIsActive = true;
 	});
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](const std::string&) {
-		_goalReplayIsActive = false;
+		_stats.GoalReplayIsActive = false;
 	});
 
 	// Enable rendering of output
@@ -112,16 +112,11 @@ void GoalPercentageCounter::registerAttempt(bool isGoal)
 	_globalCvarManager->log("Registering attempt: " + std::to_string(isGoal));
 	if (isGoal)
 	{
-		if (!_stats.Last50Shots.empty())
-		{
-			_stats.Last50Shots.back() = true; // Replace the current attempt with a goal entry
-		}
 		handleGoal();
 	}
 	else
 	{
-		_stats.Last50Shots.push_back(false);
-		handleShotReset();
+		handleAttempt();
 	}
 }
 
@@ -159,11 +154,16 @@ void GoalPercentageCounter::recalculatePercentages()
 
 void GoalPercentageCounter::handleGoal()
 {
+	if (!_stats.Last50Shots.empty())
+	{
+		_stats.Last50Shots.back() = true; // Replace the current attempt with a goal entry
+	}
 	_stats.MissStreakCounter = 0;
 	_stats.GoalStreakCounter++;
 	_stats.Goals++;
 
-	// If we press reset after a goal, we mustn't treat it as a miss.
+	// When starting the next attempt, we don't know whether the previous one was a goal or a miss without this flag
+	// (there is no trigger for a miss, unless we incorporate the reset trigger for it (we might actually do that in future))
 	_stats.PreviousAttemptWasAGoal = true;
 
 	if (_stats.GoalStreakCounter > _stats.LongestGoalStreak)
@@ -172,8 +172,10 @@ void GoalPercentageCounter::handleGoal()
 	}
 }
 
-void GoalPercentageCounter::handleShotReset()
+void GoalPercentageCounter::handleAttempt()
 {
+	_stats.Last50Shots.push_back(false);
+
 	// Count the shot attempt in any case
 	_stats.Attempts++;
 
@@ -222,7 +224,7 @@ void drawPercentageStat(CanvasWrapper canvas, float yOffset, const std::string& 
 void GoalPercentageCounter::render(CanvasWrapper canvas) const
 {
 	if (!gameWrapper->IsInCustomTraining()) { return; }
-	if (!_enabled) { return; }
+	if (!_stats.Enabled) { return; }
 
 	// Draw a panel so we can read the text on all kinds of maps
 	LinearColor colors;
