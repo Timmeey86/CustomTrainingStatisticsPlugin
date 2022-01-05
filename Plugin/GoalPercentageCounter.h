@@ -10,6 +10,7 @@
 #include "Data/CalculatedData.h"
 #include "Data/PlayerStats.h"
 #include "Data/PluginState.h"
+#include "Core/EventListener.h"
 
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
@@ -25,23 +26,9 @@ private:
 	// REFACTOR UI overlay
 	void render(CanvasWrapper canvas) const; // Copy is intentional since we don't want to modify the object owned by the caller.
 
-	// REFACTOR maybe add constructor to data structures
-	void reset();
-
-	// REFACTOR control flow
-	void update(bool isGoal, bool isReset);
-	void registerAttempt(bool isGoal);
-
-	// REFACTOR calculation
-	void recalculatePercentages();
-
-	// REFACTOR stat update
-	void handleGoal();
-	void handleAttempt();
-
-	// REFACTOR state
-	CalculatedData _calculatedData;
-	PlayerStats _playerStats;
-	PluginState _pluginState;
+	std::shared_ptr<PlayerStats> _playerStats = std::make_shared<PlayerStats>();
+	std::shared_ptr<CalculatedData> _calculatedData = std::make_shared<CalculatedData>();
+	std::shared_ptr<PluginState> _pluginState = std::make_shared<PluginState>();
+	std::shared_ptr<EventListener> _eventListener;
 };
 

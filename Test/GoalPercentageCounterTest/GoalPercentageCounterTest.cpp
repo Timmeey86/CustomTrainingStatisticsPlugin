@@ -9,6 +9,9 @@ int main()
 {
     std::cout << "Hello World!\n";
 
+    testing::InitGoogleTest();
+    testing::InitGoogleMock();
+
     RUN_ALL_TESTS();
 }
 

@@ -78,7 +78,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)fmt\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,6 +91,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Calculation\StatUpdater.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
     <ClCompile Include="fmt\src\format.cc" />
     <ClCompile Include="fmt\src\os.cc" />
@@ -113,6 +114,7 @@
     <ClCompile Include="Settings\PluginSettingsUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Calculation\StatUpdater.h" />
     <ClInclude Include="Core\EventListener.h" />
     <ClInclude Include="Core\IStatDisplay.h" />
     <ClInclude Include="Core\IStatUpdater.h" />

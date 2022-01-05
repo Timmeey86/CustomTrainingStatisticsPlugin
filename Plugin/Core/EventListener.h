@@ -12,6 +12,7 @@
 /** Hooks into various rocket league events and calls the appropriate interface methods. */
 class EventListener
 {
+public:
 	/** Provides initialization parameters for the event listener. */
 	EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState);
 

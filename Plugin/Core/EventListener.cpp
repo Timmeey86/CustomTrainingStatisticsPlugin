@@ -10,6 +10,8 @@ EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shar
 
 void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpdater )
 {
+	if (!statUpdater) { return; }
+
 	// Happens whenever a goal was scored
 	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
@@ -37,18 +39,21 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 		
 		// Note: Manual reset is allowed even with the plugin disabled, or during a goal replay (because why not?)
-		statUpdater->processShotReset();
+		statUpdater->processManualStatReset();
 	}, "Reset the statistics.", PERMISSION_ALL);
 
 	// Reset automatically when loading a new training pack, or when resetting it
 	_gameWrapper->HookEventPost("Function TAGame.GameEvent_TrainingEditor_TA.OnInit", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
+		if (!_pluginState->PluginIsEnabled) { return; }
+		// Note: While loading a training pack, we are not in custom training, so we can't use statUpdatesShallBeSent() here
 
 		statUpdater->handleTrainingPackLoad();
 	});
 }
 void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisplay )
 {
+	if (!statDisplay) { return; }
+
 	_gameWrapper->RegisterDrawable([statDisplay](const CanvasWrapper& canvas) {
 		statDisplay->renderOneFrame(canvas);
 	});	
