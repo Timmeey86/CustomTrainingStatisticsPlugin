@@ -28,6 +28,9 @@
     <Filter Include="Data">
       <UniqueIdentifier>{c58d54ae-eaf6-4462-8ec7-450bbe37a0c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{036d273e-0d20-43a4-af79-60fc66e6d63f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounter.cpp">
@@ -77,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="Settings\PluginSettingsUI.cpp">
       <Filter>Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\EventListener.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +145,15 @@
     </ClInclude>
     <ClInclude Include="Data\CalculatedData.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\EventListener.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IStatUpdater.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IStatDisplay.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -28,6 +28,7 @@ void GoalPercentageCounter::onLoad()
 		_pluginState.PluginIsEnabled = cvar.getBoolValue();
 	});
 
+	// REFACTOR - IStatUpdater
 	// React to scored goals
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
@@ -37,6 +38,7 @@ void GoalPercentageCounter::onLoad()
 		update(true, false); // This is a goal, and it is not a stat reset
 	});
 
+	// REFACTOR - IStatUpdater
 	// Count every shot as soon as any button is being pressed
 	gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
@@ -46,7 +48,9 @@ void GoalPercentageCounter::onLoad()
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
 	});
 
+	// REFACTOR - IStatUpdater
 	// Update statistics on each car spawn
+	// TODO: Maybe implement a mini state machine: Idle -> Attempt -> Goal -> Reset -> Idle, or Idle -> Attempt -> Miss (Reset without goal) -> Idle
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 		if (!_pluginState.PluginIsEnabled) { return; }
@@ -55,6 +59,7 @@ void GoalPercentageCounter::onLoad()
 		recalculatePercentages();
 	});
 	
+	// REFACTOR - IStatUpdater
 	// Allow resetting statistics to zero attempts/goals manually
 	cvarManager->registerNotifier("goalpercentagecounter_reset", [this](const std::vector<std::string>&)
 	{
@@ -64,6 +69,7 @@ void GoalPercentageCounter::onLoad()
 		update(false, true); // This is not a goal, and it is a stat reset
 	}, "Reset the statistics.", PERMISSION_ALL);
 
+	// REFACTOR - IStatUpdater
 	// Reset automatically when loading a new training pack, or when resetting it
 	gameWrapper->HookEventPost("Function TAGame.GameEvent_TrainingEditor_TA.OnInit", [this](const std::string&) {
 		if (!_pluginState.PluginIsEnabled) { return; }
@@ -71,14 +77,17 @@ void GoalPercentageCounter::onLoad()
 		update(false, true); // This is not a goal, and it is a stat reset
 	});
 
+	// REFACTOR - Directly within in EventListener (no need for an extra class)
 	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](const std::string&) {
 		_pluginState.GoalReplayIsActive = true;
 	});
+	// UNVERIFIED ASSUMPTION: There is no way for leaving ReplayPlayback without EndState being called
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](const std::string&) {
 		_pluginState.GoalReplayIsActive = false;
 	});
 
+	// REFACTOR - IStatDisplay
 	// Enable rendering of output
 	gameWrapper->RegisterDrawable(std::bind(&GoalPercentageCounter::render, this, std::placeholders::_1));
 
