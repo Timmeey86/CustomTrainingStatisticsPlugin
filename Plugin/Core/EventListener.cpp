@@ -54,8 +54,11 @@ void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisp
 {
 	if (!statDisplay) { return; }
 
-	_gameWrapper->RegisterDrawable([statDisplay](const CanvasWrapper& canvas) {
-		statDisplay->renderOneFrame(canvas);
+	_gameWrapper->RegisterDrawable([this, statDisplay](const CanvasWrapper& canvas) {
+		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining())
+		{
+			statDisplay->renderOneFrame(canvas);
+		}
 	});	
 }
 

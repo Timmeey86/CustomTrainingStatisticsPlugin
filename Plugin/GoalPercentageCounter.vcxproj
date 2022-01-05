@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClCompile Include="Calculation\StatUpdater.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
+    <ClCompile Include="Display\StatDisplay.cpp" />
     <ClCompile Include="fmt\src\format.cc" />
     <ClCompile Include="fmt\src\os.cc" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="Data\CalculatedData.h" />
     <ClInclude Include="Data\PlayerStats.h" />
     <ClInclude Include="Data\PluginState.h" />
+    <ClInclude Include="Display\StatDisplay.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imguivariouscontrols.h" />

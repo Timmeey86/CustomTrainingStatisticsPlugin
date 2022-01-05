@@ -23,9 +23,6 @@ class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public P
 
 private:
 
-	// REFACTOR UI overlay
-	void render(CanvasWrapper canvas) const; // Copy is intentional since we don't want to modify the object owned by the caller.
-
 	std::shared_ptr<PlayerStats> _playerStats = std::make_shared<PlayerStats>();
 	std::shared_ptr<CalculatedData> _calculatedData = std::make_shared<CalculatedData>();
 	std::shared_ptr<PluginState> _pluginState = std::make_shared<PluginState>();
