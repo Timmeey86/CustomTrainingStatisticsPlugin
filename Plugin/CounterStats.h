@@ -37,11 +37,5 @@ class State
 public:
 	bool PreviousAttemptWasAGoal = false; ///< If this is still false when a new attempt is started, it means the previous shot was a miss.
 	bool GoalReplayIsActive = false; ///< True while a goal is being replayed. We ignore other events during that time.
-	bool Enabled = true; ///< True while the user has not disabled the plugin in the settings UI.
+	bool PluginIsEnabled = true; ///< True while the user has not disabled the plugin in the settings UI.
 };
-
-/** LEGACY. DO NOT USE FOR NEW CODE */
-class CounterStats : public Stats, public CalculatedData, public State
-{
-};
-

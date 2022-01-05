@@ -25,6 +25,9 @@
     <Filter Include="Settings">
       <UniqueIdentifier>{c314c668-82f4-46a5-bf45-75ffa62ae23b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{c58d54ae-eaf6-4462-8ec7-450bbe37a0c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounter.cpp">
@@ -70,9 +73,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="fmt\src\os.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CounterStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Settings\PluginSettingsUI.cpp">
@@ -128,11 +128,17 @@
     <ClInclude Include="version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CounterStats.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Settings\PluginSettingsUI.h">
       <Filter>Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\PluginState.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\PlayerStats.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\CalculatedData.h">
+      <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

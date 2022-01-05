@@ -25,14 +25,14 @@ void GoalPercentageCounter::onLoad()
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 	cvarManager->registerCvar("goalpercentagecounter_enabled", "1", "Enable Plugin", true, true, 0, true, 1)
 		.addOnValueChanged([this](std::string oldValue, CVarWrapper cvar) {
-		_stats.Enabled = cvar.getBoolValue();
+		_pluginState.PluginIsEnabled = cvar.getBoolValue();
 	});
 
 	// React to scored goals
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
-		if (_stats.GoalReplayIsActive) { return; }
-		if (!_stats.Enabled) { return; }
+		if (_pluginState.GoalReplayIsActive) { return; }
+		if (!_pluginState.PluginIsEnabled) { return; }
 
 		update(true, false); // This is a goal, and it is not a stat reset
 	});
@@ -40,8 +40,8 @@ void GoalPercentageCounter::onLoad()
 	// Count every shot as soon as any button is being pressed
 	gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
-		if (_stats.GoalReplayIsActive) { return; }
-		if (!_stats.Enabled) { return; }
+		if (_pluginState.GoalReplayIsActive) { return; }
+		if (!_pluginState.PluginIsEnabled) { return; }
 
 		update(false, false); // This is not a goal (but a miss), and it is not a stat reset
 	});
@@ -49,7 +49,7 @@ void GoalPercentageCounter::onLoad()
 	// Update statistics on each car spawn
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
-		if (!_stats.Enabled) { return; }
+		if (!_pluginState.PluginIsEnabled) { return; }
 
 		// Update percentages, but do not modify attempts or goals
 		recalculatePercentages();
@@ -66,17 +66,17 @@ void GoalPercentageCounter::onLoad()
 
 	// Reset automatically when loading a new training pack, or when resetting it
 	gameWrapper->HookEventPost("Function TAGame.GameEvent_TrainingEditor_TA.OnInit", [this](const std::string&) {
-		if (!_stats.Enabled) { return; }
+		if (!_pluginState.PluginIsEnabled) { return; }
 		reset();
 		update(false, true); // This is not a goal, and it is a stat reset
 	});
 
 	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](const std::string&) {
-		_stats.GoalReplayIsActive = true;
+		_pluginState.GoalReplayIsActive = true;
 	});
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](const std::string&) {
-		_stats.GoalReplayIsActive = false;
+		_pluginState.GoalReplayIsActive = false;
 	});
 
 	// Enable rendering of output
@@ -92,18 +92,12 @@ void GoalPercentageCounter::onUnload()
 
 void GoalPercentageCounter::reset()
 {
-	_stats.Attempts = 0;
-	_stats.Goals = 0;
-	_stats.GoalStreakCounter = 0;
-	_stats.MissStreakCounter = 0;
-	_stats.LongestGoalStreak = 0;
-	_stats.LongestMissStreak = 0;
-	_stats.PreviousAttemptWasAGoal = false;
-	_stats.SuccessPercentage = 0;
-	_stats.PeakSuccessPercentage = 0;
-	_stats.PeakShotNumber = 0;
-	_stats.Last50Shots.clear();
-	_stats.Last50ShotsPercentage = 0;
+	_playerStats = PlayerStats();
+	_calculatedData = CalculatedData();
+
+	// Do not reset anything which can be changed by user settings - Those settings shall of course not be reset.
+	// Also do not reset anything which is based on the Rocket League state
+	_pluginState.PreviousAttemptWasAGoal = false;
 }
 void GoalPercentageCounter::update(bool isGoal, bool isReset)
 {
@@ -135,75 +129,75 @@ void GoalPercentageCounter::registerAttempt(bool isGoal)
 void GoalPercentageCounter::recalculatePercentages()
 {
 	auto successPercentage = .0;
-	if (_stats.Attempts > 0)
+	if (_playerStats.Attempts > 0)
 	{
 		// Calculate the success percentage in percent, including two decimal digits
-		successPercentage = getPercentageValue(_stats.Attempts, _stats.Goals);
+		successPercentage = getPercentageValue(_playerStats.Attempts, _playerStats.Goals);
 	}
-	_stats.SuccessPercentage = successPercentage;
+	_calculatedData.SuccessPercentage = successPercentage;
 
 	// Update the percentage for the last 50 shots
 	// Ignore the event if this is a reset after a goal
-	while (_stats.Last50Shots.size() > 50)
+	while (_playerStats.Last50Shots.size() > 50)
 	{
-		_stats.Last50Shots.pop_front();
+		_playerStats.Last50Shots.pop_front();
 	}
 	successPercentage = .0;
-	if (!_stats.Last50Shots.empty())
+	if (!_playerStats.Last50Shots.empty())
 	{
-		auto numberOfGoals = std::count(_stats.Last50Shots.begin(), _stats.Last50Shots.end(), true);
-		successPercentage = getPercentageValue((double)_stats.Last50Shots.size(), (double)numberOfGoals);
+		auto numberOfGoals = std::count(_playerStats.Last50Shots.begin(), _playerStats.Last50Shots.end(), true);
+		successPercentage = getPercentageValue((double)_playerStats.Last50Shots.size(), (double)numberOfGoals);
 	}
-	_stats.Last50ShotsPercentage = successPercentage;
+	_calculatedData.Last50ShotsPercentage = successPercentage;
 
 	// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
-	if (_stats.Attempts > 20 && _stats.Last50ShotsPercentage > _stats.PeakSuccessPercentage)
+	if (_playerStats.Attempts > 20 && _calculatedData.Last50ShotsPercentage > _calculatedData.PeakSuccessPercentage)
 	{
-		_stats.PeakSuccessPercentage = _stats.Last50ShotsPercentage;
-		_stats.PeakShotNumber = _stats.Attempts;
+		_calculatedData.PeakSuccessPercentage = _calculatedData.Last50ShotsPercentage;
+		_calculatedData.PeakShotNumber = _playerStats.Attempts;
 	}
 }
 
 void GoalPercentageCounter::handleGoal()
 {
-	if (!_stats.Last50Shots.empty())
+	if (!_playerStats.Last50Shots.empty())
 	{
-		_stats.Last50Shots.back() = true; // Replace the current attempt with a goal entry
+		_playerStats.Last50Shots.back() = true; // Replace the current attempt with a goal entry
 	}
-	_stats.MissStreakCounter = 0;
-	_stats.GoalStreakCounter++;
-	_stats.Goals++;
+	_playerStats.MissStreakCounter = 0;
+	_playerStats.GoalStreakCounter++;
+	_playerStats.Goals++;
 
 	// When starting the next attempt, we don't know whether the previous one was a goal or a miss without this flag
 	// (there is no trigger for a miss, unless we incorporate the reset trigger for it (we might actually do that in future))
-	_stats.PreviousAttemptWasAGoal = true;
+	_pluginState.PreviousAttemptWasAGoal = true;
 
-	if (_stats.GoalStreakCounter > _stats.LongestGoalStreak)
+	if (_playerStats.GoalStreakCounter > _playerStats.LongestGoalStreak)
 	{
-		_stats.LongestGoalStreak = _stats.GoalStreakCounter;
+		_playerStats.LongestGoalStreak = _playerStats.GoalStreakCounter;
 	}
 }
 
 void GoalPercentageCounter::handleAttempt()
 {
-	_stats.Last50Shots.push_back(false);
+	_playerStats.Last50Shots.push_back(false);
 
 	// Count the shot attempt in any case
-	_stats.Attempts++;
+	_playerStats.Attempts++;
 
-	if (_stats.PreviousAttemptWasAGoal)
+	if (_pluginState.PreviousAttemptWasAGoal)
 	{
 		// A goal was scored, and then reset was pressed. No further action required, but do not ignore any further resets.
-		_stats.PreviousAttemptWasAGoal = false;
+		_pluginState.PreviousAttemptWasAGoal = false;
 	}
 	else
 	{
-		_stats.MissStreakCounter++;
-		_stats.GoalStreakCounter = 0;
+		_playerStats.MissStreakCounter++;
+		_playerStats.GoalStreakCounter = 0;
 
-		if (_stats.MissStreakCounter > _stats.LongestMissStreak)
+		if (_playerStats.MissStreakCounter > _playerStats.LongestMissStreak)
 		{
-			_stats.LongestMissStreak = _stats.MissStreakCounter;
+			_playerStats.LongestMissStreak = _playerStats.MissStreakCounter;
 		}
 	}
 }
@@ -236,7 +230,7 @@ void drawPercentageStat(CanvasWrapper canvas, float yOffset, const std::string& 
 void GoalPercentageCounter::render(CanvasWrapper canvas) const
 {
 	if (!gameWrapper->IsInCustomTraining()) { return; }
-	if (!_stats.Enabled) { return; }
+	if (!_pluginState.PluginIsEnabled) { return; }
 
 	// Draw a panel so we can read the text on all kinds of maps
 	LinearColor colors;
@@ -256,14 +250,14 @@ void GoalPercentageCounter::render(CanvasWrapper canvas) const
 	colors.A = 255;
 	canvas.SetColor(colors);
 
-	drawIntStat(canvas, 200.0, "Attempts:", _stats.Attempts);
-	drawIntStat(canvas, 220.0, "Goals:", _stats.Goals);
-	drawIntStat(canvas, 240.0, "Current Goal Streak:", _stats.GoalStreakCounter);
-	drawIntStat(canvas, 260.0, "Current Miss Streak:", _stats.MissStreakCounter);
-	drawPercentageStat(canvas, 280.0, "Total Success Rate:", _stats.SuccessPercentage);
-	drawIntStat(canvas, 300.0, "Longest Goal Streak:", _stats.LongestGoalStreak);
-	drawIntStat(canvas, 320.0, "Longest Miss Streak:", _stats.LongestMissStreak);
-	drawPercentageStat(canvas, 340.0, "Peak Success Rate:", _stats.PeakSuccessPercentage);
-	drawIntStat(canvas, 360.0, "Peak At Shot#:", _stats.PeakShotNumber);
-	drawPercentageStat(canvas, 380.0, "Last 50 Shots:", _stats.Last50ShotsPercentage);
+	drawIntStat(canvas, 200.0, "Attempts:", _playerStats.Attempts);
+	drawIntStat(canvas, 220.0, "Goals:", _playerStats.Goals);
+	drawIntStat(canvas, 240.0, "Current Goal Streak:", _playerStats.GoalStreakCounter);
+	drawIntStat(canvas, 260.0, "Current Miss Streak:", _playerStats.MissStreakCounter);
+	drawPercentageStat(canvas, 280.0, "Total Success Rate:", _calculatedData.SuccessPercentage);
+	drawIntStat(canvas, 300.0, "Longest Goal Streak:", _playerStats.LongestGoalStreak);
+	drawIntStat(canvas, 320.0, "Longest Miss Streak:", _playerStats.LongestMissStreak);
+	drawPercentageStat(canvas, 340.0, "Peak Success Rate:", _calculatedData.PeakSuccessPercentage);
+	drawIntStat(canvas, 360.0, "Peak At Shot#:", _calculatedData.PeakShotNumber);
+	drawPercentageStat(canvas, 380.0, "Last 50 Shots:", _calculatedData.Last50ShotsPercentage);
 }

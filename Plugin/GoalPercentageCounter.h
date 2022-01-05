@@ -5,9 +5,11 @@
 #include "bakkesmod/plugin/PluginSettingsWindow.h"
 
 #include "version.h"
-#include "CounterStats.h"
 
 #include "Settings/PluginSettingsUI.h"
+#include "Data/CalculatedData.h"
+#include "Data/PlayerStats.h"
+#include "Data/PluginState.h"
 
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
@@ -38,6 +40,8 @@ private:
 	void handleAttempt();
 
 	// REFACTOR state
-	CounterStats _stats;
+	CalculatedData _calculatedData;
+	PlayerStats _playerStats;
+	PluginState _pluginState;
 };
 
