@@ -24,9 +24,10 @@ public:
 	/** Sets the UI context to the given context */
 	void SetImGuiContext(uintptr_t ctx) override;
 
+private:
+	/** Creates a check box in the UI, and performs a one-time registration of the associated cvar if it hasn't been done yet. */
 	void createCheckbox(const std::string& variableName, const std::string& displayText, const std::string& tooltipText, std::function<void(bool)> setValueFunc);
 
-private:
 	std::function<void(const std::string&)> _sendNotifierFunc; ///< A function which is able to send a notifier for which CVarManagerWrapper::registerNotifier has been called.
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows registering and retrieving custom variables.
 	std::shared_ptr<PluginState> _pluginState; ///< Stores the state of the plugin.

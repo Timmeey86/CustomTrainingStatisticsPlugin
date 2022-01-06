@@ -21,7 +21,7 @@ void GoalPercentageCounter::onLoad()
 	initPluginSettingsUi(commandExecutionFunction, cvarManager, _pluginState);
 
 	// Enable rendering of output
-	auto statDisplay = std::make_shared<StatDisplay>(_playerStats, _calculatedData);
+	auto statDisplay = std::make_shared<StatDisplay>(_playerStats, _calculatedData, _pluginState);
 
 	// Create handler classes
 	auto statUpdater = std::make_shared<StatUpdater>(_playerStats, _calculatedData, _pluginState);
