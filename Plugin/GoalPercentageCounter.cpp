@@ -16,18 +16,9 @@ void GoalPercentageCounter::onLoad()
 			cvarManager->executeCommand(commandName);
 		});
 	};
-	// Define a function which is able to retrieve a cvar without having to know the cvar manager
-	auto cvarRetrievalFunction = [this](const std::string& variableName) { return cvarManager->getCvar(variableName); };
 
 	// Initialize the Settings page of the bakkesmod menu (F2)
-	initPluginSettingsUi(commandExecutionFunction, cvarRetrievalFunction);
-		
-	// Initialize variables which can be configured by the user (currently this is only a single enabled flag. Create a new class if there's more)
-	cvarManager->log("Loaded GoalPercentageCounter plugin");
-	cvarManager->registerCvar(ConfigurationOptions::EnablePlugin, "1", "Enable Plugin", true, true, 0, true, 1)
-		.addOnValueChanged([this](const std::string&, CVarWrapper cvar) {
-		_pluginState->PluginIsEnabled = cvar.getBoolValue();
-	});
+	initPluginSettingsUi(commandExecutionFunction, cvarManager, _pluginState);
 
 	// Enable rendering of output
 	auto statDisplay = std::make_shared<StatDisplay>(_playerStats, _calculatedData);
@@ -40,6 +31,8 @@ void GoalPercentageCounter::onLoad()
 	_eventListener->registerGameStateEvents();
 	_eventListener->registerUpdateEvents(statUpdater);
 	_eventListener->registerRenderEvents(statDisplay);
+
+	cvarManager->log("Loaded GoalPercentageCounter plugin");
 }
 
 void GoalPercentageCounter::onUnload()

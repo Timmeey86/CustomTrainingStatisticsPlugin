@@ -2,15 +2,19 @@
 
 #include <string>
 #include <functional>
+#include <unordered_set>
 
 #include "bakkesmod/plugin/PluginSettingsWindow.h"
+#include "bakkesmod/wrappers/cvarmanagerwrapper.h"
+
+#include "../Data/PluginState.h"
 
 /** Implements methods which create a settings UI. */
 class PluginSettingsUI : public BakkesMod::Plugin::PluginSettingsWindow
 {
 public:
 	/** Initializes the plugin settings UI. */
-	void initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::function<CVarWrapper(const std::string&)> getVariableWrapperFunc);
+	void initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState);
 
 
 	/** Creates and configures the UI controls for the settings. */
@@ -20,7 +24,11 @@ public:
 	/** Sets the UI context to the given context */
 	void SetImGuiContext(uintptr_t ctx) override;
 
+	void createCheckbox(const std::string& variableName, const std::string& displayText, const std::string& tooltipText, std::function<void(bool)> setValueFunc);
+
 private:
 	std::function<void(const std::string&)> _sendNotifierFunc; ///< A function which is able to send a notifier for which CVarManagerWrapper::registerNotifier has been called.
-	std::function<CVarWrapper(const std::string&)> _getVariableWrapperFunc; ///< A function which is able to retrieve a CVarWrapper for a given variable.
+	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows registering and retrieving custom variables.
+	std::shared_ptr<PluginState> _pluginState; ///< Stores the state of the plugin.
+	std::unordered_set<std::string> _registeredCVars; ///< Allows registering every cvar just once.
 };

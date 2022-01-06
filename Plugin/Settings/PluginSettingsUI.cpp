@@ -7,10 +7,11 @@
 
 #include "../IMGUI/imgui.h"
 
-void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::function<CVarWrapper(const std::string&)> getVariableWrapperFunc)
+void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
 {
 	_sendNotifierFunc = sendNotifierFunc;
-	_getVariableWrapperFunc = getVariableWrapperFunc;
+	_cvarManager = cvarManager;
+	_pluginState = pluginState;
 }
 
 std::string PluginSettingsUI::GetPluginName() 
@@ -23,6 +24,33 @@ void PluginSettingsUI::SetImGuiContext(uintptr_t ctx)
 	ImGui::SetCurrentContext(reinterpret_cast<ImGuiContext*>(ctx));
 }
 
+void PluginSettingsUI::createCheckbox(const std::string& variableName, const std::string& displayText, const std::string& tooltipText, std::function<void(bool)> setValueFunc)
+{
+	if (_registeredCVars.count(variableName) == 0)
+	{
+		_cvarManager->registerCvar(variableName, "1", displayText, true, true, 0, true, 1)
+			.addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) {
+			setValueFunc(cvar.getBoolValue());
+		});
+		_registeredCVars.emplace(variableName);
+	}
+
+	CVarWrapper cvar = _cvarManager->getCvar(variableName);
+	if (!cvar) { return; }
+
+	if (bool enabled = cvar.getBoolValue();
+		ImGui::Checkbox(displayText.c_str(), &enabled))
+	{
+		cvar.setValue(enabled);
+	}
+	if (ImGui::IsItemHovered()) 
+	{
+		ImGui::SetTooltip(tooltipText.c_str());
+	}
+}
+
+#define SET_VALUE_FUNC(propertyName) [this](bool value) { _pluginState->propertyName = value; }
+
 // Render the plugin settings here
 // This will show up in bakkesmod when the plugin is loaded at
 //  f2 -> plugins -> GoalPercentageCounter
@@ -30,16 +58,7 @@ void PluginSettingsUI::RenderSettings()
 {	
 	if (ImGui::CollapsingHeader("General"))
 	{
-		// Add an option for enabling or disabling the plugin
-		CVarWrapper enableCvar = _getVariableWrapperFunc(ConfigurationOptions::EnablePlugin);
-		if (!enableCvar) { return; }
-
-		if (bool enabled = enableCvar.getBoolValue(); ImGui::Checkbox("Enable plugin", &enabled)) {
-			enableCvar.setValue(enabled);
-		}
-		if (ImGui::IsItemHovered()) {
-			ImGui::SetTooltip("Toggle Goal Percentage Counter Plugin");
-		}	
+		createCheckbox(ConfigurationOptions::EnablePlugin, "Enable Plugin", "Toggle Goal Percentage Counter Plugin", SET_VALUE_FUNC(PluginIsEnabled));
 
 		// Add a button for resetting statistics
 		ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
@@ -51,6 +70,41 @@ void PluginSettingsUI::RenderSettings()
 
 	if (ImGui::CollapsingHeader("Display"))
 	{
+		// Add an option for enabling or disabling the Attempts/Goals display
+		createCheckbox(
+			ConfigurationOptions::DisplayAttemptsAndGoals, 
+			"Attempts/Goals",
+			"Toggle display of attempts and goals in the stat display", 
+			SET_VALUE_FUNC(AttemptsAndGoalsShallBeDisplayed));
 
+		createCheckbox(
+			ConfigurationOptions::DisplayCurrentStreaks,
+			"Current Miss/Goal Streaks",
+			"Toggle display of current miss and goal streaks in the stat display",
+			SET_VALUE_FUNC(CurrentStreaksShallBeDisplayed));
+
+		createCheckbox(
+			ConfigurationOptions::DisplayTotalSuccessRate,
+			"Total Success Rate",
+			"Toggle display of total success rate in the stat display",
+			SET_VALUE_FUNC(TotalSuccessRateShallBeDisplayed));
+
+		createCheckbox(
+			ConfigurationOptions::DisplayLongestStreaks,
+			"Longest Miss/Goal Streaks",
+			"Toggle display of longest miss and goal streaks in the stat display",
+			SET_VALUE_FUNC(LongestStreaksShallBeDisplayed));
+
+		createCheckbox(
+			ConfigurationOptions::DisplayPeakInfo,
+			"Peak Success Rate",
+			"Toggle display of peak success rate and peak shot number in the stat display",
+			SET_VALUE_FUNC(PeakInfoShallBeDisplayed));
+
+		createCheckbox(
+			ConfigurationOptions::DisplayLastNShotPercentage,
+			"Last N Shots",
+			"Toggle display of the last n shots percentage in the stat display",
+			SET_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
 	}
 }
