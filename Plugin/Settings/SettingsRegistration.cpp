@@ -1,5 +1,6 @@
 #include <pch.h>
 #include "SettingsRegistration.h"
+#include "../Data/TriggerNames.h"
 
 // These macros just remove the syntactic overhead of extremely similar lambda function definitions
 // If you are a lowlevel template expert and you know a better solution, feel free to propose a pull request ;-)
@@ -7,9 +8,15 @@
 #define SET_INT_VALUE_FUNC(propertyName) [pluginState](int value) { pluginState->propertyName = value; }
 #define SET_FLOAT_VALUE_FUNC(propertyName) [pluginState](float value) { pluginState->propertyName = value; }
 
-void SettingsRegistration::registerCVars(std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
+void SettingsRegistration::registerCVars(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
 {
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::EnableFlagDef, SET_BOOL_VALUE_FUNC(PluginIsEnabled));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::TrackInitialHitsInsteadOfGoalsDef, [pluginState, sendNotifierFunc](bool value) {
+		pluginState->TrackInitialBallHitInsteadOfGoal = value;
+		// In addition to changing the state variable, we need to send a reset since mixing goal counts with ball hit counts doesn't make sense
+		sendNotifierFunc(TriggerNames::ResetStatistics);
+	});
+
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef, SET_BOOL_VALUE_FUNC(AttemptsAndGoalsShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayCurrentStreaksDef, SET_BOOL_VALUE_FUNC(CurrentStreaksShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayTotalSuccessRateDef, SET_BOOL_VALUE_FUNC(TotalSuccessRateShallBeDisplayed));

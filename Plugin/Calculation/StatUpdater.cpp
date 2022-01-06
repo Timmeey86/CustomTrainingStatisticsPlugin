@@ -45,6 +45,7 @@ void StatUpdater::reset()
 	// Do not reset anything which can be changed by user settings - Those settings shall of course not be reset.
 	// Also do not reset anything which is based on the Rocket League state
 	_pluginState->PreviousAttemptWasAGoal = false;
+	_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = false;
 }
 
 double getPercentageValue(double attempts, double goals)

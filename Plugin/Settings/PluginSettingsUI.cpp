@@ -1,6 +1,6 @@
 #include <pch.h>
 #include "PluginSettingsUI.h"
-#include "../Data/ConfigurationOptions.h"
+#include "../Data/TriggerNames.h"
 
 #include "bakkesmod/plugin/pluginwindow.h"
 #include "bakkesmod/plugin/bakkesmodplugin.h"
@@ -76,11 +76,12 @@ void PluginSettingsUI::RenderSettings()
 	if (ImGui::CollapsingHeader("General"))
 	{
 		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
+		createCheckbox(GoalPercentageCounterSettings::TrackInitialHitsInsteadOfGoalsDef);
 
 		// Add a button for resetting statistics
 		if (ImGui::Button("Reset Statistics"))
 		{
-			_sendNotifierFunc(ConfigurationOptions::ResetStatistics);
+			_sendNotifierFunc(TriggerNames::ResetStatistics);
 		}
 	}
 

@@ -1,6 +1,6 @@
 #include <pch.h>
 #include "EventListener.h"
-#include "../Data/ConfigurationOptions.h"
+#include "../Data/TriggerNames.h"
 
 EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
 	: _gameWrapper( gameWrapper )
@@ -17,13 +17,30 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
 
-		statUpdater->processGoal();
+		if (!_pluginState->TrackInitialBallHitInsteadOfGoal)
+		{
+			statUpdater->processGoal();
+		}
+	});
+
+	// Happens whenever the ball is being touched
+	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnCarTouch", [this, statUpdater](const std::string&) {
+		if (!statUpdatesShallBeSent()) { return; }
+
+		// Act like this was a goal, but send it only for the first hit per attempt
+		// This allows e.g. tracking the success of speedflip attempts with a close timer
+		if (_pluginState->TrackInitialBallHitInsteadOfGoal && !_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt)
+		{
+			_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = true;
+			statUpdater->processGoal();
+		}
 	});
 
 	// Happens whenever a button was pressed after loading a new shot
 	_gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
 
+		_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = false;
 		statUpdater->processNewAttempt();
 	});
 
@@ -36,7 +53,7 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	});
 
 	// Allow resetting statistics to zero attempts/goals manually
-	_cvarManager->registerNotifier(ConfigurationOptions::ResetStatistics, [this, statUpdater](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 		
 		// Note: Manual reset is allowed even with the plugin disabled, or during a goal replay (because why not?)

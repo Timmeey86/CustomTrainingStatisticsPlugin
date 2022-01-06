@@ -93,7 +93,7 @@
   <ItemGroup>
     <ClCompile Include="Calculation\StatUpdater.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
-    <ClCompile Include="Data\ConfigurationOptions.cpp" />
+    <ClCompile Include="Data\TriggerNames.cpp" />
     <ClCompile Include="Display\StatDisplay.cpp" />
     <ClCompile Include="fmt\src\format.cc" />
     <ClCompile Include="fmt\src\os.cc" />
@@ -123,9 +123,9 @@
     <ClInclude Include="Core\IStatDisplay.h" />
     <ClInclude Include="Core\IStatUpdater.h" />
     <ClInclude Include="Data\CalculatedData.h" />
-    <ClInclude Include="Data\ConfigurationOptions.h" />
     <ClInclude Include="Data\PlayerStats.h" />
     <ClInclude Include="Data\PluginState.h" />
+    <ClInclude Include="Data\TriggerNames.h" />
     <ClInclude Include="Display\StatDisplay.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
