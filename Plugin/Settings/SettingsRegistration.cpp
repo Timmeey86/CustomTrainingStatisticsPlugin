@@ -1,6 +1,8 @@
 #include <pch.h>
 #include "SettingsRegistration.h"
 
+// These macros just remove the syntactic overhead of extremely similar lambda function definitions
+// If you are a lowlevel template expert and you know a better solution, feel free to propose a pull request ;-)
 #define SET_BOOL_VALUE_FUNC(propertyName) [pluginState](bool value) { pluginState->propertyName = value; }
 #define SET_INT_VALUE_FUNC(propertyName) [pluginState](int value) { pluginState->propertyName = value; }
 #define SET_FLOAT_VALUE_FUNC(propertyName) [pluginState](float value) { pluginState->propertyName = value; }
@@ -15,13 +17,15 @@ void SettingsRegistration::registerCVars(std::shared_ptr<CVarManagerWrapper> cva
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayPeakInfoDef, SET_BOOL_VALUE_FUNC(PeakInfoShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayLastNShotPercentageDef, SET_BOOL_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
 
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::XPositionDef, [](int) {}); // TODO Add Plugin State variable
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::YPositionDef, [](int) {}); // TODO Add Plugin State variable
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::FontWidthDef, [](float) {}); // TODO Add Plugin State variable
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::FontHeightDef, [](float) {}); // TODO Add Plugin State variable
+	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::XPositionDef, SET_INT_VALUE_FUNC(OverlayXPosition));
+	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::YPositionDef, SET_INT_VALUE_FUNC(OverlayYPosition));
+	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::FontWidthDef, SET_FLOAT_VALUE_FUNC(TextWidthFactor));
+	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::FontHeightDef, SET_FLOAT_VALUE_FUNC(TextHeightFactor));
 }
 
 #undef SET_BOOL_VALUE_FUNC
+#undef SET_INT_VALUE_FUNC
+#undef SET_FLOAT_VALUE_FUNC
 
 CVarWrapper SettingsRegistration::registerCVar(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition)
 {

@@ -71,10 +71,10 @@ void PluginSettingsUI::createFloatSlider(const SettingsDefinition& settingsDefin
 //  f2 -> plugins -> GoalPercentageCounter
 void PluginSettingsUI::RenderSettings()
 {
+	ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
+
 	if (ImGui::CollapsingHeader("General"))
 	{
-		ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
-
 		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
 
 		// Add a button for resetting statistics
