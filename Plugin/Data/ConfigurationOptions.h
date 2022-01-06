@@ -14,4 +14,8 @@ public:
 	static const char* DisplayLongestStreaks;
 	static const char* DisplayPeakInfo;
 	static const char* DisplayLastNShotPercentage;
+	static const char* OverlayXPosition;
+	static const char* OverlayYPosition;
+	static const char* FontHeightFactor;
+	static const char* FontWidthFactor;
 };

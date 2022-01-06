@@ -19,6 +19,7 @@ void GoalPercentageCounter::onLoad()
 
 	// Initialize the Settings page of the bakkesmod menu (F2)
 	initPluginSettingsUi(commandExecutionFunction, cvarManager, _pluginState);
+	RenderSettings();
 
 	// Enable rendering of output
 	auto statDisplay = std::make_shared<StatDisplay>(_playerStats, _calculatedData, _pluginState);

@@ -49,6 +49,15 @@ void PluginSettingsUI::createCheckbox(const std::string& variableName, const std
 	}
 }
 
+void PluginSettingsUI::createSlider(const std::string& variableName, const std::string& displayText, int minValue, int maxValue, int defaultValue)
+{
+	if (_registeredCVars.count(variableName) == 0)
+	{
+		_cvarManager->registerCvar(variableName, std::to_string(defaultValue), displayText, true, true, 0, true, 2048);
+		
+	}
+}
+
 #define SET_VALUE_FUNC(propertyName) [this](bool value) { _pluginState->propertyName = value; }
 
 // Render the plugin settings here
@@ -58,10 +67,11 @@ void PluginSettingsUI::RenderSettings()
 {	
 	if (ImGui::CollapsingHeader("General"))
 	{
+		ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
+
 		createCheckbox(ConfigurationOptions::EnablePlugin, "Enable Plugin", "Toggle Goal Percentage Counter Plugin", SET_VALUE_FUNC(PluginIsEnabled));
 
 		// Add a button for resetting statistics
-		ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
 		if (ImGui::Button("Reset Statistics"))
 		{
 			_sendNotifierFunc(ConfigurationOptions::ResetStatistics);
@@ -106,5 +116,7 @@ void PluginSettingsUI::RenderSettings()
 			"Last N Shots",
 			"Toggle display of the last n shots percentage in the stat display",
 			SET_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
+
+
 	}
 }
