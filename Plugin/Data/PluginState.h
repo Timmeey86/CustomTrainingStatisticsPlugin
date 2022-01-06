@@ -17,4 +17,9 @@ public:
 	bool LongestStreaksShallBeDisplayed = true;			///< True while the longest miss/goal streaks shall appear in the stat display.
 	bool PeakInfoShallBeDisplayed = true;				///< True while the peak percentage and shot number shall appear in the stat display.
 	bool LastNShotPercentageShallBeDisplayed = true;	///< True while success percentage of the last N shots shall appear in the stat display.
+
+	int OverlayXPosition = 5;		///< Stores the user-defined value for the X position of the overlay
+	int OverlayYPosition = 195;		///< Stores the user-defined value for the Y position of the overlay
+	float TextWidthFactor = 2.0f;	///< Stores the user-defined value for the width factor of the overlay
+	float TextHeightFactor = 1.5f;	///< Stores the user-defined value for the height factor of the overlay
 };

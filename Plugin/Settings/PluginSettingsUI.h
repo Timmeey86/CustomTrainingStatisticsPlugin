@@ -7,6 +7,7 @@
 #include "bakkesmod/plugin/PluginSettingsWindow.h"
 #include "bakkesmod/wrappers/cvarmanagerwrapper.h"
 
+#include "SettingsDefinition.h"
 #include "../Data/PluginState.h"
 
 /** Implements methods which create a settings UI. */
@@ -14,7 +15,7 @@ class PluginSettingsUI : public BakkesMod::Plugin::PluginSettingsWindow
 {
 public:
 	/** Initializes the plugin settings UI. */
-	void initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState);
+	void initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager);
 
 
 	/** Creates and configures the UI controls for the settings. */
@@ -25,11 +26,13 @@ public:
 	void SetImGuiContext(uintptr_t ctx) override;
 
 private:
-	/** Creates a check box in the UI, and performs a one-time registration of the associated cvar if it hasn't been done yet. */
-	void createCheckbox(const std::string& variableName, const std::string& displayText, const std::string& tooltipText, std::function<void(bool)> setValueFunc);
+	/** Creates a check box in the UI. */
+	void createCheckbox(const SettingsDefinition& settingsDefinition);
+	/** Creates a slider control for integer values. */
+	void createIntSlider(const SettingsDefinition& settingsDefinition);
+	/** Creates a slider control for float values. */
+	void createFloatSlider(const SettingsDefinition& settingsDefinition);
 
 	std::function<void(const std::string&)> _sendNotifierFunc; ///< A function which is able to send a notifier for which CVarManagerWrapper::registerNotifier has been called.
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows registering and retrieving custom variables.
-	std::shared_ptr<PluginState> _pluginState; ///< Stores the state of the plugin.
-	std::unordered_set<std::string> _registeredCVars; ///< Allows registering every cvar just once.
 };

@@ -95,6 +95,12 @@
     <ClCompile Include="Data\ConfigurationOptions.cpp">
       <Filter>Data</Filter>
     </ClCompile>
+    <ClCompile Include="Settings\SettingsDefinition.cpp">
+      <Filter>SettingsUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingsRegistration.cpp">
+      <Filter>SettingsUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -174,6 +180,12 @@
     </ClInclude>
     <ClInclude Include="Data\ConfigurationOptions.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingsDefinition.h">
+      <Filter>SettingsUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingsRegistration.h">
+      <Filter>SettingsUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

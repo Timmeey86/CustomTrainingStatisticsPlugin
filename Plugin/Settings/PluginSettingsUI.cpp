@@ -7,14 +7,13 @@
 
 #include "../IMGUI/imgui.h"
 
-void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
+void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager)
 {
 	_sendNotifierFunc = sendNotifierFunc;
 	_cvarManager = cvarManager;
-	_pluginState = pluginState;
 }
 
-std::string PluginSettingsUI::GetPluginName() 
+std::string PluginSettingsUI::GetPluginName()
 {
 	return "Goal Percentage Counter";
 }
@@ -24,44 +23,61 @@ void PluginSettingsUI::SetImGuiContext(uintptr_t ctx)
 	ImGui::SetCurrentContext(reinterpret_cast<ImGuiContext*>(ctx));
 }
 
-void PluginSettingsUI::createCheckbox(const std::string& variableName, const std::string& displayText, const std::string& tooltipText, std::function<void(bool)> setValueFunc)
+void PluginSettingsUI::createCheckbox(const SettingsDefinition& settingsDefinition)
 {
-	if (_registeredCVars.count(variableName) == 0)
-	{
-		_cvarManager->registerCvar(variableName, "1", displayText, true, true, 0, true, 1)
-			.addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) {
-			setValueFunc(cvar.getBoolValue());
-		});
-		_registeredCVars.emplace(variableName);
-	}
-
-	CVarWrapper cvar = _cvarManager->getCvar(variableName);
+	CVarWrapper cvar = _cvarManager->getCvar(settingsDefinition.VariableName);
 	if (!cvar) { return; }
 
 	if (bool enabled = cvar.getBoolValue();
-		ImGui::Checkbox(displayText.c_str(), &enabled))
+		ImGui::Checkbox(settingsDefinition.DisplayText.c_str(), &enabled))
 	{
 		cvar.setValue(enabled);
 	}
-	if (ImGui::IsItemHovered()) 
+	if (ImGui::IsItemHovered() && !settingsDefinition.ToolTipText.empty())
 	{
-		ImGui::SetTooltip(tooltipText.c_str());
+		ImGui::SetTooltip(settingsDefinition.ToolTipText.c_str());
 	}
 }
 
-#define SET_VALUE_FUNC(propertyName) [this](bool value) { _pluginState->propertyName = value; }
+void PluginSettingsUI::createIntSlider(const SettingsDefinition& settingsDefinition)
+{
+	auto cvar = _cvarManager->getCvar(settingsDefinition.VariableName);
+	if (!cvar) { return; }
 
+	auto currentValue = cvar.getIntValue();
+	auto minValue = (int)std::round(settingsDefinition.MinValue.value());
+	auto maxValue = (int)std::round(settingsDefinition.MaxValue.value());
+	if (ImGui::SliderInt(settingsDefinition.DisplayText.c_str(), &currentValue, minValue, maxValue))
+	{
+		cvar.setValue(currentValue);
+	}
+}
+
+void PluginSettingsUI::createFloatSlider(const SettingsDefinition& settingsDefinition)
+{
+	auto cvar = _cvarManager->getCvar(settingsDefinition.VariableName);
+	if (!cvar) { return; }
+
+	auto currentValue = cvar.getFloatValue();
+	auto minValue = settingsDefinition.MinValue.value();
+	auto maxValue = settingsDefinition.MaxValue.value();
+	if (ImGui::SliderFloat(settingsDefinition.DisplayText.c_str(), &currentValue, minValue, maxValue))
+	{
+		cvar.setValue(currentValue);
+	}
+}
 // Render the plugin settings here
 // This will show up in bakkesmod when the plugin is loaded at
 //  f2 -> plugins -> GoalPercentageCounter
-void PluginSettingsUI::RenderSettings() 
-{	
+void PluginSettingsUI::RenderSettings()
+{
+	ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
+
 	if (ImGui::CollapsingHeader("General"))
 	{
-		createCheckbox(ConfigurationOptions::EnablePlugin, "Enable Plugin", "Toggle Goal Percentage Counter Plugin", SET_VALUE_FUNC(PluginIsEnabled));
+		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
 
 		// Add a button for resetting statistics
-		ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
 		if (ImGui::Button("Reset Statistics"))
 		{
 			_sendNotifierFunc(ConfigurationOptions::ResetStatistics);
@@ -71,40 +87,17 @@ void PluginSettingsUI::RenderSettings()
 	if (ImGui::CollapsingHeader("Display"))
 	{
 		// Add an option for enabling or disabling the Attempts/Goals display
-		createCheckbox(
-			ConfigurationOptions::DisplayAttemptsAndGoals, 
-			"Attempts/Goals",
-			"Toggle display of attempts and goals in the stat display", 
-			SET_VALUE_FUNC(AttemptsAndGoalsShallBeDisplayed));
+		createCheckbox(GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayCurrentStreaksDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayTotalSuccessRateDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayLongestStreaksDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayPeakInfoDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayLastNShotPercentageDef);
 
-		createCheckbox(
-			ConfigurationOptions::DisplayCurrentStreaks,
-			"Current Miss/Goal Streaks",
-			"Toggle display of current miss and goal streaks in the stat display",
-			SET_VALUE_FUNC(CurrentStreaksShallBeDisplayed));
-
-		createCheckbox(
-			ConfigurationOptions::DisplayTotalSuccessRate,
-			"Total Success Rate",
-			"Toggle display of total success rate in the stat display",
-			SET_VALUE_FUNC(TotalSuccessRateShallBeDisplayed));
-
-		createCheckbox(
-			ConfigurationOptions::DisplayLongestStreaks,
-			"Longest Miss/Goal Streaks",
-			"Toggle display of longest miss and goal streaks in the stat display",
-			SET_VALUE_FUNC(LongestStreaksShallBeDisplayed));
-
-		createCheckbox(
-			ConfigurationOptions::DisplayPeakInfo,
-			"Peak Success Rate",
-			"Toggle display of peak success rate and peak shot number in the stat display",
-			SET_VALUE_FUNC(PeakInfoShallBeDisplayed));
-
-		createCheckbox(
-			ConfigurationOptions::DisplayLastNShotPercentage,
-			"Last N Shots",
-			"Toggle display of the last n shots percentage in the stat display",
-			SET_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
+		// Add options for the overlay panel
+		createIntSlider(GoalPercentageCounterSettings::XPositionDef);
+		createIntSlider(GoalPercentageCounterSettings::YPositionDef);
+		createFloatSlider(GoalPercentageCounterSettings::FontWidthDef);
+		createFloatSlider(GoalPercentageCounterSettings::FontHeightDef);
 	}
 }

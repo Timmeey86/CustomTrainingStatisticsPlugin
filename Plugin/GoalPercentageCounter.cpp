@@ -4,12 +4,15 @@
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Data/ConfigurationOptions.h"
-
+#include "Settings/SettingsRegistration.h"
 
 BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
 
 void GoalPercentageCounter::onLoad()
 {
+	// Register CVars before doing anything else, so they are properly restored from the config
+	SettingsRegistration::registerCVars(cvarManager, _pluginState);	
+
 	// Define a function which can trigger a command manually
 	auto commandExecutionFunction = [this](const std::string& commandName) {
 		gameWrapper->Execute([this, commandName](const GameWrapper*) {
@@ -18,7 +21,7 @@ void GoalPercentageCounter::onLoad()
 	};
 
 	// Initialize the Settings page of the bakkesmod menu (F2)
-	initPluginSettingsUi(commandExecutionFunction, cvarManager, _pluginState);
+	initPluginSettingsUi(commandExecutionFunction, cvarManager);
 
 	// Enable rendering of output
 	auto statDisplay = std::make_shared<StatDisplay>(_playerStats, _calculatedData, _pluginState);
