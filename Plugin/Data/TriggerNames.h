@@ -1,0 +1,10 @@
+#pragma once
+
+
+
+/** Defines triggers which can be activated indirectly by the user. The strings are not displayed to the user, but used as internal keys. */
+class TriggerNames
+{
+public:
+	static const char* ResetStatistics;
+};

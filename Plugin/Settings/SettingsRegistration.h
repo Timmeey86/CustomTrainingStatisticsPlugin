@@ -10,7 +10,7 @@ class SettingsRegistration
 {
 public:
 	/** Registers any CVars which can be modified by the user. */
-	static void registerCVars(std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState);
+	static void registerCVars(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState);
 
 private:
 	/** Registers a single CVar based on the given settings definition. */

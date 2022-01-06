@@ -92,14 +92,14 @@
     <ClCompile Include="Display\StatDisplay.cpp">
       <Filter>Display</Filter>
     </ClCompile>
-    <ClCompile Include="Data\ConfigurationOptions.cpp">
-      <Filter>Data</Filter>
-    </ClCompile>
     <ClCompile Include="Settings\SettingsDefinition.cpp">
       <Filter>SettingsUI</Filter>
     </ClCompile>
     <ClCompile Include="Settings\SettingsRegistration.cpp">
       <Filter>SettingsUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\TriggerNames.cpp">
+      <Filter>Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,14 +178,14 @@
     <ClInclude Include="Display\StatDisplay.h">
       <Filter>Display</Filter>
     </ClInclude>
-    <ClInclude Include="Data\ConfigurationOptions.h">
-      <Filter>Data</Filter>
-    </ClInclude>
     <ClInclude Include="Settings\SettingsDefinition.h">
       <Filter>SettingsUI</Filter>
     </ClInclude>
     <ClInclude Include="Settings\SettingsRegistration.h">
       <Filter>SettingsUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\TriggerNames.h">
+      <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,17 +1,27 @@
 #include <pch.h>
 #include "SettingsDefinition.h"
-#include "Data/ConfigurationOptions.h"
 
 const SettingsDefinition GoalPercentageCounterSettings::EnableFlagDef = {
-	ConfigurationOptions::EnablePlugin,
+	"goalpercentagecounter_enable",
 	"Enable Plugin",
 	"Toggle Goal Percentage Counter Plugin",
 	.0f,
 	1.0f,
 	1.0f
 };
+
+const SettingsDefinition GoalPercentageCounterSettings::TrackInitialHitsInsteadOfGoalsDef = {
+	"goalpercentagecounter_track_initial_hits",
+	"Count Initial Ball Hits instead of Goals",
+	"Allows checking consistency with mechanics which end by touching the ball, e.g. speed flip training packs",
+	.0f,
+	1.0f,
+	.0f
+};
+
+
 const SettingsDefinition GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef = {
-	ConfigurationOptions::DisplayAttemptsAndGoals,
+	"goalpercentagecounter_display_attempts_and_goals",
 	"Attempts/Goals",
 	"Toggle display of attempts and goals in the stat display",
 	.0f,
@@ -19,7 +29,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayAttemptsAndGoalsD
 	1.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef = {
-	ConfigurationOptions::DisplayCurrentStreaks,
+	"goalpercentagecounter_display_total_success_rate",
 	"Current Miss/Goal Streaks",
 	"Toggle display of current miss and goal streaks in the stat display",
 	.0f,
@@ -27,7 +37,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef
 	1.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayTotalSuccessRateDef = {
-	ConfigurationOptions::DisplayTotalSuccessRate,
+	"goalpercentagecounter_display_current_streaks",
 	"Total Success Rate",
 	"Toggle display of total success rate in the stat display",
 	.0f,
@@ -35,7 +45,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayTotalSuccessRateD
 	1.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayLongestStreaksDef = {
-	ConfigurationOptions::DisplayLongestStreaks,
+	"goalpercentagecounter_display_longest_streaks",
 	"Longest Miss/Goal Streaks",
 	"Toggle display of longest miss and goal streaks in the stat display",
 	.0f,
@@ -43,7 +53,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayLongestStreaksDef
 	1.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayPeakInfoDef = {
-	ConfigurationOptions::DisplayPeakInfo,
+	"goalpercentagecounter_display_peak_info",
 	"Peak Success Rate",
 	"Toggle display of peak success rate and peak shot number in the stat display",
 	.0f,
@@ -51,7 +61,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayPeakInfoDef = {
 	1.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayLastNShotPercentageDef = {
-	ConfigurationOptions::DisplayLastNShotPercentage,
+	"goalpercentagecounter_display_last_n_shots",
 	"Last N Shots",
 	"Toggle display of the last n shots percentage in the stat display",
 	.0f,
@@ -61,7 +71,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayLastNShotPercenta
 
 
 const SettingsDefinition GoalPercentageCounterSettings::XPositionDef = {
-	ConfigurationOptions::OverlayXPosition,
+	"goalpercentagecounter_overlay_x_position",
 	"Overlay X Position",
 	"",
 	.0f,
@@ -69,7 +79,7 @@ const SettingsDefinition GoalPercentageCounterSettings::XPositionDef = {
 	5.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::YPositionDef = {
-	ConfigurationOptions::OverlayYPosition,
+	"goalpercentagecounter_overlay_y_position",
 	"Overlay Y Position",
 	"",
 	.0f,
@@ -77,7 +87,7 @@ const SettingsDefinition GoalPercentageCounterSettings::YPositionDef = {
 	195.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::FontWidthDef = {
-	ConfigurationOptions::FontWidthFactor,
+	"goalpercentagecounter_font_height_factor",
 	"Font Width Factor",
 	"",
 	1.0f,
@@ -85,7 +95,7 @@ const SettingsDefinition GoalPercentageCounterSettings::FontWidthDef = {
 	2.0f
 };
 const SettingsDefinition GoalPercentageCounterSettings::FontHeightDef = {
-	ConfigurationOptions::FontHeightFactor,
+	"goalpercentagecounter_font_width_factor",
 	"Font Height Factor",
 	"",
 	1.0f,
