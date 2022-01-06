@@ -26,15 +26,6 @@ void PluginSettingsUI::SetImGuiContext(uintptr_t ctx)
 
 void PluginSettingsUI::createCheckbox(const std::string& variableName, const std::string& displayText, const std::string& tooltipText, std::function<void(bool)> setValueFunc)
 {
-	if (_registeredCVars.count(variableName) == 0)
-	{
-		_cvarManager->registerCvar(variableName, "1", displayText, true, true, 0, true, 1)
-			.addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) {
-			setValueFunc(cvar.getBoolValue());
-		});
-		_registeredCVars.emplace(variableName);
-	}
-
 	CVarWrapper cvar = _cvarManager->getCvar(variableName);
 	if (!cvar) { return; }
 
@@ -51,11 +42,6 @@ void PluginSettingsUI::createCheckbox(const std::string& variableName, const std
 
 void PluginSettingsUI::createSlider(const std::string& variableName, const std::string& displayText, int minValue, int maxValue, int defaultValue)
 {
-	if (_registeredCVars.count(variableName) == 0)
-	{
-		_cvarManager->registerCvar(variableName, std::to_string(defaultValue), displayText, true, true, 0, true, 2048);
-		
-	}
 }
 
 #define SET_VALUE_FUNC(propertyName) [this](bool value) { _pluginState->propertyName = value; }

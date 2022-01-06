@@ -1,17 +1,18 @@
 #pragma once
 
 #include <string>
+#include <optional>
 
 /** Defines parameters related to a user configurable setting. */
 class SettingsDefinition
 {
-public:
-	std::string VariableName;	///< The name of the variable to be used.
-	std::string DisplayText;	///< The text to be displayed both in config.cfg and the settings UI
-	std::string ToolTipText;	///< The tool tip text (if any - use this especially for checkboxes)
-	std::string MinValue;		///< The minimum value (empty string if there is none)
-	std::string MaxValue;		///< The maximum value (empty string if there is none)
-	std::string DefaultValue;	///< The default value (should always be provided)
+public:		
+	std::string VariableName;			///< The name of the variable to be used.
+	std::string DisplayText;			///< The text to be displayed both in config.cfg and the settings UI
+	std::string ToolTipText;			///< The tool tip text (if any - use this especially for checkboxes)
+	std::optional<float> MinValue;		///< The minimum value 
+	std::optional<float> MaxValue;		///< The maximum value 
+	float DefaultValue;					///< The default value (should always be provided)
 };
 
 /** Defines settings which are available for this plugin. */

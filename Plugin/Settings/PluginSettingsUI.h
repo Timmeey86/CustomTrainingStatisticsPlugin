@@ -33,5 +33,4 @@ private:
 	std::function<void(const std::string&)> _sendNotifierFunc; ///< A function which is able to send a notifier for which CVarManagerWrapper::registerNotifier has been called.
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows registering and retrieving custom variables.
 	std::shared_ptr<PluginState> _pluginState; ///< Stores the state of the plugin.
-	std::unordered_set<std::string> _registeredCVars; ///< Allows registering every cvar just once.
 };
