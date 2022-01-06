@@ -3,6 +3,7 @@
 #include "Calculation/StatUpdater.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
+#include "Data/ConfigurationOptions.h"
 
 
 BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
@@ -23,7 +24,7 @@ void GoalPercentageCounter::onLoad()
 		
 	// Initialize variables which can be configured by the user (currently this is only a single enabled flag. Create a new class if there's more)
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
-	cvarManager->registerCvar("goalpercentagecounter_enabled", "1", "Enable Plugin", true, true, 0, true, 1)
+	cvarManager->registerCvar(ConfigurationOptions::EnablePlugin, "1", "Enable Plugin", true, true, 0, true, 1)
 		.addOnValueChanged([this](const std::string&, CVarWrapper cvar) {
 		_pluginState->PluginIsEnabled = cvar.getBoolValue();
 	});
@@ -43,5 +44,6 @@ void GoalPercentageCounter::onLoad()
 
 void GoalPercentageCounter::onUnload()
 {
+	_eventListener.reset(); // Stop listening to events before destroying anything else
 	cvarManager->log("Unloaded GoalPercentageCounter plugin");
 }

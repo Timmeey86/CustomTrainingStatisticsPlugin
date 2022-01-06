@@ -1,5 +1,6 @@
 #include <pch.h>
 #include "EventListener.h"
+#include "../Data/ConfigurationOptions.h"
 
 EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
 	: _gameWrapper( gameWrapper )
@@ -35,7 +36,7 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	});
 
 	// Allow resetting statistics to zero attempts/goals manually
-	_cvarManager->registerNotifier("goalpercentagecounter_reset", [this, statUpdater](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(ConfigurationOptions::ResetStatistics, [this, statUpdater](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 		
 		// Note: Manual reset is allowed even with the plugin disabled, or during a goal replay (because why not?)

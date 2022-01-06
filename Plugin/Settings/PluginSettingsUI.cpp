@@ -1,5 +1,6 @@
 #include <pch.h>
 #include "PluginSettingsUI.h"
+#include "../Data/ConfigurationOptions.h"
 
 #include "bakkesmod/plugin/pluginwindow.h"
 #include "bakkesmod/plugin/bakkesmodplugin.h"
@@ -26,20 +27,30 @@ void PluginSettingsUI::SetImGuiContext(uintptr_t ctx)
 // This will show up in bakkesmod when the plugin is loaded at
 //  f2 -> plugins -> GoalPercentageCounter
 void PluginSettingsUI::RenderSettings() 
-{
-	ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
-	if (ImGui::Button("Reset Statistics"))
+{	
+	if (ImGui::CollapsingHeader("General"))
 	{
-		_sendNotifierFunc("goalpercentagecounter_reset");
+		// Add an option for enabling or disabling the plugin
+		CVarWrapper enableCvar = _getVariableWrapperFunc(ConfigurationOptions::EnablePlugin);
+		if (!enableCvar) { return; }
+
+		if (bool enabled = enableCvar.getBoolValue(); ImGui::Checkbox("Enable plugin", &enabled)) {
+			enableCvar.setValue(enabled);
+		}
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetTooltip("Toggle Goal Percentage Counter Plugin");
+		}	
+
+		// Add a button for resetting statistics
+		ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
+		if (ImGui::Button("Reset Statistics"))
+		{
+			_sendNotifierFunc(ConfigurationOptions::ResetStatistics);
+		}
 	}
 
-	CVarWrapper enableCvar =  _getVariableWrapperFunc("goalpercentagecounter_enabled");
-	if (!enableCvar) { return; }
-	
-	if(bool enabled = enableCvar.getBoolValue(); ImGui::Checkbox("Enable plugin", &enabled)) {
-		enableCvar.setValue(enabled);
-	}
-	if (ImGui::IsItemHovered()) {
-		ImGui::SetTooltip("Toggle Goal Percentage Counter Plugin");
+	if (ImGui::CollapsingHeader("Display"))
+	{
+
 	}
 }
