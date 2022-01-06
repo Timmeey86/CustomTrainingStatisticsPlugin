@@ -66,7 +66,7 @@ void StatUpdater::recalculatePercentages()
 	// Ignore the event if this is a reset after a goal
 	while (_playerStats->Last50Shots.size() > 50)
 	{
-		_playerStats->Last50Shots.pop_front();
+		_playerStats->Last50Shots.erase(_playerStats->Last50Shots.begin());
 	}
 	successPercentage = .0;
 	if (!_playerStats->Last50Shots.empty())
