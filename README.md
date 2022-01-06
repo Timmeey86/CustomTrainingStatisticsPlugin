@@ -1,17 +1,19 @@
 # Goal Percentage Counter (Bakkesmod Plugin for Rocket League)
 
-This is a plugin for https://www.bakkesmod.com/index.php which gathers statistics about your success during custom training:
+This is a customizable plugin for https://www.bakkesmod.com/index.php which gathers statistics about your success during custom training:
 
 ![](./img/GoalPercentageCounterBanner.png)
 
 # Supported Use Cases
 
-- Repeating a single shot within a custom training pack over and over again, and measuring your progress
+- Repeating a single shot within a custom training pack over and over again, and measuring your progress, where:
+  - each shot ends with a scoring a goal
+  - each shot ends with hitting the ball at least once (e.g. speed flip training packs)
 - Repeating several different shots within a custom training pack multiple times, while tracking the overall goal percentage
 
 # Known Limitations
 
-- The plugin can currently only be used for training mechanics which end with you scoring the ball. For counting things like the number of flip resets you made, there are already other existing plugins.
+- The plugin can currently only be used for training mechanics which either end with you scoring a goal, or hitting the ball. For counting things like the number of flip resets you made, there are already other existing plugins.
 
 # How to Install Manually
 
