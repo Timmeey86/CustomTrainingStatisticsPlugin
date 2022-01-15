@@ -25,6 +25,8 @@ private:
 
 	std::shared_ptr<PlayerStats> _playerStats = std::make_shared<PlayerStats>();
 	std::shared_ptr<CalculatedData> _calculatedData = std::make_shared<CalculatedData>();
+	std::shared_ptr<std::vector<std::pair<std::shared_ptr<PlayerStats>, std::shared_ptr<CalculatedData>>>> _statsDataPerShot =
+		std::make_shared<std::vector<std::pair<std::shared_ptr<PlayerStats>, std::shared_ptr<CalculatedData>>>>();
 	std::shared_ptr<PluginState> _pluginState = std::make_shared<PluginState>();
 	std::shared_ptr<EventListener> _eventListener;
 };

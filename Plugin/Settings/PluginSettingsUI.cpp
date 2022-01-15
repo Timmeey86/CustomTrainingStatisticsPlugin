@@ -95,10 +95,17 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::DisplayPeakInfoDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayLastNShotPercentageDef);
 
-		// Add options for the overlay panel
-		createIntSlider(GoalPercentageCounterSettings::XPositionDef);
-		createIntSlider(GoalPercentageCounterSettings::YPositionDef);
-		createFloatSlider(GoalPercentageCounterSettings::FontWidthDef);
-		createFloatSlider(GoalPercentageCounterSettings::FontHeightDef);
+		// Add options for the overlay panels
+		createCheckbox(GoalPercentageCounterSettings::DisplayAllShotStats);
+		createIntSlider(GoalPercentageCounterSettings::AllShotXPositionDef);
+		createIntSlider(GoalPercentageCounterSettings::AllShotYPositionDef);
+		createFloatSlider(GoalPercentageCounterSettings::AllShotFontWidthDef);
+		createFloatSlider(GoalPercentageCounterSettings::AllShotFontHeightDef);
+		
+		createCheckbox(GoalPercentageCounterSettings::DisplayPerShotStats);
+		createIntSlider(GoalPercentageCounterSettings::PerShotXPositionDef);
+		createIntSlider(GoalPercentageCounterSettings::PerShotYPositionDef);
+		createFloatSlider(GoalPercentageCounterSettings::PerShotFontWidthDef);
+		createFloatSlider(GoalPercentageCounterSettings::PerShotFontHeightDef);
 	}
 }
