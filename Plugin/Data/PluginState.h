@@ -3,11 +3,12 @@
 class DisplayOptions
 {
 public:
-	std::string Title = "All Shots Statistics";
-	int OverlayXPosition = 5;		///< Stores the user-defined value for the X position of the overlay
-	int OverlayYPosition = 205;		///< Stores the user-defined value for the Y position of the overlay
-	float TextWidthFactor = 2.0f;	///< Stores the user-defined value for the width factor of the overlay
-	float TextHeightFactor = 1.5f;	///< Stores the user-defined value for the height factor of the overlay
+	std::string Title;
+	int OverlayXPosition;		///< Stores the user-defined value for the X position of the overlay
+	int OverlayYPosition;		///< Stores the user-defined value for the Y position of the overlay
+	float TextSizeFactor;	///< Stores the user-defined value for the text size factor of the overlay
+	float TextWidthFactor;	///< Stores the calculated value for the width factor of the overlay
+	float TextHeightFactor;	///< Stores the calculated value for the height factor of the overlay
 };
 
 /**
@@ -34,6 +35,6 @@ public:
 	int CurrentRoundIndex = -1;								///< The index of the current round, -1 when not initialized
 	int TotalRounds = -1;									///< The total number of rounds in the current training back
 
-	DisplayOptions AllShotsOpts; ///< Stores the user-defined value for the overlay and text for all shots stats
-	DisplayOptions PerShotOpts{ "Per Shot Statistics", 5, 467, 2.0f, 1.5f};  ///< Stores the user-defined value for the overlay and text for per round stats
+	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, 1.0f, 2.0f, 1.5f }; ///< Stores the user-defined value for the overlay and text for all shots stats
+	DisplayOptions PerShotOpts{"Per Shot Statistics", 5, 467, 1.0f, 2.0f, 1.5f};  ///< Stores the user-defined value for the overlay and text for per round stats
 };

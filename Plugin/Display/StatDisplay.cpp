@@ -103,7 +103,7 @@ void StatDisplay::render(CanvasWrapper& canvas, const DisplayOptions& opts, cons
 	canvas.SetColor(colors);
 
 	canvas.SetPosition(Vector2F{ (float)opts.OverlayXPosition, (float)opts.OverlayYPosition });
-	canvas.FillBox(Vector2F{ 200.0f * opts.TextWidthFactor, (10.0f + (statNamesAndValues.size() + 1) * 15.0f) * opts.TextHeightFactor });
+	canvas.FillBox(Vector2F{ 200.0f * opts.TextWidthFactor, (10.0f + (statNamesAndValues.size() + 1) * 15.0f) * opts.TextHeightFactor }); // +1 for title
 
 	// Now draw the text on top of it
 	colors.R = 255;

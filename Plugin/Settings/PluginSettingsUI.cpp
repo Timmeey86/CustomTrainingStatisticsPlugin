@@ -99,13 +99,11 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::DisplayAllShotStats);
 		createIntSlider(GoalPercentageCounterSettings::AllShotXPositionDef);
 		createIntSlider(GoalPercentageCounterSettings::AllShotYPositionDef);
-		createFloatSlider(GoalPercentageCounterSettings::AllShotFontWidthDef);
-		createFloatSlider(GoalPercentageCounterSettings::AllShotFontHeightDef);
+		createFloatSlider(GoalPercentageCounterSettings::AllShotFontSizeDef);
 		
 		createCheckbox(GoalPercentageCounterSettings::DisplayPerShotStats);
 		createIntSlider(GoalPercentageCounterSettings::PerShotXPositionDef);
 		createIntSlider(GoalPercentageCounterSettings::PerShotYPositionDef);
-		createFloatSlider(GoalPercentageCounterSettings::PerShotFontWidthDef);
-		createFloatSlider(GoalPercentageCounterSettings::PerShotFontHeightDef);
+		createFloatSlider(GoalPercentageCounterSettings::PerShotFontSizeDef);
 	}
 }

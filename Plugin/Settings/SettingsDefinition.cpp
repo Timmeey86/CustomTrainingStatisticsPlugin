@@ -104,21 +104,13 @@ const SettingsDefinition GoalPercentageCounterSettings::AllShotYPositionDef = {
 	2160.0f,
 	205.0f
 };
-const SettingsDefinition GoalPercentageCounterSettings::AllShotFontWidthDef = {
-	"goalpercentagecounter_all_shot_font_height_factor",
-	"All Shots Font Width Factor",
+const SettingsDefinition GoalPercentageCounterSettings::AllShotFontSizeDef = {
+	"goalpercentagecounter_all_shot_font_size_factor",
+	"All Shots Font Size Factor",
 	"",
-	1.0f,
-	4.0f,
-	2.0f
-};
-const SettingsDefinition GoalPercentageCounterSettings::AllShotFontHeightDef = {
-	"goalpercentagecounter_all_shot_font_width_factor",
-	"All Shots Font Height Factor",
-	"",
-	1.0f,
-	4.0f,
-	1.5f
+	0.5f,
+	2.0f,
+	1.0f
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::PerShotXPositionDef = {
@@ -137,19 +129,11 @@ const SettingsDefinition GoalPercentageCounterSettings::PerShotYPositionDef = {
 	2160.0f,
 	467.0f
 };
-const SettingsDefinition GoalPercentageCounterSettings::PerShotFontWidthDef = {
+const SettingsDefinition GoalPercentageCounterSettings::PerShotFontSizeDef = {
 	"goalpercentagecounter_per_shot_font_height_factor",
-	"Per Shot Font Width Factor",
+	"Per Shot Font Size Factor",
 	"",
-	1.0f,
-	4.0f,
-	2.0f
-};
-const SettingsDefinition GoalPercentageCounterSettings::PerShotFontHeightDef = {
-	"goalpercentagecounter_per_shot_font_width_factor",
-	"Per Shot Font Height Factor",
-	"",
-	1.0f,
-	4.0f,
-	1.5f
+	0.5f,
+	2.0f,
+	1.0f
 };

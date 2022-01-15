@@ -27,14 +27,20 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayAllShotStats, SET_BOOL_VALUE_FUNC(AllShotStatsShallBeDisplayed));
 	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotXPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayXPosition));
 	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotYPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayYPosition));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotFontWidthDef, SET_FLOAT_VALUE_FUNC(AllShotsOpts.TextWidthFactor));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotFontHeightDef, SET_FLOAT_VALUE_FUNC(AllShotsOpts.TextHeightFactor));
+	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotFontSizeDef, [pluginState](float value) {
+		pluginState->AllShotsOpts.TextSizeFactor = value;
+		pluginState->AllShotsOpts.TextWidthFactor = 2.0f * value;
+		pluginState->AllShotsOpts.TextHeightFactor = 1.5f * value;
+		});
 
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayPerShotStats, SET_BOOL_VALUE_FUNC(PerShotStatsShallBeDisplayed));
 	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotXPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayXPosition));
 	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotYPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayYPosition));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotFontWidthDef, SET_FLOAT_VALUE_FUNC(PerShotOpts.TextWidthFactor));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotFontHeightDef, SET_FLOAT_VALUE_FUNC(PerShotOpts.TextHeightFactor));
+	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotFontSizeDef, [pluginState](float value) {
+		pluginState->PerShotOpts.TextSizeFactor = value;
+		pluginState->PerShotOpts.TextWidthFactor = 2.0f * value;
+		pluginState->PerShotOpts.TextHeightFactor = 1.5f * value;
+		});
 }
 
 #undef SET_BOOL_VALUE_FUNC

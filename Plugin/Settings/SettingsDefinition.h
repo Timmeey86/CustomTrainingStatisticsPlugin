@@ -33,11 +33,9 @@ public:
 
 	static const SettingsDefinition AllShotXPositionDef; ///< Definitions for the X position of the all shot overlay
 	static const SettingsDefinition AllShotYPositionDef; ///< Definitions for the Y position of the all shot overlay
-	static const SettingsDefinition AllShotFontWidthDef; ///< Definitions for the font width of the all shot overlay
-	static const SettingsDefinition AllShotFontHeightDef; ///< Definitions for the font height of the all shot overlay
+	static const SettingsDefinition AllShotFontSizeDef; ///< Definitions for the font size of the all shot overlay
 
 	static const SettingsDefinition PerShotXPositionDef; ///< Definitions for the X position of the per shot overlay
 	static const SettingsDefinition PerShotYPositionDef; ///< Definitions for the Y position of the per shot overlay
-	static const SettingsDefinition PerShotFontWidthDef; ///< Definitions for the font width of the per shot overlay
-	static const SettingsDefinition PerShotFontHeightDef; ///< Definitions for the font height of the per shot overlay
+	static const SettingsDefinition PerShotFontSizeDef; ///< Definitions for the font size of the per shot overlay
 };
