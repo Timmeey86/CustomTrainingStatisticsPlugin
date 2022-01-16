@@ -7,8 +7,7 @@
 #include "version.h"
 
 #include "Settings/PluginSettingsUI.h"
-#include "Data/CalculatedData.h"
-#include "Data/PlayerStats.h"
+#include "Data/ShotStats.h"
 #include "Data/PluginState.h"
 #include "Core/EventListener.h"
 
@@ -23,10 +22,7 @@ class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public P
 
 private:
 
-	std::shared_ptr<PlayerStats> _playerStats = std::make_shared<PlayerStats>();
-	std::shared_ptr<CalculatedData> _calculatedData = std::make_shared<CalculatedData>();
-	std::shared_ptr<std::vector<std::pair<std::shared_ptr<PlayerStats>, std::shared_ptr<CalculatedData>>>> _statsDataPerShot =
-		std::make_shared<std::vector<std::pair<std::shared_ptr<PlayerStats>, std::shared_ptr<CalculatedData>>>>();
+	std::shared_ptr<ShotStats> _shotStats = std::make_shared<ShotStats>();
 	std::shared_ptr<PluginState> _pluginState = std::make_shared<PluginState>();
 	std::shared_ptr<EventListener> _eventListener;
 };

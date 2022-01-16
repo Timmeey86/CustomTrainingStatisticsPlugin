@@ -23,10 +23,10 @@ void GoalPercentageCounter::onLoad()
 	initPluginSettingsUi(commandExecutionFunction, cvarManager);
 
 	// Create handler classes
-	auto statUpdater = std::make_shared<StatUpdater>(_playerStats, _calculatedData, _statsDataPerShot, _pluginState);
+	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, _pluginState);
 
 	// Enable rendering of output
-	auto statDisplay = std::make_shared<StatDisplay>(_playerStats, _calculatedData, _statsDataPerShot, _pluginState);
+	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, _pluginState);
 
 	// Set up event registration
 	_eventListener = std::make_shared<EventListener>(gameWrapper, cvarManager, _pluginState);

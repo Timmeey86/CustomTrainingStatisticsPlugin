@@ -6,13 +6,9 @@
 #include <cmath>
 
 StatDisplay::StatDisplay(
-	const std::shared_ptr<const PlayerStats> playerStats,
-	const std::shared_ptr<const CalculatedData> calculatedData,
-	const std::shared_ptr<const std::vector<std::pair<std::shared_ptr<PlayerStats>, std::shared_ptr<CalculatedData>>>> statsDataPerShot,
+	const std::shared_ptr<const ShotStats> shotStats,
 	const std::shared_ptr<const PluginState> pluginState)
-		: _playerStats(playerStats)
-		, _calculatedData(calculatedData)
-		, _statsDataPerShot(statsDataPerShot)
+		: _shotStats(shotStats)
 		, _pluginState(pluginState)
 {
 }
@@ -47,7 +43,7 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 	canvas.DrawString(value, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 }
 
-std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered(const std::shared_ptr<const PlayerStats> playerStats, const std::shared_ptr<const CalculatedData> calculatedData) const
+std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered(const std::shared_ptr<const StatsData> statsData) const
 {
 	std::list<std::pair<std::string, std::string>> statNamesAndValues;
 
@@ -55,31 +51,31 @@ std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered
 
 	if (_pluginState->AttemptsAndGoalsShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Attempts:", std::to_string(playerStats->Attempts ));
-		statNamesAndValues.emplace_back(goalName + "s:", std::to_string(playerStats->Goals));
+		statNamesAndValues.emplace_back("Attempts:", std::to_string(statsData->Stats->Attempts ));
+		statNamesAndValues.emplace_back(goalName + "s:", std::to_string(statsData->Stats->Goals));
 	}
 	if (_pluginState->CurrentStreaksShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Current " + goalName + " Streak:", std::to_string(playerStats->GoalStreakCounter));
-		statNamesAndValues.emplace_back("Current Miss Streak:", std::to_string(playerStats->MissStreakCounter));
+		statNamesAndValues.emplace_back("Current " + goalName + " Streak:", std::to_string(statsData->Stats->GoalStreakCounter));
+		statNamesAndValues.emplace_back("Current Miss Streak:", std::to_string(statsData->Stats->MissStreakCounter));
 	}
 	if (_pluginState->TotalSuccessRateShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Total Success Rate:", to_percentage_string(calculatedData->SuccessPercentage));
+		statNamesAndValues.emplace_back("Total Success Rate:", to_percentage_string(statsData->Data->SuccessPercentage));
 	}
 	if (_pluginState->LongestStreaksShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Longest " + goalName + " Streak:", std::to_string(playerStats->LongestGoalStreak));
-		statNamesAndValues.emplace_back("Longest Miss Streak:", std::to_string(playerStats->LongestMissStreak));
+		statNamesAndValues.emplace_back("Longest " + goalName + " Streak:", std::to_string(statsData->Stats->LongestGoalStreak));
+		statNamesAndValues.emplace_back("Longest Miss Streak:", std::to_string(statsData->Stats->LongestMissStreak));
 	}
 	if (_pluginState->PeakInfoShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Peak Success Rate:", to_percentage_string(calculatedData->PeakSuccessPercentage));
-		statNamesAndValues.emplace_back("Peak At Shot#:", std::to_string(calculatedData->PeakShotNumber));
+		statNamesAndValues.emplace_back("Peak Success Rate:", to_percentage_string(statsData->Data->PeakSuccessPercentage));
+		statNamesAndValues.emplace_back("Peak At Shot#:", std::to_string(statsData->Data->PeakShotNumber));
 	}
 	if (_pluginState->LastNShotPercentageShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Last 50 Shots", to_percentage_string(calculatedData->Last50ShotsPercentage));
+		statNamesAndValues.emplace_back("Last 50 Shots", to_percentage_string(statsData->Data->Last50ShotsPercentage));
 	}
 
 	if (statNamesAndValues.empty())
@@ -90,9 +86,9 @@ std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered
 	return statNamesAndValues;
 }
 
-void StatDisplay::render(CanvasWrapper& canvas, const DisplayOptions& opts, const std::shared_ptr<const PlayerStats> playerStats, const std::shared_ptr<const CalculatedData> calculatedData) const
+void StatDisplay::render(CanvasWrapper& canvas, const DisplayOptions& opts, const std::shared_ptr<const StatsData> statsData) const
 {
-	auto statNamesAndValues = getStatsToBeRendered(playerStats, calculatedData);
+	auto statNamesAndValues = getStatsToBeRendered(statsData);
 
 	// Draw a panel so we can read the text on all kinds of maps
 	LinearColor colors;
@@ -126,7 +122,7 @@ void StatDisplay::renderAllShotStats(CanvasWrapper& canvas) const
 {
 	if (_pluginState->AllShotStatsShallBeDisplayed)
 	{
-		render(canvas, _pluginState->AllShotsOpts, _playerStats, _calculatedData);
+		render(canvas, _pluginState->AllShotsOpts, _shotStats->AllShotStats);
 	}
 }
 
@@ -135,10 +131,10 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas) const
 	if (_pluginState->PerShotStatsShallBeDisplayed)
 	{
 		// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
-		if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _statsDataPerShot->size())
+		if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _shotStats->PerShotStats->size())
 		{
-			const auto& statsData = _statsDataPerShot->at(_pluginState->CurrentRoundIndex);
-			render(canvas, _pluginState->PerShotOpts, statsData.first, statsData.second);
+			const auto& statsData = _shotStats->PerShotStats->at(_pluginState->CurrentRoundIndex);
+			render(canvas, _pluginState->PerShotOpts, statsData);
 		}
 	}
 }

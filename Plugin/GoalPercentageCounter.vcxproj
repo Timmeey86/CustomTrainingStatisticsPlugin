@@ -124,6 +124,8 @@
     <ClInclude Include="Core\IStatUpdater.h" />
     <ClInclude Include="Data\CalculatedData.h" />
     <ClInclude Include="Data\PlayerStats.h" />
+    <ClInclude Include="Data\ShotStats.h" />
+    <ClInclude Include="Data\StatsData.h" />
     <ClInclude Include="Data\PluginState.h" />
     <ClInclude Include="Data\TriggerNames.h" />
     <ClInclude Include="Display\StatDisplay.h" />
