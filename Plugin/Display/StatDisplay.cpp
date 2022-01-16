@@ -91,22 +91,13 @@ void StatDisplay::render(CanvasWrapper& canvas, const DisplayOptions& opts, cons
 	auto statNamesAndValues = getStatsToBeRendered(statsData);
 
 	// Draw a panel so we can read the text on all kinds of maps
-	LinearColor colors;
-	colors.R = 100;
-	colors.G = 100;
-	colors.B = 100;
-	colors.A = 200;
-	canvas.SetColor(colors);
+	canvas.SetColor(_pluginState->PanelColor);
 
 	canvas.SetPosition(Vector2F{ (float)opts.OverlayXPosition, (float)opts.OverlayYPosition });
 	canvas.FillBox(Vector2F{ 200.0f * opts.TextWidthFactor, (10.0f + (statNamesAndValues.size() + 1) * 15.0f) * opts.TextHeightFactor }); // +1 for title
 
 	// Now draw the text on top of it
-	colors.R = 255;
-	colors.G = 255;
-	colors.B = 255;
-	colors.A = 255;
-	canvas.SetColor(colors);
+	canvas.SetColor(_pluginState->FontColor);
 
 	int counter = 0;
 	drawCenter(canvas, opts, counter, opts.Title);
