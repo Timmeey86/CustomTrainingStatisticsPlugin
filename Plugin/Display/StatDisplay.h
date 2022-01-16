@@ -22,9 +22,9 @@ private:
 	 *
 	 * \returns		A list of string pairs, consisting of a label and a value string. These will be displayed in two columns.
 	 */
-	std::list<std::pair<std::string, std::string>> getStatsToBeRendered(const std::shared_ptr<const StatsData> statsData) const;
+	std::list<std::pair<std::string, std::string>> getStatsToBeRendered(const StatsData& statsData) const;
 
-	void render(CanvasWrapper& canvas, const DisplayOptions& opts, const std::shared_ptr<const StatsData> statsData) const;
+	void render(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const;
 	void renderAllShotStats(CanvasWrapper& canvas) const;
 	void renderPerShotStats(CanvasWrapper& canvas) const;
 

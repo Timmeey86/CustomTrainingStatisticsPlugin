@@ -26,13 +26,13 @@ public:
 
 private:
 	/** Increases the goal counter, updates streaks and recalculates percentages. */
-	void handleGoal(std::shared_ptr<StatsData> statsData);
+	void handleGoal(StatsData& statsData);
 	/** Increases the attempt counter, updates streaks and recalculates percentages. */
-	void handleAttempt(std::shared_ptr<StatsData> statsData, bool changePluginState);
+	void handleAttempt(StatsData& statsData, bool changePluginState);
 	/** Resets everything to zero. */
 	void reset();
 	/** Updates percentage values. */
-	void recalculatePercentages(std::shared_ptr<StatsData> statsData);
+	void recalculatePercentages(StatsData& statsData);
 	/** Initializes the per shot vector */
 	void initStatsDataPerShot();
 
