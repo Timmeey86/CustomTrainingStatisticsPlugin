@@ -66,6 +66,18 @@ void PluginSettingsUI::createFloatSlider(const SettingsDefinition& settingsDefin
 		cvar.setValue(currentValue);
 	}
 }
+
+void PluginSettingsUI::createColorEdit(const SettingsDefinition& settingsDefinition)
+{
+	auto cvar = _cvarManager->getCvar(settingsDefinition.VariableName);
+	if (!cvar) { return; }
+
+	auto currentValue = cvar.getColorValue();
+	if (ImGui::ColorEdit4(settingsDefinition.DisplayText.c_str(), &currentValue.R))
+	{
+		cvar.setValue(currentValue);
+	}
+}
 // Render the plugin settings here
 // This will show up in bakkesmod when the plugin is loaded at
 //  f2 -> plugins -> GoalPercentageCounter
@@ -95,12 +107,22 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::DisplayPeakInfoDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayLastNShotPercentageDef);
 
+		ImGui::Separator();
+
+		// Add coloring options (Both panels will use the same colors)
+		createColorEdit(GoalPercentageCounterSettings::PanelColorDef);
+		createColorEdit(GoalPercentageCounterSettings::FontColorDef);
+
+		ImGui::Separator();
+
 		// Add options for the overlay panels
 		createCheckbox(GoalPercentageCounterSettings::DisplayAllShotStats);
 		createIntSlider(GoalPercentageCounterSettings::AllShotXPositionDef);
 		createIntSlider(GoalPercentageCounterSettings::AllShotYPositionDef);
 		createFloatSlider(GoalPercentageCounterSettings::AllShotFontSizeDef);
-		
+
+		ImGui::Separator();
+
 		createCheckbox(GoalPercentageCounterSettings::DisplayPerShotStats);
 		createIntSlider(GoalPercentageCounterSettings::PerShotXPositionDef);
 		createIntSlider(GoalPercentageCounterSettings::PerShotYPositionDef);

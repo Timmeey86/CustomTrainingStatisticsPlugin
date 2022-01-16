@@ -7,6 +7,12 @@
 #define SET_BOOL_VALUE_FUNC(propertyName) [pluginState](bool value) { pluginState->propertyName = value; }
 #define SET_INT_VALUE_FUNC(propertyName) [pluginState](int value) { pluginState->propertyName = value; }
 #define SET_FLOAT_VALUE_FUNC(propertyName) [pluginState](float value) { pluginState->propertyName = value; }
+#define SET_COLOR_VALUE_FUNC(propertyName) [pluginState](const LinearColor& value) { \
+	pluginState->propertyName.R = value.R * 255.0f; \
+	pluginState->propertyName.G = value.G * 255.0f; \
+	pluginState->propertyName.B = value.B * 255.0f; \
+	pluginState->propertyName.A = value.A * 255.0f; \
+	}
 
 void SettingsRegistration::registerCVars(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
 {
@@ -41,17 +47,21 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 		pluginState->PerShotOpts.TextWidthFactor = 2.0f * value;
 		pluginState->PerShotOpts.TextHeightFactor = 1.5f * value;
 		});
+
+	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::PanelColorDef, SET_COLOR_VALUE_FUNC(PanelColor));
+	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::FontColorDef, SET_COLOR_VALUE_FUNC(FontColor));
 }
 
 #undef SET_BOOL_VALUE_FUNC
 #undef SET_INT_VALUE_FUNC
 #undef SET_FLOAT_VALUE_FUNC
+#undef SET_COLOR_VALUE_FUNC
 
 CVarWrapper SettingsRegistration::registerCVar(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition)
 {
 	return cvarManager->registerCvar(
 		settingsDefinition.VariableName,
-		std::to_string(settingsDefinition.DefaultValue),
+		settingsDefinition.DefaultValue,
 		settingsDefinition.DisplayText,
 		true,
 		settingsDefinition.MinValue.has_value(),
@@ -73,4 +83,16 @@ void SettingsRegistration::registerIntSliderSetting(std::shared_ptr<CVarManagerW
 void SettingsRegistration::registerFloatSliderSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(float)> setValueFunc)
 {
 	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getFloatValue()); });
+}
+
+void SettingsRegistration::registerColorEditSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(const LinearColor&)> setValueFunc)
+{
+	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getColorValue()); });
+	
+	// Apply the initial color from the settings
+	auto cvar = cvarManager->getCvar(settingsDefinition.VariableName);
+	if (cvar)
+	{
+		setValueFunc(cvar.getColorValue());
+	}
 }

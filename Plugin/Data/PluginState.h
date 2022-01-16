@@ -37,4 +37,7 @@ public:
 
 	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, 1.0f, 2.0f, 1.5f }; ///< Stores the user-defined value for the overlay and text for all shots stats
 	DisplayOptions PerShotOpts{"Per Shot Statistics", 5, 467, 1.0f, 2.0f, 1.5f};  ///< Stores the user-defined value for the overlay and text for per round stats
+
+	LinearColor PanelColor = LinearColor();
+	LinearColor FontColor = LinearColor();
 };

@@ -12,7 +12,7 @@ public:
 	std::string ToolTipText;			///< The tool tip text (if any - use this especially for checkboxes)
 	std::optional<float> MinValue;		///< The minimum value 
 	std::optional<float> MaxValue;		///< The maximum value 
-	float DefaultValue;					///< The default value (should always be provided)
+	std::string DefaultValue;			///< The default value (should always be provided)
 };
 
 /** Defines settings which are available for this plugin. */
@@ -38,4 +38,7 @@ public:
 	static const SettingsDefinition PerShotXPositionDef; ///< Definitions for the X position of the per shot overlay
 	static const SettingsDefinition PerShotYPositionDef; ///< Definitions for the Y position of the per shot overlay
 	static const SettingsDefinition PerShotFontSizeDef; ///< Definitions for the font size of the per shot overlay
+
+	static const SettingsDefinition PanelColorDef; ///< Definitions for the background color of the panel
+	static const SettingsDefinition FontColorDef; ///< Definitions for the text color of the panel
 };
