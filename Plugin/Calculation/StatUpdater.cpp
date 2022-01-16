@@ -1,34 +1,92 @@
 #include <pch.h>
 #include "StatUpdater.h"
 
-StatUpdater::StatUpdater(std::shared_ptr<PlayerStats> playerStats, std::shared_ptr<CalculatedData> calculatedData, std::shared_ptr<PluginState> pluginState)
-	: _playerStats(playerStats)
-	, _calculatedData(calculatedData)
+StatUpdater::StatUpdater(
+	std::shared_ptr<ShotStats> shotStats,
+	std::shared_ptr<PluginState> pluginState)
+	: _shotStats(shotStats)
 	, _pluginState(pluginState)
 {
 }
 
 void StatUpdater::processGoal()
 {
-	handleGoal();
-	recalculatePercentages();
+	// Update total stats
+	handleGoal(_shotStats->AllShotStats);
+	recalculatePercentages(_shotStats->AllShotStats);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _shotStats->PerShotStats.size())
+	{
+		auto&& currStatsData = _shotStats->PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleGoal(currStatsData);
+		recalculatePercentages(currStatsData);
+	}
 }
 
 void StatUpdater::processNewAttempt()
 {
-	handleAttempt();
-	recalculatePercentages();
+	// Check if _statsDataPerShot is initialized and init if not
+	// Could not be initialized if plugin was loaded while in training
+	if (_pluginState->TotalRounds > 0 && _pluginState->TotalRounds != _shotStats->PerShotStats.size())
+	{
+		initStatsDataPerShot();
+	}
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _shotStats->PerShotStats.size())
+	{
+		auto&& currStatsData = _shotStats->PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleAttempt(currStatsData, false);
+		recalculatePercentages(currStatsData);
+	}
+
+	// Update total stats
+	// update total stats last because handleAttempt needs to change plugin state, which might not always be the case for per shot stats
+	handleAttempt(_shotStats->AllShotStats, true);
+	recalculatePercentages(_shotStats->AllShotStats);
 }
 
 void StatUpdater::processShotReset()
 {
-	recalculatePercentages();
+	// Update total stats
+	recalculatePercentages(_shotStats->AllShotStats);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex &&_pluginState->CurrentRoundIndex < _shotStats->PerShotStats.size())
+	{
+		auto&& currStatsData = _shotStats->PerShotStats.at(_pluginState->CurrentRoundIndex);
+		recalculatePercentages(currStatsData);
+	}
 }
 
 void StatUpdater::processManualStatReset()
 {
 	reset();
-	recalculatePercentages();
+
+	// Recalculate total stats
+	recalculatePercentages(_shotStats->AllShotStats);
+
+	// Recalculate per shot stats
+	for (auto&& statsData : _shotStats->PerShotStats)
+	{
+		recalculatePercentages(statsData);
+	}
+}
+
+void StatUpdater::initStatsDataPerShot()
+{
+	// Delete pointers
+	_shotStats->PerShotStats.clear();
+
+	// Create pointers
+	for (int i = 0; i < _pluginState->TotalRounds; ++i)
+	{
+		_shotStats->PerShotStats.emplace_back();
+	}
 }
 
 void StatUpdater::handleTrainingPackLoad()
@@ -39,8 +97,26 @@ void StatUpdater::handleTrainingPackLoad()
 
 void StatUpdater::reset()
 {
-	*_playerStats = PlayerStats();
-	*_calculatedData = CalculatedData();
+	// Reset total stats
+	_shotStats->AllShotStats.Stats = PlayerStats();
+	_shotStats->AllShotStats.Data = CalculatedData();
+
+	// Reset per shot stats
+	if (_pluginState->TotalRounds > 0)
+	{
+		if (_pluginState->TotalRounds == _shotStats->PerShotStats.size())
+		{
+			for (auto&& statsData : _shotStats->PerShotStats)
+			{
+				statsData.Stats = PlayerStats();
+				statsData.Data = CalculatedData();
+			}
+		}
+		else
+		{
+			initStatsDataPerShot();
+		}
+	}
 
 	// Do not reset anything which can be changed by user settings - Those settings shall of course not be reset.
 	// Also do not reset anything which is based on the Rocket League state
@@ -53,78 +129,82 @@ double getPercentageValue(double attempts, double goals)
 	return round((goals / attempts) * 10000.0) / 100.0;
 }
 
-void StatUpdater::recalculatePercentages()
+void StatUpdater::recalculatePercentages(StatsData& statsData)
 {
 	auto successPercentage = .0;
-	if (_playerStats->Attempts > 0)
+	if (statsData.Stats.Attempts > 0)
 	{
 		// Calculate the success percentage in percent, including two decimal digits
-		successPercentage = getPercentageValue(_playerStats->Attempts, _playerStats->Goals);
+		successPercentage = getPercentageValue(statsData.Stats.Attempts, statsData.Stats.Goals);
 	}
-	_calculatedData->SuccessPercentage = successPercentage;
+	statsData.Data.SuccessPercentage = successPercentage;
 
 	// Update the percentage for the last 50 shots
 	// Ignore the event if this is a reset after a goal
-	while (_playerStats->Last50Shots.size() > 50)
+	while (statsData.Stats.Last50Shots.size() > 50)
 	{
-		_playerStats->Last50Shots.erase(_playerStats->Last50Shots.begin());
+		statsData.Stats.Last50Shots.erase(statsData.Stats.Last50Shots.begin());
 	}
 	successPercentage = .0;
-	if (!_playerStats->Last50Shots.empty())
+	if (!statsData.Stats.Last50Shots.empty())
 	{
-		auto numberOfGoals = std::count(_playerStats->Last50Shots.begin(), _playerStats->Last50Shots.end(), true);
-		successPercentage = getPercentageValue((double)_playerStats->Last50Shots.size(), (double)numberOfGoals);
+		auto numberOfGoals = std::count(statsData.Stats.Last50Shots.begin(), statsData.Stats.Last50Shots.end(), true);
+		successPercentage = getPercentageValue((double)statsData.Stats.Last50Shots.size(), (double)numberOfGoals);
 	}
-	_calculatedData->Last50ShotsPercentage = successPercentage;
+	statsData.Data.Last50ShotsPercentage = successPercentage;
 
 	// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
-	if (_playerStats->Attempts > 20 && _calculatedData->Last50ShotsPercentage > _calculatedData->PeakSuccessPercentage)
+	if (statsData.Stats.Attempts > 20 && statsData.Data.Last50ShotsPercentage > statsData.Data.PeakSuccessPercentage)
 	{
-		_calculatedData->PeakSuccessPercentage = _calculatedData->Last50ShotsPercentage;
-		_calculatedData->PeakShotNumber = _playerStats->Attempts;
+		statsData.Data.PeakSuccessPercentage = statsData.Data.Last50ShotsPercentage;
+		statsData.Data.PeakShotNumber = statsData.Stats.Attempts;
 	}
 }
 
-void StatUpdater::handleGoal()
+void StatUpdater::handleGoal(StatsData& statsData)
 {
-	if (!_playerStats->Last50Shots.empty())
+	if (!statsData.Stats.Last50Shots.empty())
 	{
-		_playerStats->Last50Shots.back() = true; // Replace the current attempt with a goal entry
+		statsData.Stats.Last50Shots.back() = true; // Replace the current attempt with a goal entry
 	}
-	_playerStats->MissStreakCounter = 0;
-	_playerStats->GoalStreakCounter++;
-	_playerStats->Goals++;
+	statsData.Stats.MissStreakCounter = 0;
+	statsData.Stats.GoalStreakCounter++;
+	statsData.Stats.Goals++;
 
 	// When starting the next attempt, we don't know whether the previous one was a goal or a miss without this flag
 	// (there is no trigger for a miss, unless we incorporate the reset trigger for it (we might actually do that in future))
 	_pluginState->PreviousAttemptWasAGoal = true;
 
-	if (_playerStats->GoalStreakCounter > _playerStats->LongestGoalStreak)
+	if (statsData.Stats.GoalStreakCounter > statsData.Stats.LongestGoalStreak)
 	{
-		_playerStats->LongestGoalStreak = _playerStats->GoalStreakCounter;
+		statsData.Stats.LongestGoalStreak = statsData.Stats.GoalStreakCounter;
 	}
 }
 
-void StatUpdater::handleAttempt()
+void StatUpdater::handleAttempt(StatsData& statsData, bool changePluginState)
 {
-	_playerStats->Last50Shots.push_back(false);
+	statsData.Stats.Last50Shots.push_back(false);
 
 	// Count the shot attempt in any case
-	_playerStats->Attempts++;
+	statsData.Stats.Attempts++;
 
 	if (_pluginState->PreviousAttemptWasAGoal)
 	{
-		// A goal was scored, and then reset was pressed. No further action required, but do not ignore any further resets.
-		_pluginState->PreviousAttemptWasAGoal = false;
+		// Only change plugin state on last call to handleAttempt (called for all shots, and per shot)
+		if (changePluginState)
+		{
+			// A goal was scored, and then reset was pressed. No further action required, but do not ignore any further resets.
+			_pluginState->PreviousAttemptWasAGoal = false;
+		}
 	}
 	else
 	{
-		_playerStats->MissStreakCounter++;
-		_playerStats->GoalStreakCounter = 0;
+		statsData.Stats.MissStreakCounter++;
+		statsData.Stats.GoalStreakCounter = 0;
 
-		if (_playerStats->MissStreakCounter > _playerStats->LongestMissStreak)
+		if (statsData.Stats.MissStreakCounter > statsData.Stats.LongestMissStreak)
 		{
-			_playerStats->LongestMissStreak = _playerStats->MissStreakCounter;
+			statsData.Stats.LongestMissStreak = statsData.Stats.MissStreakCounter;
 		}
 	}
 }

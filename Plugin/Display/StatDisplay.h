@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../Core/IStatDisplay.h"
-#include "../Data/CalculatedData.h"
-#include "../Data/PlayerStats.h"
+#include "../Data/ShotStats.h"
+#include "../Data/StatsData.h"
 #include "../Data/PluginState.h"
 
 class StatDisplay : public IStatDisplay
@@ -10,23 +10,25 @@ class StatDisplay : public IStatDisplay
 public:
 	/** Creates a new object which is able to display statistics to the user. */
 	StatDisplay(
-		std::shared_ptr<PlayerStats> playerStats,
-		std::shared_ptr<CalculatedData> calculatedData,
-		std::shared_ptr<PluginState> pluginState
+		const std::shared_ptr<const ShotStats> shotStats,
+		const std::shared_ptr<const PluginState> pluginState
 	);
 
 	// Inherited via IStatDisplay
-	void renderOneFrame(CanvasWrapper canvas) override;
+	void renderOneFrame(CanvasWrapper& canvas) const override;
 
 private:
 	/** Builds a list of stats to be rendered, based on the current plugin state. 
 	 *
 	 * \returns		A list of string pairs, consisting of a label and a value string. These will be displayed in two columns.
 	 */
-	std::list<std::pair<std::string, std::string>> getStatsToBeRendered() const;
+	std::list<std::pair<std::string, std::string>> getStatsToBeRendered(const StatsData& statsData) const;
 
-	std::shared_ptr<PlayerStats> _playerStats;			///< Statistics about the player
-	std::shared_ptr<CalculatedData> _calculatedData;	///< Calculated data based on PlayerStats
-	std::shared_ptr<PluginState> _pluginState;			///< The state of the plugin.
+	void render(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const;
+	void renderAllShotStats(CanvasWrapper& canvas) const;
+	void renderPerShotStats(CanvasWrapper& canvas) const;
+
+	const std::shared_ptr<const ShotStats> _shotStats;		///< Statistics and data for shots taken in custom training
+	const std::shared_ptr<const PluginState> _pluginState;	///< The state of the plugin.
 };
 

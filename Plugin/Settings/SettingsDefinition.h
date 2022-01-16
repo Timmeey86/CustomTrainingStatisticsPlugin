@@ -21,6 +21,8 @@ class GoalPercentageCounterSettings
 public:
 	static const SettingsDefinition EnableFlagDef;						///< Definitions for the global enable flag
 	static const SettingsDefinition TrackInitialHitsInsteadOfGoalsDef;	///< Definitions for the flag which allows tracking the initial ball hit instead of the goal
+	static const SettingsDefinition DisplayAllShotStats;				///< Definitions for the flag which displays the overlay for all shot stats
+	static const SettingsDefinition DisplayPerShotStats;				///< Definitions for the flag which displays the overlay for per shot stats
 
 	static const SettingsDefinition DisplayAttemptsAndGoalsDef;		///< Definitions for the flag which toggles display of attempts and goals
 	static const SettingsDefinition DisplayCurrentStreaksDef;		///< Definitions for the flag which toggles display of the current miss/goal streaks
@@ -29,8 +31,11 @@ public:
 	static const SettingsDefinition DisplayPeakInfoDef;				///< Definitions for the flag which toggles display of the peak success percentage and shot number
 	static const SettingsDefinition DisplayLastNShotPercentageDef;	///< Definitions for the flag which toggles display of the last N shot percentage
 
-	static const SettingsDefinition XPositionDef; ///< Definitions for the X position of the overlay
-	static const SettingsDefinition YPositionDef; ///< Definitions for the Y position of the overlay
-	static const SettingsDefinition FontWidthDef; ///< Definitions for the font width
-	static const SettingsDefinition FontHeightDef; ///< Definitions for the font height
+	static const SettingsDefinition AllShotXPositionDef; ///< Definitions for the X position of the all shot overlay
+	static const SettingsDefinition AllShotYPositionDef; ///< Definitions for the Y position of the all shot overlay
+	static const SettingsDefinition AllShotFontSizeDef; ///< Definitions for the font size of the all shot overlay
+
+	static const SettingsDefinition PerShotXPositionDef; ///< Definitions for the X position of the per shot overlay
+	static const SettingsDefinition PerShotYPositionDef; ///< Definitions for the Y position of the per shot overlay
+	static const SettingsDefinition PerShotFontSizeDef; ///< Definitions for the font size of the per shot overlay
 };

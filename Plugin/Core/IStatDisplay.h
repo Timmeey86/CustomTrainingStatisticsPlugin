@@ -12,5 +12,5 @@ public:
 	virtual ~IStatDisplay() = default;
 
 	/** This is called each time a single frame shall be rendered. */
-	virtual void renderOneFrame(CanvasWrapper canvas) = 0;
+	virtual void renderOneFrame(CanvasWrapper& canvas) const = 0;
 };

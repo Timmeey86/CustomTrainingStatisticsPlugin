@@ -19,6 +19,24 @@ const SettingsDefinition GoalPercentageCounterSettings::TrackInitialHitsInsteadO
 	.0f
 };
 
+const SettingsDefinition GoalPercentageCounterSettings::DisplayAllShotStats = {
+	"goalpercentagecounter_display_all_shot_stats",
+	"Display All Shots Statistics",
+	"Displays the overlay which shows statistics for every shot recorded in the training session",
+	.0f,
+	1.0f,
+	1.0f
+};
+
+const SettingsDefinition GoalPercentageCounterSettings::DisplayPerShotStats = {
+	"goalpercentagecounter_display_per_shot_stats",
+	"Display Per Shot Statistics",
+	"Displays the overlay which shows statistics for the current shot in the training session",
+	.0f,
+	1.0f,
+	.0f
+};
+
 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef = {
 	"goalpercentagecounter_display_attempts_and_goals",
@@ -54,7 +72,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayLongestStreaksDef
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayPeakInfoDef = {
 	"goalpercentagecounter_display_peak_info",
-	"Peak Success Rate",
+	"Peak Success Rate (Minimum of 20 Attempts)",
 	"Toggle display of peak success rate and peak shot number in the stat display",
 	.0f,
 	1.0f,
@@ -70,35 +88,52 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayLastNShotPercenta
 };
 
 
-const SettingsDefinition GoalPercentageCounterSettings::XPositionDef = {
-	"goalpercentagecounter_overlay_x_position",
-	"Overlay X Position",
+const SettingsDefinition GoalPercentageCounterSettings::AllShotXPositionDef = {
+	"goalpercentagecounter_all_shot_overlay_x_position",
+	"All Shots Overlay X Position",
 	"",
 	.0f,
 	3840.0f,
 	5.0f
 };
-const SettingsDefinition GoalPercentageCounterSettings::YPositionDef = {
-	"goalpercentagecounter_overlay_y_position",
-	"Overlay Y Position",
+const SettingsDefinition GoalPercentageCounterSettings::AllShotYPositionDef = {
+	"goalpercentagecounter_all_shot_overlay_y_position",
+	"All Shots Overlay Y Position",
 	"",
 	.0f,
 	2160.0f,
-	195.0f
+	205.0f
 };
-const SettingsDefinition GoalPercentageCounterSettings::FontWidthDef = {
-	"goalpercentagecounter_font_height_factor",
-	"Font Width Factor",
+const SettingsDefinition GoalPercentageCounterSettings::AllShotFontSizeDef = {
+	"goalpercentagecounter_all_shot_font_size_factor",
+	"All Shots Font Size Factor",
 	"",
-	1.0f,
-	4.0f,
-	2.0f
+	0.5f,
+	2.0f,
+	1.0f
 };
-const SettingsDefinition GoalPercentageCounterSettings::FontHeightDef = {
-	"goalpercentagecounter_font_width_factor",
-	"Font Height Factor",
+
+const SettingsDefinition GoalPercentageCounterSettings::PerShotXPositionDef = {
+	"goalpercentagecounter_per_shot_overlay_x_position",
+	"Per Shot Overlay X Position",
 	"",
-	1.0f,
-	4.0f,
-	1.5f
+	.0f,
+	3840.0f,
+	5.0f
+};
+const SettingsDefinition GoalPercentageCounterSettings::PerShotYPositionDef = {
+	"goalpercentagecounter_per_shot_overlay_y_position",
+	"Per Shot Overlay Y Position",
+	"",
+	.0f,
+	2160.0f,
+	467.0f
+};
+const SettingsDefinition GoalPercentageCounterSettings::PerShotFontSizeDef = {
+	"goalpercentagecounter_per_shot_font_height_factor",
+	"Per Shot Font Size Factor",
+	"",
+	0.5f,
+	2.0f,
+	1.0f
 };

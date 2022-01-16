@@ -148,10 +148,7 @@
     <ClInclude Include="Data\PluginState.h">
       <Filter>Data</Filter>
     </ClInclude>
-    <ClInclude Include="Data\PlayerStats.h">
-      <Filter>Data</Filter>
-    </ClInclude>
-    <ClInclude Include="Data\CalculatedData.h">
+    <ClInclude Include="Data\StatsData.h">
       <Filter>Data</Filter>
     </ClInclude>
     <ClInclude Include="Core\EventListener.h">
@@ -185,6 +182,15 @@
       <Filter>SettingsUI</Filter>
     </ClInclude>
     <ClInclude Include="Data\TriggerNames.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\CalculatedData.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\PlayerStats.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\ShotStats.h">
       <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>

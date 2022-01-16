@@ -24,10 +24,23 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayPeakInfoDef, SET_BOOL_VALUE_FUNC(PeakInfoShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayLastNShotPercentageDef, SET_BOOL_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
 
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::XPositionDef, SET_INT_VALUE_FUNC(OverlayXPosition));
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::YPositionDef, SET_INT_VALUE_FUNC(OverlayYPosition));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::FontWidthDef, SET_FLOAT_VALUE_FUNC(TextWidthFactor));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::FontHeightDef, SET_FLOAT_VALUE_FUNC(TextHeightFactor));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayAllShotStats, SET_BOOL_VALUE_FUNC(AllShotStatsShallBeDisplayed));
+	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotXPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayXPosition));
+	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotYPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayYPosition));
+	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotFontSizeDef, [pluginState](float value) {
+		pluginState->AllShotsOpts.TextSizeFactor = value;
+		pluginState->AllShotsOpts.TextWidthFactor = 2.0f * value;
+		pluginState->AllShotsOpts.TextHeightFactor = 1.5f * value;
+		});
+
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayPerShotStats, SET_BOOL_VALUE_FUNC(PerShotStatsShallBeDisplayed));
+	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotXPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayXPosition));
+	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotYPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayYPosition));
+	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotFontSizeDef, [pluginState](float value) {
+		pluginState->PerShotOpts.TextSizeFactor = value;
+		pluginState->PerShotOpts.TextWidthFactor = 2.0f * value;
+		pluginState->PerShotOpts.TextHeightFactor = 1.5f * value;
+		});
 }
 
 #undef SET_BOOL_VALUE_FUNC

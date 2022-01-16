@@ -44,6 +44,15 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		statUpdater->processNewAttempt();
 	});
 
+	// Happens whenever a shot is changed or loaded in custom training
+	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function TAGame.GameEvent_TrainingEditor_TA.EventRoundChanged",
+		[this](ActorWrapper caller, void*, const std::string&) {
+
+			TrainingEditorWrapper trainingWrapper(caller.memory_address);
+			_pluginState->CurrentRoundIndex = trainingWrapper.GetActiveRoundNumber();
+			_pluginState->TotalRounds = trainingWrapper.GetTotalRounds();
+		});
+
 	// Happens whenever a car spawns, i.e. usually a shot reset
 	_gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
@@ -60,24 +69,31 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		statUpdater->processManualStatReset();
 	}, "Reset the statistics.", PERMISSION_ALL);
 
+	// Happens when custom taining mode is loaded or restarted, but the total rounds is loaded
 	// Reset automatically when loading a new training pack, or when resetting it
-	_gameWrapper->HookEventPost("Function TAGame.GameEvent_TrainingEditor_TA.OnInit", [this, statUpdater](const std::string&) {
-		if (!_pluginState->PluginIsEnabled) { return; }
-		// Note: While loading a training pack, we are not in custom training, so we can't use statUpdatesShallBeSent() here
+	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
+		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
+			if (!_pluginState->PluginIsEnabled) { return; }
+			// Note: While loading a training pack, we are not in custom training, so we can't use statUpdatesShallBeSent() here 
+			// Note may not be true from since this was changed from OnInit to OnTrainingModeLoaded
 
-		statUpdater->handleTrainingPackLoad();
-	});
+			TrainingEditorWrapper trainingWrapper(caller.memory_address);
+			_pluginState->TotalRounds = trainingWrapper.GetTotalRounds();
+
+			statUpdater->handleTrainingPackLoad();
+		});
 }
+
 void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisplay )
 {
 	if (!statDisplay) { return; }
 
-	_gameWrapper->RegisterDrawable([this, statDisplay](const CanvasWrapper& canvas) {
+	_gameWrapper->RegisterDrawable([this, statDisplay](CanvasWrapper canvas) {
 		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining())
 		{
 			statDisplay->renderOneFrame(canvas);
 		}
-	});	
+	});
 }
 
 void EventListener::registerGameStateEvents()

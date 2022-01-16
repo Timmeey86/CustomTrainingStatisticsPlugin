@@ -1,8 +1,11 @@
 #pragma once
 
+#include <vector>
+#include <utility>
+
 #include "../Core/IStatUpdater.h"
-#include "../Data/CalculatedData.h"
-#include "../Data/PlayerStats.h"
+#include "../Data/ShotStats.h"
+#include "../Data/StatsData.h"
 #include "../Data/PluginState.h"
 
 class StatUpdater : public IStatUpdater
@@ -10,8 +13,7 @@ class StatUpdater : public IStatUpdater
 public:
 	/** Creates a new object which is able to update statistics properly. */
 	StatUpdater(
-		std::shared_ptr<PlayerStats> playerStats,
-		std::shared_ptr<CalculatedData> calculatedData,
+		std::shared_ptr<ShotStats> shotStats,
 		std::shared_ptr<PluginState> pluginState
 	);
 
@@ -24,16 +26,17 @@ public:
 
 private:
 	/** Increases the goal counter, updates streaks and recalculates percentages. */
-	void handleGoal();
+	void handleGoal(StatsData& statsData);
 	/** Increases the attempt counter, updates streaks and recalculates percentages. */
-	void handleAttempt();
+	void handleAttempt(StatsData& statsData, bool changePluginState);
 	/** Resets everything to zero. */
 	void reset();
 	/** Updates percentage values. */
-	void recalculatePercentages();
+	void recalculatePercentages(StatsData& statsData);
+	/** Initializes the per shot vector */
+	void initStatsDataPerShot();
 
-	std::shared_ptr<PlayerStats> _playerStats;			///< Statistics about the player
-	std::shared_ptr<CalculatedData> _calculatedData;	///< Calculated data based on PlayerStats
-	std::shared_ptr<PluginState> _pluginState;			///< The current state of the plugin
+	std::shared_ptr<ShotStats> _shotStats;		///< Statistics and data for shots taken in custom training
+	std::shared_ptr<PluginState> _pluginState;	///< The current state of the plugin
 };
 
