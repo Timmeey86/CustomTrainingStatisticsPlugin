@@ -156,6 +156,7 @@ void StatUpdater::recalculatePercentages(StatsData& statsData)
 		initialHitPercentage = getPercentageValue(statsData.Stats.Attempts, statsData.Stats.InitialHits);
 	}
 	statsData.Data.SuccessPercentage = successPercentage;
+	statsData.Data.InitialHitPercentage = initialHitPercentage;
 
 	// Update the percentage for the last 50 shots
 	// Ignore the event if this is a reset after a goal
