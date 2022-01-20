@@ -30,7 +30,10 @@ public:
 	bool LongestStreaksShallBeDisplayed = true;				///< True while the longest miss/goal streaks shall appear in the stat display.
 	bool PeakInfoShallBeDisplayed = true;					///< True while the peak percentage and shot number shall appear in the stat display.
 	bool LastNShotPercentageShallBeDisplayed = true;		///< True while success percentage of the last N shots shall appear in the stat display.
-	bool TrackInitialBallHitInsteadOfGoal = false;			///< True if the initial ball hits shall be tracked, rather than goals.
+	/** True while initial ball hits and ball hit percentage shall appear in the stat display. 
+	 *  False by default since this is only useful for edge cases like speed flip training.
+	 */
+	bool InitialBallHitsShallBeDisplayed = false;			
 	bool BallWasHitAtLeastOnceWithinCurrentAttempt = false;	///< True if the ball was hit at least once during the current attempt.
 	int CurrentRoundIndex = -1;								///< The index of the current round, -1 when not initialized
 	int TotalRounds = -1;									///< The total number of rounds in the current training back

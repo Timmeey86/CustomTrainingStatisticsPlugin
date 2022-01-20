@@ -23,6 +23,9 @@ public:
 	/** Handles a shot reset. */
 	virtual void processShotReset() = 0;
 
+	/** Handles the initial touch of the ball (at most once per attempt). */
+	virtual void processInitialBallHit() = 0;
+
 	/** Handles a stat reset by the user (or some code). */
 	virtual void processManualStatReset() = 0;
 
