@@ -88,7 +88,6 @@ void PluginSettingsUI::RenderSettings()
 	if (ImGui::CollapsingHeader("General"))
 	{
 		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
-		createCheckbox(GoalPercentageCounterSettings::TrackInitialHitsInsteadOfGoalsDef);
 
 		// Add a button for resetting statistics
 		if (ImGui::Button("Reset Statistics"))
@@ -101,6 +100,7 @@ void PluginSettingsUI::RenderSettings()
 	{
 		// Add an option for enabling or disabling the Attempts/Goals display
 		createCheckbox(GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayInitialBallHitsDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayCurrentStreaksDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayTotalSuccessRateDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayLongestStreaksDef);

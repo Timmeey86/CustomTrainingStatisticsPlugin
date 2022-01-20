@@ -20,11 +20,11 @@ class GoalPercentageCounterSettings
 {
 public:
 	static const SettingsDefinition EnableFlagDef;						///< Definitions for the global enable flag
-	static const SettingsDefinition TrackInitialHitsInsteadOfGoalsDef;	///< Definitions for the flag which allows tracking the initial ball hit instead of the goal
 	static const SettingsDefinition DisplayAllShotStats;				///< Definitions for the flag which displays the overlay for all shot stats
 	static const SettingsDefinition DisplayPerShotStats;				///< Definitions for the flag which displays the overlay for per shot stats
 
 	static const SettingsDefinition DisplayAttemptsAndGoalsDef;		///< Definitions for the flag which toggles display of attempts and goals
+	static const SettingsDefinition DisplayInitialBallHitsDef;		///< Definitions for the flag which toggles idsplay of initial ball hits
 	static const SettingsDefinition DisplayCurrentStreaksDef;		///< Definitions for the flag which toggles display of the current miss/goal streaks
 	static const SettingsDefinition DisplayTotalSuccessRateDef;		///< Definitions for the flag which toggles display of the total success percentage
 	static const SettingsDefinition DisplayLongestStreaksDef;		///< Definitions for the flag which toggles display of the longest miss/goal streaks

@@ -17,22 +17,19 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
 
-		if (!_pluginState->TrackInitialBallHitInsteadOfGoal)
-		{
-			statUpdater->processGoal();
-		}
+		statUpdater->processGoal();
 	});
 
 	// Happens whenever the ball is being touched
 	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnCarTouch", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
 
-		// Act like this was a goal, but send it only for the first hit per attempt
-		// This allows e.g. tracking the success of speedflip attempts with a close timer
-		if (_pluginState->TrackInitialBallHitInsteadOfGoal && !_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt)
+		// Remember if the ball was touched at least once within the current attempt
+		// This allows e.g. tracking the success of speedflip attempts with a close timer, independent of whether a goal was or wasn't scored
+		if (!_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt)
 		{
 			_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = true;
-			statUpdater->processGoal();
+			statUpdater->processInitialBallHit();
 		}
 	});
 

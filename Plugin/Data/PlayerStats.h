@@ -17,4 +17,5 @@ public:
 	int MissStreakCounter = 0;		///< Stores the amount of misses since the last goal
 	int LongestGoalStreak = 0;		///< Stores the largest amount of consecutively scored goals
 	int LongestMissStreak = 0;		///< Stores the largest amount of consecutively scored misses
+	int InitialHits = 0;		///< Stores the number of times the ball was hit at least once during an attempt.
 };

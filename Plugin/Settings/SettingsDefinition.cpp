@@ -10,15 +10,6 @@ const SettingsDefinition GoalPercentageCounterSettings::EnableFlagDef = {
 	"1.0f"
 };
 
-const SettingsDefinition GoalPercentageCounterSettings::TrackInitialHitsInsteadOfGoalsDef = {
-	"goalpercentagecounter_track_initial_hits",
-	"Count Initial Ball Hits instead of Goals",
-	"Allows checking consistency with mechanics which end by touching the ball, e.g. speed flip training packs",
-	.0f,
-	1.0f,
-	".0f"
-};
-
 const SettingsDefinition GoalPercentageCounterSettings::DisplayAllShotStats = {
 	"goalpercentagecounter_display_all_shot_stats",
 	"Display All Shots Statistics",
@@ -45,6 +36,14 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayAttemptsAndGoalsD
 	.0f,
 	1.0f,
 	"1.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayInitialBallHitsDef = {
+	"goalpercentagecounter_track_initial_hits",
+	"Display initial ball hits",
+	"Allows checking consistency with mechanics where the goal is to touch the ball, e.g. speed flip training packs",
+	.0f,
+	1.0f,
+	".0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef = {
 	"goalpercentagecounter_display_total_success_rate",

@@ -17,13 +17,9 @@
 void SettingsRegistration::registerCVars(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
 {
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::EnableFlagDef, SET_BOOL_VALUE_FUNC(PluginIsEnabled));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::TrackInitialHitsInsteadOfGoalsDef, [pluginState, sendNotifierFunc](bool value) {
-		pluginState->TrackInitialBallHitInsteadOfGoal = value;
-		// In addition to changing the state variable, we need to send a reset since mixing goal counts with ball hit counts doesn't make sense
-		sendNotifierFunc(TriggerNames::ResetStatistics);
-	});
 
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef, SET_BOOL_VALUE_FUNC(AttemptsAndGoalsShallBeDisplayed));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayInitialBallHitsDef, SET_BOOL_VALUE_FUNC(InitialBallHitsShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayCurrentStreaksDef, SET_BOOL_VALUE_FUNC(CurrentStreaksShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayTotalSuccessRateDef, SET_BOOL_VALUE_FUNC(TotalSuccessRateShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayLongestStreaksDef, SET_BOOL_VALUE_FUNC(LongestStreaksShallBeDisplayed));

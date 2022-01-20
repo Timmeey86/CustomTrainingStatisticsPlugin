@@ -21,6 +21,7 @@ public:
 	void processGoal() override;
 	void processNewAttempt() override;
 	void processShotReset() override;
+	void processInitialBallHit() override;
 	void processManualStatReset() override;
 	void handleTrainingPackLoad() override;
 

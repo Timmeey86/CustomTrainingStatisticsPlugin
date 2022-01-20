@@ -63,6 +63,22 @@ void StatUpdater::processShotReset()
 	}
 }
 
+void StatUpdater::processInitialBallHit()
+{
+	// Increase total hit counter and update total stats
+	_shotStats->AllShotStats.Stats.InitialHits++;
+	recalculatePercentages(_shotStats->AllShotStats);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _shotStats->PerShotStats.size())
+	{
+		auto&& currStatsData = _shotStats->PerShotStats.at(_pluginState->CurrentRoundIndex);
+		currStatsData.Stats.InitialHits++;
+		recalculatePercentages(currStatsData);
+	}
+}
+
 void StatUpdater::processManualStatReset()
 {
 	reset();
@@ -132,10 +148,12 @@ double getPercentageValue(double attempts, double goals)
 void StatUpdater::recalculatePercentages(StatsData& statsData)
 {
 	auto successPercentage = .0;
+	auto initialHitPercentage = .0;
 	if (statsData.Stats.Attempts > 0)
 	{
 		// Calculate the success percentage in percent, including two decimal digits
 		successPercentage = getPercentageValue(statsData.Stats.Attempts, statsData.Stats.Goals);
+		initialHitPercentage = getPercentageValue(statsData.Stats.Attempts, statsData.Stats.InitialHits);
 	}
 	statsData.Data.SuccessPercentage = successPercentage;
 

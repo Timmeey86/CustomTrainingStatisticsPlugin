@@ -47,16 +47,19 @@ std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered
 {
 	std::list<std::pair<std::string, std::string>> statNamesAndValues;
 
-	auto goalName = std::string{ _pluginState->TrackInitialBallHitInsteadOfGoal ? "Hit" : "Goal" };
-
 	if (_pluginState->AttemptsAndGoalsShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Attempts:", std::to_string(statsData.Stats.Attempts ));
-		statNamesAndValues.emplace_back(goalName + "s:", std::to_string(statsData.Stats.Goals));
+		statNamesAndValues.emplace_back("Goals:", std::to_string(statsData.Stats.Goals));
+	}
+	if (_pluginState->InitialBallHitsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back("Initial Hits:", std::to_string(statsData.Stats.InitialHits));
+		statNamesAndValues.emplace_back("Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage));
 	}
 	if (_pluginState->CurrentStreaksShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Current " + goalName + " Streak:", std::to_string(statsData.Stats.GoalStreakCounter));
+		statNamesAndValues.emplace_back("Current Goal Streak:", std::to_string(statsData.Stats.GoalStreakCounter));
 		statNamesAndValues.emplace_back("Current Miss Streak:", std::to_string(statsData.Stats.MissStreakCounter));
 	}
 	if (_pluginState->TotalSuccessRateShallBeDisplayed)
@@ -65,7 +68,7 @@ std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered
 	}
 	if (_pluginState->LongestStreaksShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Longest " + goalName + " Streak:", std::to_string(statsData.Stats.LongestGoalStreak));
+		statNamesAndValues.emplace_back("Longest Goal Streak:", std::to_string(statsData.Stats.LongestGoalStreak));
 		statNamesAndValues.emplace_back("Longest Miss Streak:", std::to_string(statsData.Stats.LongestMissStreak));
 	}
 	if (_pluginState->PeakInfoShallBeDisplayed)
