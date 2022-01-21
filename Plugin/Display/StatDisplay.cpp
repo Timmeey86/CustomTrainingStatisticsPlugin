@@ -135,6 +135,11 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas) const
 
 void StatDisplay::renderOneFrame(CanvasWrapper& canvas) const
 {
-	renderAllShotStats(canvas);
-	renderPerShotStats(canvas);
+	// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
+	// That way we don't clutter the settings, or the match/mode selection screen
+	if (_pluginState->MenuStackSize < 2)
+	{
+		renderAllShotStats(canvas);
+		renderPerShotStats(canvas);
+	}
 }
