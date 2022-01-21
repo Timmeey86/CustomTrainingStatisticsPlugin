@@ -71,6 +71,7 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
 			if (!_pluginState->PluginIsEnabled) { return; }
+
 			// Note: While loading a training pack, we are not in custom training, so we can't use statUpdatesShallBeSent() here 
 			// Note may not be true from since this was changed from OnInit to OnTrainingModeLoaded
 
@@ -79,6 +80,23 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 
 			statUpdater->handleTrainingPackLoad();
 		});
+
+	// Happens whenever a menu is opened (also when opening a nested menu)
+	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", [this](const std::string&) {
+		_pluginState->MenuStackSize++;
+	});
+	// Happens whenever a menu is closed (also when closing a nested menu)
+	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PopMenu", [this](const std::string&) {
+		// Decrement the menu stack size but don't let it go below zero (This is just here as a safeguard in case the menu stack size ever gets reset while a menu is still open)
+		if (_pluginState->MenuStackSize > 0)
+		{
+			_pluginState->MenuStackSize--;
+		}
+	});
+	// Hook to the start of a training mode again so the menu stack counter is reset
+	_gameWrapper->HookEvent("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded", [this](const std::string&) {
+		_pluginState->MenuStackSize = 0;
+	});
 }
 
 void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisplay )

@@ -37,6 +37,7 @@ public:
 	bool BallWasHitAtLeastOnceWithinCurrentAttempt = false;	///< True if the ball was hit at least once during the current attempt.
 	int CurrentRoundIndex = -1;								///< The index of the current round, -1 when not initialized
 	int TotalRounds = -1;									///< The total number of rounds in the current training back
+	int MenuStackSize = 0;									///< The total number of open menus (1 for the "Pause" Menu in custom training, 2 for "Settings" or "Change Mode/Match")
 
 	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, 1.0f, 2.0f, 1.5f }; ///< Stores the user-defined value for the overlay and text for all shots stats
 	DisplayOptions PerShotOpts{"Per Shot Statistics", 5, 467, 1.0f, 2.0f, 1.5f};  ///< Stores the user-defined value for the overlay and text for per round stats
