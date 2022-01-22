@@ -43,40 +43,40 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 	canvas.DrawString(value, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 }
 
-std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered(const StatsData& statsData) const
+std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
 {
 	std::list<std::pair<std::string, std::string>> statNamesAndValues;
 
-	if (_pluginState->AttemptsAndGoalsShallBeDisplayed)
+	if (pluginState->AttemptsAndGoalsShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Attempts:", std::to_string(statsData.Stats.Attempts ));
 		statNamesAndValues.emplace_back("Goals:", std::to_string(statsData.Stats.Goals));
 	}
-	if (_pluginState->InitialBallHitsShallBeDisplayed)
+	if (pluginState->InitialBallHitsShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Initial Hits:", std::to_string(statsData.Stats.InitialHits));
 		statNamesAndValues.emplace_back("Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage));
 	}
-	if (_pluginState->CurrentStreaksShallBeDisplayed)
+	if (pluginState->CurrentStreaksShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Current Goal Streak:", std::to_string(statsData.Stats.GoalStreakCounter));
 		statNamesAndValues.emplace_back("Current Miss Streak:", std::to_string(statsData.Stats.MissStreakCounter));
 	}
-	if (_pluginState->TotalSuccessRateShallBeDisplayed)
+	if (pluginState->TotalSuccessRateShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage));
 	}
-	if (_pluginState->LongestStreaksShallBeDisplayed)
+	if (pluginState->LongestStreaksShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Longest Goal Streak:", std::to_string(statsData.Stats.LongestGoalStreak));
 		statNamesAndValues.emplace_back("Longest Miss Streak:", std::to_string(statsData.Stats.LongestMissStreak));
 	}
-	if (_pluginState->PeakInfoShallBeDisplayed)
+	if (pluginState->PeakInfoShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Peak Success Rate:", to_percentage_string(statsData.Data.PeakSuccessPercentage));
 		statNamesAndValues.emplace_back("Peak At Shot#:", std::to_string(statsData.Data.PeakShotNumber));
 	}
-	if (_pluginState->LastNShotPercentageShallBeDisplayed)
+	if (pluginState->LastNShotPercentageShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage));
 	}
@@ -89,9 +89,9 @@ std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered
 	return statNamesAndValues;
 }
 
-void StatDisplay::render(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const
+void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const
 {
-	auto statNamesAndValues = getStatsToBeRendered(statsData);
+	auto statNamesAndValues = getStatsToBeRendered(statsData, _pluginState);
 
 	// Draw a panel so we can read the text on all kinds of maps
 	canvas.SetColor(_pluginState->PanelColor);
@@ -116,7 +116,7 @@ void StatDisplay::renderAllShotStats(CanvasWrapper& canvas) const
 {
 	if (_pluginState->AllShotStatsShallBeDisplayed)
 	{
-		render(canvas, _pluginState->AllShotsOpts, _shotStats->AllShotStats);
+		renderStatsData(canvas, _pluginState->AllShotsOpts, _shotStats->AllShotStats);
 	}
 }
 
@@ -128,7 +128,7 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas) const
 		if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _shotStats->PerShotStats.size())
 		{
 			const auto& statsData = _shotStats->PerShotStats.at(_pluginState->CurrentRoundIndex);
-			render(canvas, _pluginState->PerShotOpts, statsData);
+			renderStatsData(canvas, _pluginState->PerShotOpts, statsData);
 		}
 	}
 }

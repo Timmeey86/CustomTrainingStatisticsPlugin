@@ -17,14 +17,14 @@ public:
 	// Inherited via IStatDisplay
 	void renderOneFrame(CanvasWrapper& canvas) const override;
 
-private:
-	/** Builds a list of stats to be rendered, based on the current plugin state. 
+	/** Builds a list of stats to be rendered, based on the current plugin state.
 	 *
 	 * \returns		A list of string pairs, consisting of a label and a value string. These will be displayed in two columns.
 	 */
-	std::list<std::pair<std::string, std::string>> getStatsToBeRendered(const StatsData& statsData) const;
+	static std::list<std::pair<std::string, std::string>> getStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState);
 
-	void render(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const;
+private:
+	void renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const;
 	void renderAllShotStats(CanvasWrapper& canvas) const;
 	void renderPerShotStats(CanvasWrapper& canvas) const;
 
