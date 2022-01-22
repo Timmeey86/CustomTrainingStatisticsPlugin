@@ -43,7 +43,7 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 	canvas.DrawString(value, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 }
 
-std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+std::list<std::pair<std::string, std::string>> StatDisplay::GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
 {
 	std::list<std::pair<std::string, std::string>> statNamesAndValues;
 
@@ -91,7 +91,7 @@ std::list<std::pair<std::string, std::string>> StatDisplay::getStatsToBeRendered
 
 void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const
 {
-	auto statNamesAndValues = getStatsToBeRendered(statsData, _pluginState);
+	auto statNamesAndValues = GetStatsToBeRendered(statsData, _pluginState);
 
 	// Draw a panel so we can read the text on all kinds of maps
 	canvas.SetColor(_pluginState->PanelColor);

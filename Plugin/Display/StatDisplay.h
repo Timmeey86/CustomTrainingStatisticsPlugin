@@ -21,7 +21,7 @@ public:
 	 *
 	 * \returns		A list of string pairs, consisting of a label and a value string. These will be displayed in two columns.
 	 */
-	static std::list<std::pair<std::string, std::string>> getStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState);
+	static std::list<std::pair<std::string, std::string>> GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState);
 
 private:
 	void renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const;

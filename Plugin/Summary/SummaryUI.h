@@ -48,6 +48,9 @@ public:
 	void CloseMenu();
 
 private:
+	void renderSummaryHeader();
+	void renderSummaryBody();
+
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows registering and retrieving custom variables.
 	std::shared_ptr<const ShotStats> _shotStats;
 	std::shared_ptr<const PluginState> _pluginState;
