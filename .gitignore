@@ -353,3 +353,4 @@ MigrationBackup/
 *.lib
 /Test/gtest.dir
 /Test/gmock.dir
+plugins/
