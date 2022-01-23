@@ -3,12 +3,13 @@
 #include <vector>
 #include <utility>
 
+#include "../DLLImportExport.h"
 #include "../Core/IStatUpdater.h"
 #include "../Data/ShotStats.h"
 #include "../Data/StatsData.h"
 #include "../Data/PluginState.h"
 
-class StatUpdater : public IStatUpdater
+class GOALPERCENTAGECOUNTER_IMPORT_EXPORT StatUpdater : public IStatUpdater
 {
 public:
 	/** Creates a new object which is able to update statistics properly. */

@@ -1,23 +1,15 @@
 // GoalPercentageCounterTest.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 int main()
 {
-    std::cout << "Hello World!\n";
-
     testing::InitGoogleTest();
     testing::InitGoogleMock();
 
     RUN_ALL_TESTS();
-}
-
-TEST(Dummy, SampleTest)
-{
-    EXPECT_TRUE(true);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

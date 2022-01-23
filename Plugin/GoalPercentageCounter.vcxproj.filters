@@ -193,6 +193,9 @@
     <ClInclude Include="Data\ShotStats.h">
       <Filter>Data</Filter>
     </ClInclude>
+    <ClInclude Include="DLLImportExport.h">
+      <Filter>Plugin Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GoalPercentageCounter.rc">

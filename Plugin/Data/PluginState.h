@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bakkesmod/wrappers/wrapperstructs.h> // for LinearColor
+
 class DisplayOptions
 {
 public:
