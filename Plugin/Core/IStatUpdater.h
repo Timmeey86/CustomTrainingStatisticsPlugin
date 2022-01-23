@@ -1,7 +1,9 @@
 #pragma once
 
+#include "../DLLImportExport.h"
+
 /** The public interface of classes which update statistics data in case of certain events. */
-class IStatUpdater
+class GOALPERCENTAGECOUNTER_IMPORT_EXPORT IStatUpdater
 {
 protected:
 	IStatUpdater() = default;

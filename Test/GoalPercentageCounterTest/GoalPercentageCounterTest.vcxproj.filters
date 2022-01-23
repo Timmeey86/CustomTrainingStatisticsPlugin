@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Fixtures">
+      <UniqueIdentifier>{efe6ecf9-de8e-4706-8e05-e2617868f990}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounterTest.cpp">
@@ -27,8 +30,16 @@
     <ClCompile Include="StatUpdaterTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Fixtures\StatUpdaterTestFixture.cpp">
+      <Filter>Source Files\Fixtures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Fixtures\StatUpdaterTestFixture.h">
+      <Filter>Source Files\Fixtures</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

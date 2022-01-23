@@ -56,11 +56,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Fixtures\StatUpdaterTestFixture.cpp" />
     <ClCompile Include="GoalPercentageCounterTest.cpp" />
     <ClCompile Include="StatUpdaterTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Fixtures\StatUpdaterTestFixture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
