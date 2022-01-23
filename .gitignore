@@ -353,3 +353,14 @@ MigrationBackup/
 *.lib
 /Test/gtest.dir
 /Test/gmock.dir
+plugins/fine-code-coverage/build-output/GoalPercentageCounterTest.exe
+plugins/fine-code-coverage/build-output/GoalPercentageCounterTest.exe.gta.testdurations
+plugins/fine-code-coverage/coverage-tool-output/GoalPercentageCounterTest.coverage.xml
+plugins/GoalPercentageCounterTest.exe
+plugins/GoalPercentageCounterTest.exe.gta.testdurations
+plugins/GoalPercentageCounterTest.exe.is_google_test
+plugins/GoalPercentageCounterTest.exe
+plugins/fine-code-coverage/coverage-tool-output/Cobertura.xml
+plugins/fine-code-coverage/coverage-tool-output/index-processed.html
+plugins/fine-code-coverage/coverage-tool-output/index.htm
+plugins/fine-code-coverage/coverage-tool-output/index.html

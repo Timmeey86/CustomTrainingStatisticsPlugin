@@ -2,7 +2,11 @@
 #include <gmock/gmock.h>
 #include <Plugin/Calculation/StatUpdater.h>
 
-TEST(Dummy, SampleTest)
+class SampleFixture : public testing::Test
+{
+
+};
+TEST_F(SampleFixture, MyDummyTest)
 {
     EXPECT_TRUE(true);
     auto shotStats = std::make_shared<ShotStats>();
