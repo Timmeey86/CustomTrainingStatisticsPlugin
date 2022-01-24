@@ -5,6 +5,8 @@
 
 #include <string>
 
+const std::string SummaryUI::MenuName = "goal_percentage_counter_summary";
+
 void SummaryUI::initSummaryUi(
 	const std::shared_ptr<CVarManagerWrapper> cvarManager,
 	const std::shared_ptr<const ShotStats> shotStats,
@@ -127,7 +129,7 @@ void SummaryUI::Render()
 
 std::string SummaryUI::GetMenuName()
 {
-	return "goal_percentage_counter_summary";
+	return MenuName;
 }
 
 std::string SummaryUI::GetMenuTitle()
@@ -164,7 +166,7 @@ void SummaryUI::OnClose()
 
 void SummaryUI::ToggleMenu()
 {
-	_cvarManager->executeCommand("togglemenu " + GetMenuName());
+	_cvarManager->executeCommand("togglemenu " + MenuName);
 }
 
 void SummaryUI::OpenMenu()

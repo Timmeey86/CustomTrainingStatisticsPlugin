@@ -23,4 +23,7 @@ private:
 	static void registerFloatSliderSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(float)> setValueFunc);
 	/** Registers a variable for a color value. */
 	static void registerColorEditSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(const LinearColor&)> setValueFunc);
+	/** Registers a variable for a drop down menu. */
+	static void registerDropdownMenuSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(const std::string&, CVarWrapper)> handleDropdown);
+
 };

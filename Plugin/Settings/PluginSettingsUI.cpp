@@ -78,6 +78,19 @@ void PluginSettingsUI::createColorEdit(const SettingsDefinition& settingsDefinit
 		cvar.setValue(currentValue);
 	}
 }
+
+void PluginSettingsUI::createDropdownMenu(const SettingsDefinition& settingsDefinition, const char* items[], int numItems)
+{
+	auto cvar = _cvarManager->getCvar(settingsDefinition.VariableName);
+	if (!cvar) { return; }
+
+	int currentIndex = cvar.getIntValue();
+	if (ImGui::Combo(settingsDefinition.DisplayText.c_str(), &currentIndex, items, numItems))
+	{
+		cvar.setValue(currentIndex);
+	}
+}
+
 // Render the plugin settings here
 // This will show up in bakkesmod when the plugin is loaded at
 //  f2 -> plugins -> GoalPercentageCounter
@@ -127,5 +140,10 @@ void PluginSettingsUI::RenderSettings()
 		createIntSlider(GoalPercentageCounterSettings::PerShotXPositionDef);
 		createIntSlider(GoalPercentageCounterSettings::PerShotYPositionDef);
 		createFloatSlider(GoalPercentageCounterSettings::PerShotFontSizeDef);
+
+		ImGui::Separator();
+
+		ImGui::Text("Bindings (this creates bindings in the Bindings tab)");
+		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybinding, GoalPercentageCounterSettings::KeybindingsArray, 127);
 	}
 }

@@ -47,6 +47,8 @@ public:
 
 	void CloseMenu();
 
+	static const std::string MenuName;
+
 private:
 	void renderSummaryHeader();
 	void renderSummaryBody();
