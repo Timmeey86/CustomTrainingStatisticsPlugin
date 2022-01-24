@@ -7,13 +7,14 @@
 #include "version.h"
 
 #include "Settings/PluginSettingsUI.h"
+#include "Summary/SummaryUI.h"
 #include "Data/ShotStats.h"
 #include "Data/PluginState.h"
 #include "Core/EventListener.h"
 
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
-class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public PluginSettingsUI
+class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public PluginSettingsUI, public SummaryUI
 {
 
 	//Boilerplate

@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "SettingsRegistration.h"
 #include "../Data/TriggerNames.h"
+#include "Summary/SummaryUI.h"
 
 // These macros just remove the syntactic overhead of extremely similar lambda function definitions
 // If you are a lowlevel template expert and you know a better solution, feel free to propose a pull request ;-)
@@ -46,6 +47,41 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 
 	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::PanelColorDef, SET_COLOR_VALUE_FUNC(PanelColor));
 	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::FontColorDef, SET_COLOR_VALUE_FUNC(FontColor));
+
+	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::SummaryKeybinding, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+		// Check if oldIdx is valid
+		int oldIdx;
+		try
+		{
+			oldIdx = std::stoi(oldValue);
+		}
+		catch (const std::invalid_argument&)
+		{
+			return;
+		}
+
+		int newIdx = cvar.getIntValue();
+
+		// Check bounds of indices
+		if (0 <= oldIdx && oldIdx < GoalPercentageCounterSettings::KeybindingsArraySize &&
+			0 <= newIdx && newIdx < GoalPercentageCounterSettings::KeybindingsArraySize)
+		{
+			std::string oldBind = std::string(GoalPercentageCounterSettings::KeybindingsArray[oldIdx]);
+			std::string newBind = std::string(GoalPercentageCounterSettings::KeybindingsArray[newIdx]);
+
+			// Unbind old value unless it is "None"
+			if (!oldBind.empty() && oldBind != GoalPercentageCounterSettings::KeybindingsArray[0])
+			{
+				cvarManager->executeCommand("unbind " + oldBind, false);
+			}
+
+			// Bind new value unless it is "None"
+			if (newBind != GoalPercentageCounterSettings::KeybindingsArray[0])
+			{
+				cvarManager->setBind(newBind, "togglemenu " + SummaryUI::MenuName + ";");
+			}
+		}
+		});
 }
 
 #undef SET_BOOL_VALUE_FUNC
@@ -91,4 +127,9 @@ void SettingsRegistration::registerColorEditSetting(std::shared_ptr<CVarManagerW
 	{
 		setValueFunc(cvar.getColorValue());
 	}
+}
+
+void SettingsRegistration::registerDropdownMenuSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(const std::string&, CVarWrapper)> handleDropdown)
+{
+	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([handleDropdown](const std::string& oldValue, CVarWrapper cvar) { handleDropdown(oldValue, cvar); });
 }

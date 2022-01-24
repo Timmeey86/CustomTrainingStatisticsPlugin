@@ -41,4 +41,9 @@ public:
 
 	static const SettingsDefinition PanelColorDef; ///< Definitions for the background color of the panel
 	static const SettingsDefinition FontColorDef; ///< Definitions for the text color of the panel
+
+
+	static const SettingsDefinition SummaryKeybinding;
+	static constexpr int KeybindingsArraySize{ 127 };
+	static const char* KeybindingsArray[]; ///< List of possible keybindings
 };

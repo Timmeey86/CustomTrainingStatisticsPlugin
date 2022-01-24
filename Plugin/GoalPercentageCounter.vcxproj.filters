@@ -33,6 +33,9 @@
     <Filter Include="SettingsUI">
       <UniqueIdentifier>{c314c668-82f4-46a5-bf45-75ffa62ae23b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SummaryUI">
+      <UniqueIdentifier>{0f53a59d-cc68-4f0e-8626-85c77ce624de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounter.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="Data\TriggerNames.cpp">
       <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Summary\SummaryUI.cpp">
+      <Filter>SummaryUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="Data\ShotStats.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Summary\SummaryUI.h">
+      <Filter>SummaryUI</Filter>
     </ClInclude>
     <ClInclude Include="DLLImportExport.h">
       <Filter>Plugin Files</Filter>
