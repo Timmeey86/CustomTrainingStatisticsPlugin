@@ -2,6 +2,8 @@
 
 void StatUpdaterTestFixture::expectTotalStats(const PlayerStats& expectedStats) const
 {
+	ASSERT_TRUE(_shotStats != nullptr);
+
 	auto allShotStats = _shotStats->AllShotStats.Stats;
 
 	EXPECT_EQ(allShotStats.Attempts, expectedStats.Attempts);
@@ -25,6 +27,7 @@ void StatUpdaterTestFixture::expectPerShotStats(const PlayerStats& expectedStats
 {
 	// Note: We could reduce the code here by extracting the common parts of expectedTotalStats and expectPerShotStats, but that would 
 	// then require custom failure messages as otherwise we wouldn't know which struct is wrong in the test output.
+	ASSERT_TRUE(_shotStats != nullptr);
 	ASSERT_GT(_shotStats->PerShotStats.size(), shotNumber);
 
 	auto perShotStats = _shotStats->PerShotStats[shotNumber].Stats;

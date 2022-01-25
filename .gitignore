@@ -354,3 +354,4 @@ MigrationBackup/
 /Test/gtest.dir
 /Test/gmock.dir
 plugins/
+.opencppcov

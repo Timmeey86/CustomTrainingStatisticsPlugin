@@ -37,7 +37,7 @@ TEST_F(StatUpdaterTestFixture, new_attempt_increases_attempts)
 	expectPerShotStats(expectedStats, 0);
 	expectPerShotStats(defaultStats, 1);
 }
-TEST_F(StatUpdaterTestFixture, statUpdater_increases_goals)
+TEST_F(StatUpdaterTestFixture, goal_attempt_increases_goals)
 {
 	// Arrange
 	PlayerStats defaultStats;
@@ -60,3 +60,62 @@ TEST_F(StatUpdaterTestFixture, statUpdater_increases_goals)
 	expectPerShotStats(defaultStats, 1);
 }
 
+TEST_F(StatUpdaterTestFixture, miss_attempt_increases_misses)
+{
+	// Arrange
+	PlayerStats defaultStats;
+	PlayerStats expectedStats;
+	expectedStats.Attempts = 1;
+	expectedStats.InitialHits = 0; // We simulate a complete miss
+	expectedStats.MissStreakCounter = 1;
+	expectedStats.LongestMissStreak = 1;
+	expectedStats.Last50Shots.push_back(false);
+
+	// Act
+	statUpdater->processNewAttempt();
+	statUpdater->processShotReset();
+
+	// Assert
+	expectTotalStats(expectedStats);
+	expectPerShotStats(expectedStats, 0);
+	expectPerShotStats(defaultStats, 1);
+}
+
+TEST_F(StatUpdaterTestFixture, manual_stat_reset_resets_everything)
+{
+	// Arrange
+	ASSERT_TRUE(_shotStats != nullptr);
+	ASSERT_GE(_shotStats->PerShotStats.size(), 2);
+
+	// Set arbitrary values in all stats data structures
+	auto& allShotStats = _shotStats->AllShotStats;
+	auto& firstShotStats = _shotStats->PerShotStats[0];
+	auto& secondShotStats = _shotStats->PerShotStats[1];
+	
+	auto fillShotStatsFunc = [](StatsData& statsData) {
+		statsData.Stats.Attempts = 42;
+		statsData.Stats.Goals = 42;
+		statsData.Stats.GoalStreakCounter = 42;
+		statsData.Stats.InitialHits = 42;
+		statsData.Stats.Last50Shots.push_back(false);
+		statsData.Stats.Last50Shots.push_back(true);
+		statsData.Stats.Last50Shots.push_back(true);
+		statsData.Stats.Last50Shots.push_back(false);
+		statsData.Stats.LongestGoalStreak = 42;
+		statsData.Stats.LongestMissStreak = 42;
+		statsData.Stats.MissStreakCounter = 42;
+	};
+	fillShotStatsFunc(allShotStats);
+	fillShotStatsFunc(firstShotStats);
+	fillShotStatsFunc(secondShotStats);
+
+	PlayerStats defaultStats;
+
+	// Act
+	statUpdater->processManualStatReset();
+
+	// Assert
+	expectTotalStats(defaultStats);
+	expectPerShotStats(defaultStats, 0);
+	expectPerShotStats(defaultStats, 1);
+}
