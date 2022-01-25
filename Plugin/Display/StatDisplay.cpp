@@ -13,11 +13,18 @@ StatDisplay::StatDisplay(
 {
 }
 
-// Converts e.g. 12.7531 into "12.75". It is recomended to do rounding before calling this
+// Converts e.g. 12.7531 into "12.75%". It is recomended to do rounding before calling this
 std::string to_percentage_string(double value)
 {
 	std::ostringstream stream;
 	stream << std::fixed << std::setprecision(2) << value << "%";
+	return stream.str();
+}
+
+std::string to_float_string(float value, int precision = 2)
+{
+	std::ostringstream stream;
+	stream << std::fixed << std::setprecision(precision) << value;
 	return stream.str();
 }
 
@@ -79,6 +86,26 @@ std::list<std::pair<std::string, std::string>> StatDisplay::GetStatsToBeRendered
 	if (pluginState->LastNShotPercentageShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back("Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage));
+	}
+	if (pluginState->MostRecentGoalSpeedShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back("Latest Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMostRecent(pluginState->IsMetric)));
+	}
+	if (pluginState->MaxGoalSpeedShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back("Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMax(pluginState->IsMetric)));
+	}
+	if (pluginState->MinGoalSpeedShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back("Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMin(pluginState->IsMetric)));
+	}
+	if (pluginState->MedianGoalSpeedShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back("Median Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMedian(pluginState->IsMetric)));
+	}
+	if (pluginState->MeanGoalSpeedShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back("Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMean(pluginState->IsMetric)));
 	}
 
 	if (statNamesAndValues.empty())

@@ -30,20 +30,25 @@ public:
 	static const SettingsDefinition DisplayLongestStreaksDef;		///< Definitions for the flag which toggles display of the longest miss/goal streaks
 	static const SettingsDefinition DisplayPeakInfoDef;				///< Definitions for the flag which toggles display of the peak success percentage and shot number
 	static const SettingsDefinition DisplayLastNShotPercentageDef;	///< Definitions for the flag which toggles display of the last N shot percentage
+	static const SettingsDefinition DisplayMostRecentGoalSpeedDef;	///< Definitions for the flag which toggles display of the most recent goal speed
+	static const SettingsDefinition DisplayMaxGoalSpeedDef;			///< Definitions for the flag which toggles display of the maximum goal speed
+	static const SettingsDefinition DisplayMinGoalSpeedDef;			///< Definitions for the flag which toggles display of the minimum goal speed
+	static const SettingsDefinition DisplayMedianGoalSpeedDef;		///< Definitions for the flag which toggles display of the median goal speed
+	static const SettingsDefinition DisplayMeanGoalSpeedDef;		///< Definitions for the flag which toggles display of the mean goal speed
 
-	static const SettingsDefinition AllShotXPositionDef; ///< Definitions for the X position of the all shot overlay
-	static const SettingsDefinition AllShotYPositionDef; ///< Definitions for the Y position of the all shot overlay
-	static const SettingsDefinition AllShotFontSizeDef; ///< Definitions for the font size of the all shot overlay
+	static const SettingsDefinition AllShotXPositionDef;	///< Definitions for the X position of the all shot overlay
+	static const SettingsDefinition AllShotYPositionDef;	///< Definitions for the Y position of the all shot overlay
+	static const SettingsDefinition AllShotFontSizeDef;		///< Definitions for the font size of the all shot overlay
 
-	static const SettingsDefinition PerShotXPositionDef; ///< Definitions for the X position of the per shot overlay
-	static const SettingsDefinition PerShotYPositionDef; ///< Definitions for the Y position of the per shot overlay
-	static const SettingsDefinition PerShotFontSizeDef; ///< Definitions for the font size of the per shot overlay
+	static const SettingsDefinition PerShotXPositionDef;	///< Definitions for the X position of the per shot overlay
+	static const SettingsDefinition PerShotYPositionDef;	///< Definitions for the Y position of the per shot overlay
+	static const SettingsDefinition PerShotFontSizeDef;		///< Definitions for the font size of the per shot overlay
 
-	static const SettingsDefinition PanelColorDef; ///< Definitions for the background color of the panel
-	static const SettingsDefinition FontColorDef; ///< Definitions for the text color of the panel
+	static const SettingsDefinition PanelColorDef;			///< Definitions for the background color of the panel
+	static const SettingsDefinition FontColorDef;			///< Definitions for the text color of the panel
 
 
-	static const SettingsDefinition SummaryKeybinding;
-	static constexpr int KeybindingsArraySize{ 127 };
-	static const char* KeybindingsArray[]; ///< List of possible keybindings
+	static const SettingsDefinition SummaryKeybindingDef;	///< Definitions for the summary window keybinding
+	static constexpr int KeybindingsArraySize{ 127 };		///< Size of array of possible keybindings
+	static const char* KeybindingsArray[];					///< List of possible keybindings
 };

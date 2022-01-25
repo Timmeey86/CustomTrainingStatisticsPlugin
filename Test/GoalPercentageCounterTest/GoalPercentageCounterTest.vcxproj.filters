@@ -33,12 +33,18 @@
     <ClCompile Include="Fixtures\StatUpdaterTestFixture.cpp">
       <Filter>Source Files\Fixtures</Filter>
     </ClCompile>
+    <ClCompile Include="RunningMedianTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Fixtures\StatUpdaterTestFixture.h">
+      <Filter>Source Files\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="Fixtures\RunningMedianTestFixture.h">
       <Filter>Source Files\Fixtures</Filter>
     </ClInclude>
   </ItemGroup>

@@ -58,12 +58,14 @@
   <ItemGroup>
     <ClCompile Include="Fixtures\StatUpdaterTestFixture.cpp" />
     <ClCompile Include="GoalPercentageCounterTest.cpp" />
+    <ClCompile Include="RunningMedianTests.cpp" />
     <ClCompile Include="StatUpdaterTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Fixtures\RunningMedianTestFixture.h" />
     <ClInclude Include="Fixtures\StatUpdaterTestFixture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

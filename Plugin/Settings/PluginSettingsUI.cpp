@@ -119,6 +119,11 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::DisplayLongestStreaksDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayPeakInfoDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayLastNShotPercentageDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayMinGoalSpeedDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef);
 
 		ImGui::Separator();
 
@@ -144,6 +149,6 @@ void PluginSettingsUI::RenderSettings()
 		ImGui::Separator();
 
 		ImGui::Text("Bindings (this creates bindings in the Bindings tab)");
-		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybinding, GoalPercentageCounterSettings::KeybindingsArray, 127);
+		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, 127);
 	}
 }

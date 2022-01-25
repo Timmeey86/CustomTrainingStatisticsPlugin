@@ -13,6 +13,20 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 {
 	if (!statUpdater) { return; }
 
+	// Happens every tick
+	_gameWrapper->HookEvent("Function Engine.GameViewportClient.Tick", [this](const std::string&) {
+		if (!statUpdatesShallBeSent()) { return; }
+
+		ServerWrapper server = _gameWrapper->IsInReplay() ? _gameWrapper->GetGameEventAsReplay().memory_address : _gameWrapper->GetGameEventAsServer();
+		if (server.IsNull()) return;
+		GameSettingPlaylistWrapper playlist = server.GetPlaylist();
+		if (playlist.IsNull()) return;
+		BallWrapper ball = server.GetBall();
+		if (ball.IsNull()) return;
+
+		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
+	});
+
 	// Happens whenever a goal was scored
 	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
@@ -84,6 +98,7 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	// Happens whenever a menu is opened (also when opening a nested menu)
 	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", [this](const std::string&) {
 		_pluginState->MenuStackSize++;
+		_pluginState->IsMetric = _gameWrapper->GetbMetric();
 	});
 	// Happens whenever a menu is closed (also when closing a nested menu)
 	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PopMenu", [this](const std::string&) {
@@ -92,10 +107,12 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		{
 			_pluginState->MenuStackSize--;
 		}
+		_pluginState->IsMetric = _gameWrapper->GetbMetric();
 	});
 	// Hook to the start of a training mode again so the menu stack counter is reset
 	_gameWrapper->HookEvent("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded", [this](const std::string&) {
 		_pluginState->MenuStackSize = 0;
+		_pluginState->IsMetric = _gameWrapper->GetbMetric();
 	});
 }
 

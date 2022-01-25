@@ -26,6 +26,11 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayLongestStreaksDef, SET_BOOL_VALUE_FUNC(LongestStreaksShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayPeakInfoDef, SET_BOOL_VALUE_FUNC(PeakInfoShallBeDisplayed));
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayLastNShotPercentageDef, SET_BOOL_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef, SET_BOOL_VALUE_FUNC(MostRecentGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef, SET_BOOL_VALUE_FUNC(MaxGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMinGoalSpeedDef, SET_BOOL_VALUE_FUNC(MinGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef, SET_BOOL_VALUE_FUNC(MedianGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef, SET_BOOL_VALUE_FUNC(MeanGoalSpeedShallBeDisplayed));
 
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayAllShotStats, SET_BOOL_VALUE_FUNC(AllShotStatsShallBeDisplayed));
 	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotXPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayXPosition));
@@ -48,7 +53,7 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::PanelColorDef, SET_COLOR_VALUE_FUNC(PanelColor));
 	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::FontColorDef, SET_COLOR_VALUE_FUNC(FontColor));
 
-	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::SummaryKeybinding, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::SummaryKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
 		// Check if oldIdx is valid
 		int oldIdx;
 		try

@@ -198,6 +198,8 @@ void StatUpdater::handleGoal(StatsData& statsData)
 	{
 		statsData.Stats.LongestGoalStreak = statsData.Stats.GoalStreakCounter;
 	}
+
+	statsData.Stats.GoalSpeedStats.insert(_pluginState->getBallSpeed());
 }
 
 void StatUpdater::handleAttempt(StatsData& statsData, bool changePluginState)

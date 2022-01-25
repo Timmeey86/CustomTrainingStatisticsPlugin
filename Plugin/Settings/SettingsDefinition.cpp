@@ -85,6 +85,46 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayLastNShotPercenta
 	1.0f,
 	"1.0f"
 };
+const SettingsDefinition GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef = {
+	"goalpercentagecounter_display_most_recent_goal_speed",
+	"Most Recent Goal Speed",
+	"Toggle display of the most recent goal speed in the stat display",
+	.0f,
+	1.0f,
+	"1.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef = {
+	"goalpercentagecounter_display_max_goal_speed",
+	"Maximum Goal Speed",
+	"Toggle display of the maximum goal speed in the stat display",
+	.0f,
+	1.0f,
+	"1.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayMinGoalSpeedDef = {
+	"goalpercentagecounter_display_min_goal_speed",
+	"Minimum Goal Speed",
+	"Toggle display of the minimum goal speed in the stat display",
+	.0f,
+	1.0f,
+	"1.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef = {
+	"goalpercentagecounter_display_median_goal_speed",
+	"Median Goal Speed",
+	"Toggle display of the median goal speed in the stat display",
+	.0f,
+	1.0f,
+	"1.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef = {
+	"goalpercentagecounter_display_mean_goal_speed",
+	"Mean Goal Speed",
+	"Toggle display of the mean goal speed in the stat display",
+	.0f,
+	1.0f,
+	"0.0f"
+};
 
 
 const SettingsDefinition GoalPercentageCounterSettings::AllShotXPositionDef = {
@@ -155,7 +195,7 @@ const SettingsDefinition GoalPercentageCounterSettings::FontColorDef = {
 	"(1.0, 1.0, 1.0, 1.0)" // RGBA Color string (expected by CVarManager in this format)
 };
 
-const SettingsDefinition GoalPercentageCounterSettings::SummaryKeybinding = {
+const SettingsDefinition GoalPercentageCounterSettings::SummaryKeybindingDef = {
 	"goalpercentagecounter_summary_keybinding",
 	"Statistics Summary",
 	"Keybinding to toggle the summary window",
