@@ -7,10 +7,20 @@
 class RunningMedianTestFixture : public ::testing::Test
 {
 public:
-	//RunningMedian runningMedian;
+	RunningMedian runningMedian;
 
 	void SetUp() override
 	{
-		//runningMedian.reset();
+		runningMedian.reset();
+	}
+
+	void expectMedian(float value)
+	{
+		EXPECT_EQ(runningMedian.getMedian(), value);
+	}
+
+	void expectCount(size_t value)
+	{
+		EXPECT_EQ(runningMedian.getCount(), value);
 	}
 };
