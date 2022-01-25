@@ -54,6 +54,11 @@
       <AdditionalLibraryDirectories>$(SolutionDir)plugins;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>GoalPercentageCounter.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>@echo off
+echo Deploying DLLs from $(BakkesModPath) to $(OutDir) (required for tests)
+robocopy $(BakkesModPath)dll $(OutDir) pluginsdk.dll bakkesmod.dll &gt; NUL</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Fixtures\StatUpdaterTestFixture.cpp" />
