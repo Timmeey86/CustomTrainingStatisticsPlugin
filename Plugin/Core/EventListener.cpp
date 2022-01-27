@@ -13,6 +13,18 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 {
 	if (!statUpdater) { return; }
 
+	// Happens every tick
+	_gameWrapper->HookEvent("Function Engine.GameViewportClient.Tick", [this](const std::string&) {
+		if (!statUpdatesShallBeSent()) { return; }
+
+		ServerWrapper server = _gameWrapper->GetGameEventAsServer();
+		if (server.IsNull()) return;
+		BallWrapper ball = server.GetBall();
+		if (ball.IsNull()) return;
+
+		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
+	});
+
 	// Happens whenever a goal was scored
 	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, statUpdater](const std::string&) {
 		if (!statUpdatesShallBeSent()) { return; }
@@ -92,10 +104,12 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		{
 			_pluginState->MenuStackSize--;
 		}
+		_pluginState->IsMetric = _gameWrapper->GetbMetric(); // Check for change of metric setting
 	});
 	// Hook to the start of a training mode again so the menu stack counter is reset
 	_gameWrapper->HookEvent("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded", [this](const std::string&) {
 		_pluginState->MenuStackSize = 0;
+		_pluginState->IsMetric = _gameWrapper->GetbMetric();
 	});
 }
 

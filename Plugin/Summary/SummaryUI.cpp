@@ -26,16 +26,16 @@ void SummaryUI::renderSummaryHeader()
 		false,
 		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
-	auto allShotStatNamesAndValues = StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState);
-	int numColumns = allShotStatNamesAndValues.size() + 1; // +1 for shot number
+	auto statsToBeRendered = StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState);
+	int numColumns = statsToBeRendered.size() + 1; // +1 for shot number
 	ImGui::Columns(numColumns, "goal_percentage_counter_summary_stats_header");
 	ImGui::Separator();
 
 	ImGui::Text("Shot Number:");
 	ImGui::NextColumn();
-	for (const auto& nv : allShotStatNamesAndValues)
+	for (const auto& statStrings : statsToBeRendered)
 	{
-		ImGui::Text(nv.first.c_str());
+		ImGui::Text(statStrings.Label.c_str());
 		ImGui::NextColumn();
 	}
 
@@ -76,17 +76,19 @@ void SummaryUI::renderSummaryBody()
 				statsData = _shotStats->AllShotStats;
 			}
 
-			auto statNamesAndValues = StatDisplay::GetStatsToBeRendered(statsData, _pluginState);
-			for (auto&& nv : statNamesAndValues)
+			auto statsToBeRendered = StatDisplay::GetStatsToBeRendered(statsData, _pluginState);
+			for (auto&& statStrings : statsToBeRendered)
 			{
+				// TODO: Adapt this code to make use of statStrings.Unit
+
 				// ImGui displays text as a c string so percent signs are escaped
 				// Need to add an extra percent sign so it will display
-				if (nv.second.back() == '%')
+				if (statStrings.Value.back() == '%')
 				{
-					nv.second.push_back('%');
+					statStrings.Value.push_back('%');
 				}
 
-				ImGui::Text(nv.second.c_str());
+				ImGui::Text(statStrings.Value.c_str());
 				ImGui::NextColumn();
 			}
 

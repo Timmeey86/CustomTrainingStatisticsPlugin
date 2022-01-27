@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "GoalSpeed.h"
 
 /**
 * Stores raw gathered data which does not involve calculation
@@ -17,5 +18,6 @@ public:
 	int MissStreakCounter = 0;		///< Stores the amount of misses since the last goal
 	int LongestGoalStreak = 0;		///< Stores the largest amount of consecutively scored goals
 	int LongestMissStreak = 0;		///< Stores the largest amount of consecutively scored misses
-	int InitialHits = 0;		///< Stores the number of times the ball was hit at least once during an attempt.
+	int InitialHits = 0;			///< Stores the number of times the ball was hit at least once during an attempt.
+	GoalSpeed GoalSpeedStats;		///< Stores statistics about the goal speed
 };

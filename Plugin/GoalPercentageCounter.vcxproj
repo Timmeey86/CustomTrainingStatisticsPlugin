@@ -94,6 +94,9 @@
   <ItemGroup>
     <ClCompile Include="Calculation\StatUpdater.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
+    <ClCompile Include="Data\GoalSpeed.cpp" />
+    <ClCompile Include="Data\RunningMean.cpp" />
+    <ClCompile Include="Data\RunningMedian.cpp" />
     <ClCompile Include="Data\TriggerNames.cpp" />
     <ClCompile Include="Display\StatDisplay.cpp" />
     <ClCompile Include="fmt\src\format.cc" />
@@ -125,7 +128,10 @@
     <ClInclude Include="Core\IStatDisplay.h" />
     <ClInclude Include="Core\IStatUpdater.h" />
     <ClInclude Include="Data\CalculatedData.h" />
+    <ClInclude Include="Data\GoalSpeed.h" />
     <ClInclude Include="Data\PlayerStats.h" />
+    <ClInclude Include="Data\RunningMean.h" />
+    <ClInclude Include="Data\RunningMedian.h" />
     <ClInclude Include="Data\ShotStats.h" />
     <ClInclude Include="Data\StatsData.h" />
     <ClInclude Include="Data\PluginState.h" />
