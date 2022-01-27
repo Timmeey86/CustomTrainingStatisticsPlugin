@@ -32,7 +32,7 @@ private:
 	float convertSpeed(float metricSpeed, bool isMetric) const;
 
 	static float constexpr _DEFAULT_VALUE{ 0.0 };			///< Default value for when the goal speed has not been set yet
-	static float constexpr _MPH_TO_KPH{ 0.6213711922f };	///< Multiply MPH by this constant to convert to KPH
+	static float constexpr _KPH_TO_MPH{ 0.6213711922f };	///< Multiply KPH by this constant to convert to MPH
 
 	float _mostRecentSpeed{ _DEFAULT_VALUE };	///< Most recent goal speed
 	float _maxSpeed{ _DEFAULT_VALUE };			///< Maximum goal speed

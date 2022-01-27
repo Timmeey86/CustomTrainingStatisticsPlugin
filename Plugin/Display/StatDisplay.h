@@ -25,23 +25,24 @@ public:
 	);
 
 	// Inherited via IStatDisplay
-	void renderOneFrame(CanvasWrapper& canvas) const override;
+	void renderOneFrame(CanvasWrapper& canvas) override;
 
 	/** Builds a list of stats to be rendered, based on the current plugin state.
 	 *
-	 * \returns		A list of string pairs, consisting of a label and a value string. These will be displayed in two columns.
+	 * \returns		A list of SingleStatStrings, consisting of a label, value, and unit string. These will be displayed in three columns.
 	 */
 	static std::list<SingleStatStrings> GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState);
-	static constexpr float DISPLAY_WIDTH = 215.0f;
 
 private:
 	void drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const;
-	void renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const;
-	void renderAllShotStats(CanvasWrapper& canvas) const;
-	void renderPerShotStats(CanvasWrapper& canvas) const;
+	void renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData);
+	void renderAllShotStats(CanvasWrapper& canvas);
+	void renderPerShotStats(CanvasWrapper& canvas);
 
 	const std::shared_ptr<const ShotStats> _shotStats;		///< Statistics and data for shots taken in custom training
 	const std::shared_ptr<const PluginState> _pluginState;	///< The state of the plugin.
+
+	float _displayWidth{ 230.0f };
 	
 };
 

@@ -31,7 +31,7 @@ std::string to_float_string(float value, int precision = 2)
 void StatDisplay::drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const
 {
 	int numCharsLeft = floor(label.length() * 0.5);
-	auto leftTextBorder = (float)displayOpts.OverlayXPosition + ((StatDisplay::DISPLAY_WIDTH / 2.0f) - (7.0f * numCharsLeft)) * displayOpts.TextWidthFactor;
+	auto leftTextBorder = (float)displayOpts.OverlayXPosition + ((_displayWidth / 2.0f) - (7.0f * numCharsLeft)) * displayOpts.TextWidthFactor;
 	auto topTextBorder = (float)displayOpts.OverlayYPosition + (5.0f + (float)rowNumber * 15.0f) * displayOpts.TextHeightFactor;
 
 	canvas.SetPosition(Vector2F{ leftTextBorder, topTextBorder });
@@ -48,7 +48,8 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 	canvas.DrawString(statStrings.Label, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 	canvas.SetPosition(Vector2F{ leftTextBorder + 140.0f * displayOpts.TextWidthFactor, topTextBorder });
 	canvas.DrawString(statStrings.Value, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
-	// TODO: Render statStrings.Unit
+	canvas.SetPosition(Vector2F{ leftTextBorder + 190.0f * displayOpts.TextWidthFactor, topTextBorder });
+	canvas.DrawString(statStrings.Unit, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 }
 
 std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
@@ -90,7 +91,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	}
 
 	// Goal speed stats
-	std::string speed_units = pluginState->IsMetric ? " km/h" : " mph";
+	std::string speed_units = pluginState->IsMetric ? "km/h" : "mph";
 	if (pluginState->MostRecentGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Latest Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMostRecent(pluginState->IsMetric)), speed_units });
@@ -120,15 +121,22 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	return statNamesAndValues;
 }
 
-void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData) const
+void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData)
 {
 	auto statsToBeRendered = GetStatsToBeRendered(statsData, _pluginState);
+	bool isDisplayingSpeed = _pluginState->MostRecentGoalSpeedShallBeDisplayed ||
+		_pluginState->MaxGoalSpeedShallBeDisplayed ||
+		_pluginState->MinGoalSpeedShallBeDisplayed ||
+		_pluginState->MedianGoalSpeedShallBeDisplayed ||
+		_pluginState->MeanGoalSpeedShallBeDisplayed;
+	
+	_displayWidth = isDisplayingSpeed ? 230.0f : 200.0f;
 
 	// Draw a panel so we can read the text on all kinds of maps
 	canvas.SetColor(_pluginState->PanelColor);
 
 	canvas.SetPosition(Vector2F{ (float)opts.OverlayXPosition, (float)opts.OverlayYPosition });
-	canvas.FillBox(Vector2F{ DISPLAY_WIDTH * opts.TextWidthFactor, (10.0f + (statsToBeRendered.size() + 1) * 15.0f) * opts.TextHeightFactor }); // +1 for title
+	canvas.FillBox(Vector2F{ _displayWidth * opts.TextWidthFactor, (10.0f + (statsToBeRendered.size() + 1) * 15.0f) * opts.TextHeightFactor }); // +1 for title
 
 	// Now draw the text on top of it
 	canvas.SetColor(_pluginState->FontColor);
@@ -143,7 +151,7 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 	}
 }
 
-void StatDisplay::renderAllShotStats(CanvasWrapper& canvas) const
+void StatDisplay::renderAllShotStats(CanvasWrapper& canvas)
 {
 	if (_pluginState->AllShotStatsShallBeDisplayed)
 	{
@@ -151,7 +159,7 @@ void StatDisplay::renderAllShotStats(CanvasWrapper& canvas) const
 	}
 }
 
-void StatDisplay::renderPerShotStats(CanvasWrapper& canvas) const
+void StatDisplay::renderPerShotStats(CanvasWrapper& canvas)
 {
 	if (_pluginState->PerShotStatsShallBeDisplayed)
 	{
@@ -164,7 +172,7 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas) const
 	}
 }
 
-void StatDisplay::renderOneFrame(CanvasWrapper& canvas) const
+void StatDisplay::renderOneFrame(CanvasWrapper& canvas)
 {
 	// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
 	// That way we don't clutter the settings, or the match/mode selection screen

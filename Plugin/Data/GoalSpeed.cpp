@@ -82,6 +82,6 @@ float GoalSpeed::convertSpeed(float metricSpeed, bool isMetric) const
 	}
 	else
 	{
-		return metricSpeed * _MPH_TO_KPH;
+		return metricSpeed * _KPH_TO_MPH;
 	}
 }

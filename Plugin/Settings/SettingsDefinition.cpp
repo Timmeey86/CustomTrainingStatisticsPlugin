@@ -166,7 +166,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PerShotYPositionDef = {
 	"",
 	.0f,
 	2160.0f,
-	"467.0f"
+	"557.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::PerShotFontSizeDef = {
 	"goalpercentagecounter_per_shot_font_height_factor",
