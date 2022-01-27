@@ -5,6 +5,16 @@
 #include "../Data/StatsData.h"
 #include "../Data/PluginState.h"
 
+/** Defines parts of what shall be displyed in a single line in the stat display. */
+struct SingleStatStrings
+{
+public:
+	std::string Label;
+	std::string Value;
+	std::string Unit;
+};
+
+/** Implements a simple stat display which draws text on a half-transparent background frame (configurable). */
 class StatDisplay : public IStatDisplay
 {
 public:
@@ -21,7 +31,7 @@ public:
 	 *
 	 * \returns		A list of string pairs, consisting of a label and a value string. These will be displayed in two columns.
 	 */
-	static std::list<std::pair<std::string, std::string>> GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState);
+	static std::list<SingleStatStrings> GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState);
 	static constexpr float DISPLAY_WIDTH = 215.0f;
 
 private:
