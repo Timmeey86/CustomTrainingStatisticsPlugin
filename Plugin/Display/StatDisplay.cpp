@@ -28,10 +28,10 @@ std::string to_float_string(float value, int precision = 2)
 	return stream.str();
 }
 
-void drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label)
+void StatDisplay::drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const
 {
 	int numCharsLeft = floor(label.length() * 0.5);
-	auto leftTextBorder = (float)displayOpts.OverlayXPosition + (100.0f - 7.0f * numCharsLeft) * displayOpts.TextWidthFactor;
+	auto leftTextBorder = (float)displayOpts.OverlayXPosition + ((StatDisplay::DISPLAY_WIDTH / 2.0f) - (7.0f * numCharsLeft)) * displayOpts.TextWidthFactor;
 	auto topTextBorder = (float)displayOpts.OverlayYPosition + (5.0f + (float)rowNumber * 15.0f) * displayOpts.TextHeightFactor;
 
 	canvas.SetPosition(Vector2F{ leftTextBorder, topTextBorder });
@@ -87,25 +87,28 @@ std::list<std::pair<std::string, std::string>> StatDisplay::GetStatsToBeRendered
 	{
 		statNamesAndValues.emplace_back("Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage));
 	}
+
+	// Goal speed stats
+	std::string speed_units = pluginState->IsMetric ? " km/h" : " mph";
 	if (pluginState->MostRecentGoalSpeedShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Latest Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMostRecent(pluginState->IsMetric)));
+		statNamesAndValues.emplace_back("Latest Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMostRecent(pluginState->IsMetric)) + speed_units);
 	}
 	if (pluginState->MaxGoalSpeedShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMax(pluginState->IsMetric)));
+		statNamesAndValues.emplace_back("Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMax(pluginState->IsMetric)) + speed_units);
 	}
 	if (pluginState->MinGoalSpeedShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMin(pluginState->IsMetric)));
+		statNamesAndValues.emplace_back("Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMin(pluginState->IsMetric)) + speed_units);
 	}
 	if (pluginState->MedianGoalSpeedShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Median Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMedian(pluginState->IsMetric)));
+		statNamesAndValues.emplace_back("Median Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMedian(pluginState->IsMetric)) + speed_units);
 	}
 	if (pluginState->MeanGoalSpeedShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back("Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMean(pluginState->IsMetric)));
+		statNamesAndValues.emplace_back("Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMean(pluginState->IsMetric)) + speed_units);
 	}
 
 	if (statNamesAndValues.empty())
@@ -124,7 +127,7 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 	canvas.SetColor(_pluginState->PanelColor);
 
 	canvas.SetPosition(Vector2F{ (float)opts.OverlayXPosition, (float)opts.OverlayYPosition });
-	canvas.FillBox(Vector2F{ 200.0f * opts.TextWidthFactor, (10.0f + (statNamesAndValues.size() + 1) * 15.0f) * opts.TextHeightFactor }); // +1 for title
+	canvas.FillBox(Vector2F{ DISPLAY_WIDTH * opts.TextWidthFactor, (10.0f + (statNamesAndValues.size() + 1) * 15.0f) * opts.TextHeightFactor }); // +1 for title
 
 	// Now draw the text on top of it
 	canvas.SetColor(_pluginState->FontColor);
