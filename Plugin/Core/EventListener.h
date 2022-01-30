@@ -1,13 +1,14 @@
 #pragma once
 
 #include <memory>
-#include <bakkesmod/wrappers/gamewrapper.h>
+#include <bakkesmod/wrappers/GameWrapper.h>
 #include <bakkesmod/wrappers/cvarmanagerwrapper.h>
 
 #include "../Data/PluginState.h"
 
 #include "IStatDisplay.h"
 #include "IStatUpdater.h"
+#include "CustomTrainingStateMachine.h"
 
 /** Hooks into various rocket league events and calls the appropriate interface methods. */
 class EventListener
@@ -33,5 +34,6 @@ private:
 	std::shared_ptr<GameWrapper> _gameWrapper; ///< Provides access to anything related to Rocket League
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Provides access to custom variables
 	std::shared_ptr<PluginState> _pluginState; ///< Stores the state of the plugin
+	std::shared_ptr<CustomTrainingStateMachine> _stateMachine; ///< Keeps track of the current state of the custom training (attempt not started, attempt started etc)
 };
 

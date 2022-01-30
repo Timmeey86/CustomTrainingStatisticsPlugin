@@ -25,50 +25,8 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
 	});
 
-	// Happens whenever a goal was scored
-	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		statUpdater->processGoal();
-	});
-
-	// Happens whenever the ball is being touched
-	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnCarTouch", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		// Remember if the ball was touched at least once within the current attempt
-		// This allows e.g. tracking the success of speedflip attempts with a close timer, independent of whether a goal was or wasn't scored
-		if (!_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt)
-		{
-			_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = true;
-			statUpdater->processInitialBallHit();
-		}
-	});
-
-	// Happens whenever a button was pressed after loading a new shot
-	_gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = false;
-		statUpdater->processNewAttempt();
-	});
-
-	// Happens whenever a shot is changed or loaded in custom training
-	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function TAGame.GameEvent_TrainingEditor_TA.EventRoundChanged",
-		[this](ActorWrapper caller, void*, const std::string&) {
-
-			TrainingEditorWrapper trainingWrapper(caller.memory_address);
-			_pluginState->CurrentRoundIndex = trainingWrapper.GetActiveRoundNumber();
-			_pluginState->TotalRounds = trainingWrapper.GetTotalRounds();
-		});
-
-	// Happens whenever a car spawns, i.e. usually a shot reset
-	_gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		// Future extension: Process miss, unless a goal was scored since the previous attempt
-		statUpdater->processShotReset();
-	});
+	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater);
+	_stateMachine->hookToEvents(_gameWrapper);
 
 	// Allow resetting statistics to zero attempts/goals manually
 	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater](const std::vector<std::string>&) {
@@ -78,19 +36,21 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		statUpdater->processManualStatReset();
 	}, "Reset the statistics.", PERMISSION_ALL);
 
-	// Happens when custom taining mode is loaded or restarted, but the total rounds is loaded
-	// Reset automatically when loading a new training pack, or when resetting it
+	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
 			if (!_pluginState->PluginIsEnabled) { return; }
-
-			// Note: While loading a training pack, we are not in custom training, so we can't use statUpdatesShallBeSent() here 
-			// Note may not be true from since this was changed from OnInit to OnTrainingModeLoaded
-
+						
+			// Update the state machine with this event
 			TrainingEditorWrapper trainingWrapper(caller.memory_address);
-			_pluginState->TotalRounds = trainingWrapper.GetTotalRounds();
+			if (!trainingWrapper.IsNull())
+			{
+				_stateMachine->processOnTrainingModeLoaded(trainingWrapper);
+			}
 
-			statUpdater->handleTrainingPackLoad();
+			// Reset other state variables
+			_pluginState->MenuStackSize = 0;
+			_pluginState->IsMetric = _gameWrapper->GetbMetric();
 		});
 
 	// Happens whenever a menu is opened (also when opening a nested menu)
@@ -105,11 +65,6 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 			_pluginState->MenuStackSize--;
 		}
 		_pluginState->IsMetric = _gameWrapper->GetbMetric(); // Check for change of metric setting
-	});
-	// Hook to the start of a training mode again so the menu stack counter is reset
-	_gameWrapper->HookEvent("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded", [this](const std::string&) {
-		_pluginState->MenuStackSize = 0;
-		_pluginState->IsMetric = _gameWrapper->GetbMetric();
 	});
 }
 

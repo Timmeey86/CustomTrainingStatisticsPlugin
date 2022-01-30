@@ -116,6 +116,9 @@
     <ClCompile Include="Data\RunningMean.cpp">
       <Filter>Data</Filter>
     </ClCompile>
+    <ClCompile Include="Core\CustomTrainingStateMachine.cpp">
+      <Filter>Plugin Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -222,6 +225,12 @@
     </ClInclude>
     <ClInclude Include="Data\RunningMean.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CustomTrainingStateMachine.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CustomTrainingState.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
