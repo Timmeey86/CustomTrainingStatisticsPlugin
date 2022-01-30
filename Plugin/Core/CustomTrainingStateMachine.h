@@ -7,6 +7,7 @@
 #include <bakkesmod/wrappers/cvarmanagerwrapper.h>
 
 #include "../DLLImportExport.h"
+#include "../Data/PluginState.h"
 #include "IStatUpdater.h"
 #include "CustomTrainingState.h"
 
@@ -21,7 +22,10 @@ class GOALPERCENTAGECOUNTER_IMPORT_EXPORT CustomTrainingStateMachine
 {
 public:
 	/** Creates a new state machine for the given stat updater. */
-	CustomTrainingStateMachine(std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<IStatUpdater> statUpdater);
+	CustomTrainingStateMachine(
+		std::shared_ptr<CVarManagerWrapper> cvarManager, 
+		std::shared_ptr<IStatUpdater> statUpdater, 
+		std::shared_ptr<PluginState> pluginState);
 
 	/** Hooks to any events whic are related to state transitions */
 	void hookToEvents(const std::shared_ptr<GameWrapper>& gameWrapper);
@@ -53,10 +57,9 @@ private:
 
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows logging.
 	std::shared_ptr<IStatUpdater> _statUpdater; ///< Stores the object which keeps track of statistics.
+	std::shared_ptr<PluginState> _pluginState; ///< Stores other state parameters of the plugin, not related to the custom training state
 
 	CustomTrainingState _currentState; ///< Stores the currently active state
 	bool _goalWasScoredInCurrentAttempt = false; ///< True if a goal has been scored while in TrainingShotAttempt state.
 	bool _ballWasHitInCurrentAttempt = false; ///< True if the ball was hit at least once while in TrainingShotAttempt state.
-	int _currentRoundIndex = -1;	///< The index of the current round, -1 when not initialized
-	int _totalRounds = -1;		///< The total number of rounds in the current training back
 };

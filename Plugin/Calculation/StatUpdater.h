@@ -6,7 +6,6 @@
 #include "../DLLImportExport.h"
 #include "../Core/IStatUpdater.h"
 #include "../Data/ShotStats.h"
-#include "../Data/StatsData.h"
 #include "../Data/PluginState.h"
 
 class GOALPERCENTAGECOUNTER_IMPORT_EXPORT StatUpdater : public IStatUpdater
@@ -19,26 +18,24 @@ public:
 	);
 
 	// Inherited via IStatUpdater
+	void processAttempt() override;
 	void processGoal() override;
-	void processNewAttempt() override;
-	void processShotReset() override;
+	void processMiss() override;
 	void processInitialBallHit() override;
-	void processManualStatReset() override;
-	void handleTrainingPackLoad() override;
+	void processReset(int numberOfShots) override;
+	void updateData() override;
 
 private:
-	/** Increases the goal counter, updates streaks and recalculates percentages. */
+	/** Increases the goal counter and updates streaks. */
 	void handleGoal(StatsData& statsData);
-	/** Increases the attempt counter, updates streaks and recalculates percentages. */
-	void handleAttempt(StatsData& statsData, bool changePluginState);
-	/** Resets everything to zero. */
-	void reset();
+	/** Increases the miss counter and updates streaks. */
+	void handleMiss(StatsData& statsData);
 	/** Updates percentage values. */
 	void recalculatePercentages(StatsData& statsData);
-	/** Initializes the per shot vector */
-	void initStatsDataPerShot();
+		
+	ShotStats _internalShotStats; ///< A cache of the current stats (we don't use calculated data here, though)
+	std::shared_ptr<ShotStats> _externalShotStats;	///< The current stats as seen by everything outside of this class.
 
-	std::shared_ptr<ShotStats> _shotStats;		///< Statistics and data for shots taken in custom training
 	std::shared_ptr<PluginState> _pluginState;	///< The current state of the plugin
 };
 

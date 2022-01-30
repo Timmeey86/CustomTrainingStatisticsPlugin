@@ -15,6 +15,8 @@ TEST_F(StatUpdaterTestFixture, verify_fixture)
 	expectedStats.LongestMissStreak = 0;
 	expectedStats.Last50Shots.clear();
 
+	statUpdater->processReset(_pluginState->TotalRounds); // A reset is always sent when a new training pack is being loaded
+
 	expectTotalStats(expectedStats);
 	expectPerShotStats(expectedStats, 0);
 	expectPerShotStats(expectedStats, 1);
@@ -26,11 +28,12 @@ TEST_F(StatUpdaterTestFixture, new_attempt_increases_attempts)
 	PlayerStats defaultStats;
 	PlayerStats expectedStats;
 	expectedStats.Attempts = 1;
-	expectedStats.Last50Shots.push_back(false); // Currently, an attempt is pushed as false, and then changed to true if it is a goal
 	// Everything else should be default
 
 	// Act
-	statUpdater->processNewAttempt();
+	statUpdater->processReset(_pluginState->TotalRounds); // A reset is always sent when a new training pack is being loaded
+	statUpdater->processAttempt();
+	statUpdater->updateData();
 
 	// Assert
 	expectTotalStats(expectedStats);
@@ -50,9 +53,11 @@ TEST_F(StatUpdaterTestFixture, goal_attempt_increases_goals)
 	expectedStats.Last50Shots.push_back(true);
 
 	// Act
-	statUpdater->processNewAttempt();
+	statUpdater->processReset(_pluginState->TotalRounds); // A reset is always sent when a new training pack is being loaded
+	statUpdater->processAttempt();
 	statUpdater->processInitialBallHit(); // Need to touch the ball to shoot a goal, right?
 	statUpdater->processGoal();
+	statUpdater->updateData();
 
 	// Assert
 	expectTotalStats(expectedStats);
@@ -72,50 +77,13 @@ TEST_F(StatUpdaterTestFixture, miss_attempt_increases_misses)
 	expectedStats.Last50Shots.push_back(false);
 
 	// Act
-	statUpdater->processNewAttempt();
-	statUpdater->processShotReset();
+	statUpdater->processReset(_pluginState->TotalRounds); // A reset is always sent when a new training pack is being loaded
+	statUpdater->processAttempt();
+	statUpdater->processMiss();
+	statUpdater->updateData();
 
 	// Assert
 	expectTotalStats(expectedStats);
 	expectPerShotStats(expectedStats, 0);
-	expectPerShotStats(defaultStats, 1);
-}
-
-TEST_F(StatUpdaterTestFixture, manual_stat_reset_resets_everything)
-{
-	// Arrange
-	ASSERT_TRUE(_shotStats != nullptr);
-	ASSERT_GE(_shotStats->PerShotStats.size(), 2);
-
-	// Set arbitrary values in all stats data structures
-	auto& allShotStats = _shotStats->AllShotStats;
-	auto& firstShotStats = _shotStats->PerShotStats[0];
-	auto& secondShotStats = _shotStats->PerShotStats[1];
-	
-	auto fillShotStatsFunc = [](StatsData& statsData) {
-		statsData.Stats.Attempts = 42;
-		statsData.Stats.Goals = 42;
-		statsData.Stats.GoalStreakCounter = 42;
-		statsData.Stats.InitialHits = 42;
-		statsData.Stats.Last50Shots.push_back(false);
-		statsData.Stats.Last50Shots.push_back(true);
-		statsData.Stats.Last50Shots.push_back(true);
-		statsData.Stats.Last50Shots.push_back(false);
-		statsData.Stats.LongestGoalStreak = 42;
-		statsData.Stats.LongestMissStreak = 42;
-		statsData.Stats.MissStreakCounter = 42;
-	};
-	fillShotStatsFunc(allShotStats);
-	fillShotStatsFunc(firstShotStats);
-	fillShotStatsFunc(secondShotStats);
-
-	PlayerStats defaultStats;
-
-	// Act
-	statUpdater->processManualStatReset();
-
-	// Assert
-	expectTotalStats(defaultStats);
-	expectPerShotStats(defaultStats, 0);
 	expectPerShotStats(defaultStats, 1);
 }

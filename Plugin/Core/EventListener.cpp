@@ -13,27 +13,14 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 {
 	if (!statUpdater) { return; }
 
-	// Happens every tick
-	_gameWrapper->HookEvent("Function Engine.GameViewportClient.Tick", [this](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		ServerWrapper server = _gameWrapper->GetGameEventAsServer();
-		if (server.IsNull()) return;
-		BallWrapper ball = server.GetBall();
-		if (ball.IsNull()) return;
-
-		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
-	});
-
-	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater);
+	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater, _pluginState);
 	_stateMachine->hookToEvents(_gameWrapper);
 
 	// Allow resetting statistics to zero attempts/goals manually
 	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 		
-		// Note: Manual reset is allowed even with the plugin disabled, or during a goal replay (because why not?)
-		statUpdater->processManualStatReset();
+		statUpdater->processReset(_pluginState->TotalRounds);
 	}, "Reset the statistics.", PERMISSION_ALL);
 
 	// Happens when custom taining mode is loaded or restarted
@@ -42,8 +29,8 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 			if (!_pluginState->PluginIsEnabled) { return; }
 						
 			// Update the state machine with this event
-			TrainingEditorWrapper trainingWrapper(caller.memory_address);
-			if (!trainingWrapper.IsNull())
+			if (TrainingEditorWrapper trainingWrapper(caller.memory_address); 
+				!trainingWrapper.IsNull())
 			{
 				_stateMachine->processOnTrainingModeLoaded(trainingWrapper);
 			}
@@ -82,18 +69,9 @@ void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisp
 
 void EventListener::registerGameStateEvents()
 {
-	// REFACTOR - Directly within in EventListener (no need for an extra class)
-	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
-	_gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](const std::string&) {
-		_pluginState->GoalReplayIsActive = true;
-	});
-	// UNVERIFIED ASSUMPTION: There is no way for leaving ReplayPlayback without EndState being called (e.g. resetting a training pack during goal replay or whatever)
-	_gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](const std::string&) {
-		_pluginState->GoalReplayIsActive = false;
-	});
 }
 
 bool EventListener::statUpdatesShallBeSent()
 {
-	return _gameWrapper->IsInCustomTraining() && !_pluginState->GoalReplayIsActive && _pluginState->PluginIsEnabled;
+	return _gameWrapper->IsInCustomTraining() && _pluginState->PluginIsEnabled;
 }

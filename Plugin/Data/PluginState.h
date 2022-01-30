@@ -22,8 +22,6 @@ public:
 	PluginState() = default;
 
 	bool PluginIsEnabled = true;						///< True while the user has not disabled the plugin in the settings UI.
-	bool PreviousAttemptWasAGoal = false;				///< If this is still false when a new attempt is started, it means the previous shot was a miss.
-	bool GoalReplayIsActive = false;					///< True while a goal is being replayed. We ignore other events during that time.
 	bool IsMetric = true;								///< Whether or not the ball speed is in metric or imperial
 	bool AllShotStatsShallBeDisplayed = true;			///< The overlay for all shot stats will be displayed while true
 	bool PerShotStatsShallBeDisplayed = false;			///< The overlay for per shot stats will be displayed while true
@@ -43,9 +41,8 @@ public:
 	 *  False by default since this is only useful for edge cases like speed flip training.
 	 */
 	bool InitialBallHitsShallBeDisplayed = false;			
-	bool BallWasHitAtLeastOnceWithinCurrentAttempt = false;	///< True if the ball was hit at least once during the current attempt.
 	int CurrentRoundIndex = -1;								///< The index of the current round, -1 when not initialized
-	int TotalRounds = -1;									///< The total number of rounds in the current training back
+	int TotalRounds = -1;									///< The total number of rounds in the current training pack
 	int MenuStackSize = 0;									///< The total number of open menus (1 for the "Pause" Menu in custom training, 2 for "Settings" or "Change Mode/Match")
 
 	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, 1.0f, 2.0f, 1.5f }; ///< Stores the user-defined value for the overlay and text for all shots stats
