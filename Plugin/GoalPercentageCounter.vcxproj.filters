@@ -117,7 +117,7 @@
       <Filter>Data</Filter>
     </ClCompile>
     <ClCompile Include="Core\CustomTrainingStateMachine.cpp">
-      <Filter>Plugin Files</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

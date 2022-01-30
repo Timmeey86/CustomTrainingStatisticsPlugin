@@ -109,16 +109,8 @@ void CustomTrainingStateMachine::processsEventRoundChanged(TrainingEditorWrapper
 		// Automatically transition to the next state
 		setCurrentState(CustomTrainingState::PreparingNewShot);
 	}
-	else
-	{
-#if DEBUG_STATE_MACHINE
-		if (_currentRoundIndex == newRoundIndex)
-		{
-			// This could be a bug in the state machine: The player can't press reset before starting a new attempt, and can't switch to the same shot
-			_cvarManager->log("[Custom Training State Machine] [WARNING] Ignoring EventRoundChanged event while in " + to_string(_currentState));
-		}
-#endif
-	}
+	// Else: Ignore the event. This e.g. happens before OnTrainingModeLoaded
+
 	_currentRoundIndex = newRoundIndex;
 }
 
