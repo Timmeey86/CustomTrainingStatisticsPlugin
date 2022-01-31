@@ -23,7 +23,7 @@ void GoalPercentageCounter::onLoad()
 	initPluginSettingsUi(commandExecutionFunction, cvarManager);
 
 	// Initialize the stats summary page
-	initSummaryUi(cvarManager,_shotStats, _pluginState);
+	initSummaryUi(cvarManager, _shotStats, _pluginState);
 
 	// Create handler classes
 	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, _pluginState);

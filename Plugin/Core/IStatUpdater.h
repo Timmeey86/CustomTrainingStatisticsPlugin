@@ -11,27 +11,21 @@ protected:
 public:
 	virtual ~IStatUpdater() = default;
 
-	/** Handles a goal. */
+	/** Increases the attempt counter. */
+	virtual void processAttempt() = 0;
+
+	/** Increases the goal counter and adjusts streak counters. */
 	virtual void processGoal() = 0;
 
-	/** Handles the start of an attempt. */
-	virtual void processNewAttempt() = 0;
+	/** Increases the miss counter and adjusts streak counters.. */
+	virtual void processMiss() = 0;
 
-	// Possible future extension: Handles a miss (= a reset after the start of an attempt, without scoring a goal)
-	// Implementing this should increase liability and reduce complexity of the remaining code
-	// It would also make processShotReset() obsolete most likely
-	// virtual void processMiss() = 0;
-
-	/** Handles a shot reset. */
-	virtual void processShotReset() = 0;
-
-	/** Handles the initial touch of the ball (at most once per attempt). */
+	/** Increases the number of initial ball hits. */
 	virtual void processInitialBallHit() = 0;
 
-	/** Handles a stat reset by the user (or some code). */
-	virtual void processManualStatReset() = 0;
+	/** Handles a reset by the state machine or the user. */
+	virtual void processReset(int numberOfShots) = 0;
 
-	/** Handles loading of a new training pack. */
-	virtual void handleTrainingPackLoad() = 0;
-
+	/** Updates the ShotStats object which is being used by other classes. This should not be updated before calling this method. */
+	virtual void updateData() = 0;
 };

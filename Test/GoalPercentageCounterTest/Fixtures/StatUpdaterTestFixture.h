@@ -21,8 +21,6 @@ public:
 		statUpdater = std::make_shared<StatUpdater>(_shotStats, _pluginState);
 		_pluginState->TotalRounds = 2;
 		_pluginState->CurrentRoundIndex = 0;
-		_shotStats->PerShotStats.emplace_back();
-		_shotStats->PerShotStats.emplace_back();
 	}
 
 	void expectTotalStats(const PlayerStats& expectedStats) const;

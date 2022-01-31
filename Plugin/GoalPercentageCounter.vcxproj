@@ -71,7 +71,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;GOALPERCENTAGECOUNTER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;GOALPERCENTAGECOUNTER_EXPORTS;DEBUG_STATE_MACHINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -93,6 +93,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Calculation\StatUpdater.cpp" />
+    <ClCompile Include="Core\CustomTrainingStateMachine.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
     <ClCompile Include="Data\GoalSpeed.cpp" />
     <ClCompile Include="Data\RunningMean.cpp" />
@@ -124,6 +125,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calculation\StatUpdater.h" />
+    <ClInclude Include="Core\CustomTrainingStateMachine.h" />
+    <ClInclude Include="Core\CustomTrainingState.h" />
     <ClInclude Include="Core\EventListener.h" />
     <ClInclude Include="Core\IStatDisplay.h" />
     <ClInclude Include="Core\IStatUpdater.h" />

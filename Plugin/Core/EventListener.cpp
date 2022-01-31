@@ -13,84 +13,31 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 {
 	if (!statUpdater) { return; }
 
-	// Happens every tick
-	_gameWrapper->HookEvent("Function Engine.GameViewportClient.Tick", [this](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		ServerWrapper server = _gameWrapper->GetGameEventAsServer();
-		if (server.IsNull()) return;
-		BallWrapper ball = server.GetBall();
-		if (ball.IsNull()) return;
-
-		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
-	});
-
-	// Happens whenever a goal was scored
-	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		statUpdater->processGoal();
-	});
-
-	// Happens whenever the ball is being touched
-	_gameWrapper->HookEvent("Function TAGame.Ball_TA.OnCarTouch", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		// Remember if the ball was touched at least once within the current attempt
-		// This allows e.g. tracking the success of speedflip attempts with a close timer, independent of whether a goal was or wasn't scored
-		if (!_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt)
-		{
-			_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = true;
-			statUpdater->processInitialBallHit();
-		}
-	});
-
-	// Happens whenever a button was pressed after loading a new shot
-	_gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		_pluginState->BallWasHitAtLeastOnceWithinCurrentAttempt = false;
-		statUpdater->processNewAttempt();
-	});
-
-	// Happens whenever a shot is changed or loaded in custom training
-	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function TAGame.GameEvent_TrainingEditor_TA.EventRoundChanged",
-		[this](ActorWrapper caller, void*, const std::string&) {
-
-			TrainingEditorWrapper trainingWrapper(caller.memory_address);
-			_pluginState->CurrentRoundIndex = trainingWrapper.GetActiveRoundNumber();
-			_pluginState->TotalRounds = trainingWrapper.GetTotalRounds();
-		});
-
-	// Happens whenever a car spawns, i.e. usually a shot reset
-	_gameWrapper->HookEvent("Function TAGame.GameEvent_TA.AddCar", [this, statUpdater](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
-
-		// Future extension: Process miss, unless a goal was scored since the previous attempt
-		statUpdater->processShotReset();
-	});
+	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater, _pluginState);
+	_stateMachine->hookToEvents(_gameWrapper);
 
 	// Allow resetting statistics to zero attempts/goals manually
 	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 		
-		// Note: Manual reset is allowed even with the plugin disabled, or during a goal replay (because why not?)
-		statUpdater->processManualStatReset();
+		statUpdater->processReset(_pluginState->TotalRounds);
 	}, "Reset the statistics.", PERMISSION_ALL);
 
-	// Happens when custom taining mode is loaded or restarted, but the total rounds is loaded
-	// Reset automatically when loading a new training pack, or when resetting it
+	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
 			if (!_pluginState->PluginIsEnabled) { return; }
+						
+			// Update the state machine with this event
+			if (TrainingEditorWrapper trainingWrapper(caller.memory_address); 
+				!trainingWrapper.IsNull())
+			{
+				_stateMachine->processOnTrainingModeLoaded(trainingWrapper);
+			}
 
-			// Note: While loading a training pack, we are not in custom training, so we can't use statUpdatesShallBeSent() here 
-			// Note may not be true from since this was changed from OnInit to OnTrainingModeLoaded
-
-			TrainingEditorWrapper trainingWrapper(caller.memory_address);
-			_pluginState->TotalRounds = trainingWrapper.GetTotalRounds();
-
-			statUpdater->handleTrainingPackLoad();
+			// Reset other state variables
+			_pluginState->MenuStackSize = 0;
+			_pluginState->IsMetric = _gameWrapper->GetbMetric();
 		});
 
 	// Happens whenever a menu is opened (also when opening a nested menu)
@@ -105,11 +52,6 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 			_pluginState->MenuStackSize--;
 		}
 		_pluginState->IsMetric = _gameWrapper->GetbMetric(); // Check for change of metric setting
-	});
-	// Hook to the start of a training mode again so the menu stack counter is reset
-	_gameWrapper->HookEvent("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded", [this](const std::string&) {
-		_pluginState->MenuStackSize = 0;
-		_pluginState->IsMetric = _gameWrapper->GetbMetric();
 	});
 }
 
@@ -127,18 +69,9 @@ void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisp
 
 void EventListener::registerGameStateEvents()
 {
-	// REFACTOR - Directly within in EventListener (no need for an extra class)
-	// Allow ignoring events which occur during a goal replay, it would otherwise spam us with goal events, and one reset event
-	_gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", [this](const std::string&) {
-		_pluginState->GoalReplayIsActive = true;
-	});
-	// UNVERIFIED ASSUMPTION: There is no way for leaving ReplayPlayback without EndState being called (e.g. resetting a training pack during goal replay or whatever)
-	_gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", [this](const std::string&) {
-		_pluginState->GoalReplayIsActive = false;
-	});
 }
 
 bool EventListener::statUpdatesShallBeSent()
 {
-	return _gameWrapper->IsInCustomTraining() && !_pluginState->GoalReplayIsActive && _pluginState->PluginIsEnabled;
+	return _gameWrapper->IsInCustomTraining() && _pluginState->PluginIsEnabled;
 }
