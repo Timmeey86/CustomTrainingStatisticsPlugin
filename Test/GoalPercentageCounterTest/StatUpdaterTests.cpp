@@ -87,3 +87,39 @@ TEST_F(StatUpdaterTestFixture, miss_attempt_increases_misses)
 	expectPerShotStats(expectedStats, 0);
 	expectPerShotStats(defaultStats, 1);
 }
+
+TEST_F(StatUpdaterTestFixture, the_51st_goal_removes_oldest_last_50_shots_entry)
+{
+	// Arrange
+	PlayerStats defaultStats;
+	PlayerStats expectedStats;
+	expectedStats.Attempts = 51;
+	expectedStats.Goals = 50;
+	expectedStats.GoalStreakCounter = 50;
+	expectedStats.InitialHits = 50;
+	expectedStats.LongestGoalStreak = 50;
+	expectedStats.LongestMissStreak = 1;
+	expectedStats.MissStreakCounter = 0;
+	
+	// Act
+	statUpdater->processReset(_pluginState->TotalRounds); // A reset is always sent when a new training pack is being loaded
+
+	// Record one miss and then 50 goals
+	statUpdater->processAttempt();
+	statUpdater->processMiss();
+	// We don't push the miss to Last50Shots since we expect it to be gone after 50 goals
+	
+	for (auto index = 0; index < 50; index++)
+	{
+		statUpdater->processAttempt();
+		statUpdater->processInitialBallHit();
+		statUpdater->processGoal();
+		expectedStats.Last50Shots.push_back(true);
+	}
+
+	statUpdater->updateData();
+
+	expectTotalStats(expectedStats);
+	expectPerShotStats(expectedStats, 0);
+	expectPerShotStats(defaultStats, 1);
+}
