@@ -17,10 +17,6 @@ CustomTrainingStateMachine::CustomTrainingStateMachine(
 
 void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>& gameWrapper)
 {
-	// TODO: Reset the state machine to the current shot if the plugin is reloaded while already in custom training
-	// TODO: Do a final calculation when entering the training result screen, or going back to the main menu. 
-	//       That way, the summary window will be up to date when it gets opened after that (or is already open)
-
 	// Happens whenever a goal was scored
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, gameWrapper](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
@@ -54,7 +50,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 
 		TrainingEditorWrapper trainingWrapper(caller.memory_address);
-		processsEventRoundChanged(trainingWrapper);
+		processEventRoundChanged(trainingWrapper);
 	});
 
 	// Happens whenever the current custom training map gets unloaded, e.g. because of leaving to the main menu or loading a different training pack
@@ -65,10 +61,21 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		if (_currentState == CustomTrainingState::AttemptInProgress)
 		{
 			TrainingEditorWrapper trainingWrapper(caller.memory_address);
-			processsEventRoundChanged(trainingWrapper);
+			processEventRoundChanged(trainingWrapper);
 		}
 	});
 
+	// Make sure the state machine has been properly initialized when the user (or the VS plugin project) reloads the plugin while being in custom training
+	if (gameWrapper->IsInCustomTraining())
+	{
+		auto serverWrapper = gameWrapper->GetGameEventAsServer();
+		if (serverWrapper.IsNull()) { return; }
+
+		auto trainingWrapper = TrainingEditorWrapper(serverWrapper.memory_address);
+		processOnTrainingModeLoaded(trainingWrapper);
+		processEventRoundChanged(trainingWrapper);
+	}
+	
 	// Note: The calling class hooks into OnTrainingModeLoaded
 }
 
@@ -83,7 +90,7 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 	_statUpdater->processReset(_pluginState->TotalRounds);
 }
 
-void CustomTrainingStateMachine::processsEventRoundChanged(TrainingEditorWrapper& trainingWrapper)
+void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper& trainingWrapper)
 {
 	auto newRoundIndex = trainingWrapper.GetActiveRoundNumber();
 	if (_currentState == CustomTrainingState::Resetting)

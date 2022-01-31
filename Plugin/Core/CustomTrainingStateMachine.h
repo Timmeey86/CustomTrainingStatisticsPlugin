@@ -44,7 +44,7 @@ private:
 	 *
 	 * \param	trainingWrapper		provides access to the amount of total rounds etc. Not const since getters are not const in the SDK.
 	 **/
-	void processsEventRoundChanged(TrainingEditorWrapper& trainingWrapper);
+	void processEventRoundChanged(TrainingEditorWrapper& trainingWrapper);
 	/** Processes (or ignores) a TrainingShotAttempt event. */
 	void processTrainingShotAttempt();
 	/** Processes (or ignores) an OnCarTouch event. */
