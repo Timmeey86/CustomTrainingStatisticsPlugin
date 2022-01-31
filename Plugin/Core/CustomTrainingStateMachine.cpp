@@ -57,6 +57,18 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		processsEventRoundChanged(trainingWrapper);
 	});
 
+	// Happens whenever the current custom training map gets unloaded, e.g. because of leaving to the main menu or loading a different training pack
+	gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function TAGame.GameEvent_TrainingEditor_TA.Destroyed",
+		[this, gameWrapper](ActorWrapper caller, void*, const std::string&) {
+
+		// Finish the current attempt if an attempt was started, otherwise ignore the event
+		if (_currentState == CustomTrainingState::AttemptInProgress)
+		{
+			TrainingEditorWrapper trainingWrapper(caller.memory_address);
+			processsEventRoundChanged(trainingWrapper);
+		}
+	});
+
 	// Note: The calling class hooks into OnTrainingModeLoaded
 }
 
