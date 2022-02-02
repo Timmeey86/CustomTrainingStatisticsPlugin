@@ -1,4 +1,4 @@
-# Goal Percentage Counter (Bakkesmod Plugin for Rocket League)
+# Custom Training Statistics (Bakkesmod Plugin for Rocket League)
 
 This is a highly customizable plugin for https://www.bakkesmod.com/index.php which can help you train for consistency in custom training.
 It does so by gathering statistics on the amount of attempts and shots you made, and displays various percentages.
@@ -17,6 +17,7 @@ It is currently developed by [Timmeey86](https://github.com/Timmeey86) and [Bran
 
 - Displaying the total statistics of a longer custom training session
 - Displaying separate statistics for each shot
+- Displaying a summary of your statistics on demand
 - Customizing the overlay to make it as pleasant and as little annoying as possible for you
 
 # Known Limitations
