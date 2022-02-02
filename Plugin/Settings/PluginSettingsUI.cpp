@@ -15,7 +15,7 @@ void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string
 
 std::string PluginSettingsUI::GetPluginName()
 {
-	return "Goal Percentage Counter";
+	return "Custom Training Stats";
 }
 
 void PluginSettingsUI::SetImGuiContext(uintptr_t ctx)
@@ -96,11 +96,18 @@ void PluginSettingsUI::createDropdownMenu(const SettingsDefinition& settingsDefi
 //  f2 -> plugins -> GoalPercentageCounter
 void PluginSettingsUI::RenderSettings()
 {
-	ImGui::TextUnformatted("Goal Percentage Counter plugin settings");
+	ImGui::TextUnformatted("Plugin settings");
 
 	if (ImGui::CollapsingHeader("General"))
 	{
 		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
+
+		ImGui::Separator();
+
+		ImGui::Text("Bindings (this creates bindings in the Bindings tab)");
+		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, 127);
+
+		ImGui::Separator();
 
 		// Add a button for resetting statistics
 		if (ImGui::Button("Reset Statistics"))
@@ -109,7 +116,7 @@ void PluginSettingsUI::RenderSettings()
 		}
 	}
 
-	if (ImGui::CollapsingHeader("Display"))
+	if (ImGui::CollapsingHeader("Stats"))
 	{
 		// Add an option for enabling or disabling the Attempts/Goals display
 		createCheckbox(GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef);
@@ -125,8 +132,9 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef);
 
-		ImGui::Separator();
-
+	}
+	if (ImGui::CollapsingHeader("Appearance"))
+	{
 		// Add coloring options (Both panels will use the same colors)
 		createColorEdit(GoalPercentageCounterSettings::PanelColorDef);
 		createColorEdit(GoalPercentageCounterSettings::FontColorDef);
@@ -145,10 +153,5 @@ void PluginSettingsUI::RenderSettings()
 		createIntSlider(GoalPercentageCounterSettings::PerShotXPositionDef);
 		createIntSlider(GoalPercentageCounterSettings::PerShotYPositionDef);
 		createFloatSlider(GoalPercentageCounterSettings::PerShotFontSizeDef);
-
-		ImGui::Separator();
-
-		ImGui::Text("Bindings (this creates bindings in the Bindings tab)");
-		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, 127);
 	}
 }

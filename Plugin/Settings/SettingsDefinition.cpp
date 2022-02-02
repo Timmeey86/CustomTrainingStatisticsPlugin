@@ -197,7 +197,7 @@ const SettingsDefinition GoalPercentageCounterSettings::FontColorDef = {
 
 const SettingsDefinition GoalPercentageCounterSettings::SummaryKeybindingDef = {
 	"goalpercentagecounter_summary_keybinding",
-	"Statistics Summary",
+	"Open/Close Statistics Summary",
 	"Keybinding to toggle the summary window",
 	0.0f,
 	static_cast<float>(GoalPercentageCounterSettings::KeybindingsArraySize - 1),

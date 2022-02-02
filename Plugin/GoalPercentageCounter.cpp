@@ -5,6 +5,8 @@
 #include "Core/EventListener.h"
 #include "Settings/SettingsRegistration.h"
 
+// Note: In order to keep the automatic update chain working for users, this plugin is still called "Goal Percentage Counter" internally.
+//       It will however display as "Custom Training Statistics" in the settings menu.
 BAKKESMOD_PLUGIN(GoalPercentageCounter, "Goal Percentage Counter", plugin_version, PLUGINTYPE_CUSTOM_TRAINING)
 
 void GoalPercentageCounter::onLoad()
