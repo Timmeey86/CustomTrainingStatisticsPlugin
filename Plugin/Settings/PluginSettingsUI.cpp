@@ -102,6 +102,11 @@ void PluginSettingsUI::RenderSettings()
 	{
 		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
 
+		if (ImGui::Button("Restore Last Session"))
+		{
+			_sendNotifierFunc(TriggerNames::RestoreStatistics);
+		}
+
 		ImGui::Separator();
 
 		ImGui::Text("Bindings (this creates bindings in the Bindings tab)");

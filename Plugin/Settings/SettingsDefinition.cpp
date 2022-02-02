@@ -2,7 +2,7 @@
 #include "SettingsDefinition.h"
 
 const SettingsDefinition GoalPercentageCounterSettings::EnableFlagDef = {
-	"goalpercentagecounter_enable",
+	"customtrainingstatistics_enable",
 	"Enable Plugin",
 	"Toggle Goal Percentage Counter Plugin",
 	.0f,
@@ -11,7 +11,7 @@ const SettingsDefinition GoalPercentageCounterSettings::EnableFlagDef = {
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayAllShotStats = {
-	"goalpercentagecounter_display_all_shot_stats",
+	"customtrainingstatistics_display_all_shot_stats",
 	"Display All Shots Statistics",
 	"Displays the overlay which shows statistics for every shot recorded in the training session",
 	.0f,
@@ -20,7 +20,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayAllShotStats = {
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayPerShotStats = {
-	"goalpercentagecounter_display_per_shot_stats",
+	"customtrainingstatistics_display_per_shot_stats",
 	"Display Per Shot Statistics",
 	"Displays the overlay which shows statistics for the current shot in the training session",
 	.0f,
@@ -30,7 +30,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayPerShotStats = {
 
 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef = {
-	"goalpercentagecounter_display_attempts_and_goals",
+	"customtrainingstatistics_display_attempts_and_goals",
 	"Attempts/Goals",
 	"Toggle display of attempts and goals in the stat display",
 	.0f,
@@ -38,7 +38,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayAttemptsAndGoalsD
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayInitialBallHitsDef = {
-	"goalpercentagecounter_track_initial_hits",
+	"customtrainingstatistics_track_initial_hits",
 	"Display initial ball hits",
 	"Allows checking consistency with mechanics where the goal is to touch the ball, e.g. speed flip training packs",
 	.0f,
@@ -46,7 +46,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayInitialBallHitsDe
 	".0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef = {
-	"goalpercentagecounter_display_total_success_rate",
+	"customtrainingstatistics_display_total_success_rate",
 	"Current Miss/Goal Streaks",
 	"Toggle display of current miss and goal streaks in the stat display",
 	.0f,
@@ -54,7 +54,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayTotalSuccessRateDef = {
-	"goalpercentagecounter_display_current_streaks",
+	"customtrainingstatistics_display_current_streaks",
 	"Total Success Rate",
 	"Toggle display of total success rate in the stat display",
 	.0f,
@@ -62,7 +62,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayTotalSuccessRateD
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayLongestStreaksDef = {
-	"goalpercentagecounter_display_longest_streaks",
+	"customtrainingstatistics_display_longest_streaks",
 	"Longest Miss/Goal Streaks",
 	"Toggle display of longest miss and goal streaks in the stat display",
 	.0f,
@@ -70,7 +70,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayLongestStreaksDef
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayPeakInfoDef = {
-	"goalpercentagecounter_display_peak_info",
+	"customtrainingstatistics_display_peak_info",
 	"Peak Success Rate (Minimum of 20 Attempts)",
 	"Toggle display of peak success rate and peak shot number in the stat display",
 	.0f,
@@ -78,7 +78,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayPeakInfoDef = {
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayLastNShotPercentageDef = {
-	"goalpercentagecounter_display_last_n_shots",
+	"customtrainingstatistics_display_last_n_shots",
 	"Last N Shots",
 	"Toggle display of the last n shots percentage in the stat display",
 	.0f,
@@ -86,7 +86,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayLastNShotPercenta
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef = {
-	"goalpercentagecounter_display_most_recent_goal_speed",
+	"customtrainingstatistics_display_most_recent_goal_speed",
 	"Most Recent Goal Speed",
 	"Toggle display of the most recent goal speed in the stat display",
 	.0f,
@@ -94,7 +94,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMostRecentGoalSpe
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef = {
-	"goalpercentagecounter_display_max_goal_speed",
+	"customtrainingstatistics_display_max_goal_speed",
 	"Maximum Goal Speed",
 	"Toggle display of the maximum goal speed in the stat display",
 	.0f,
@@ -102,7 +102,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef =
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayMinGoalSpeedDef = {
-	"goalpercentagecounter_display_min_goal_speed",
+	"customtrainingstatistics_display_min_goal_speed",
 	"Minimum Goal Speed",
 	"Toggle display of the minimum goal speed in the stat display",
 	.0f,
@@ -110,7 +110,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMinGoalSpeedDef =
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef = {
-	"goalpercentagecounter_display_median_goal_speed",
+	"customtrainingstatistics_display_median_goal_speed",
 	"Median Goal Speed",
 	"Toggle display of the median goal speed in the stat display",
 	.0f,
@@ -118,7 +118,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMedianGoalSpeedDe
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef = {
-	"goalpercentagecounter_display_mean_goal_speed",
+	"customtrainingstatistics_display_mean_goal_speed",
 	"Mean Goal Speed",
 	"Toggle display of the mean goal speed in the stat display",
 	.0f,
@@ -128,7 +128,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef 
 
 
 const SettingsDefinition GoalPercentageCounterSettings::AllShotXPositionDef = {
-	"goalpercentagecounter_all_shot_overlay_x_position",
+	"customtrainingstatistics_all_shot_overlay_x_position",
 	"All Shots Overlay X Position",
 	"",
 	.0f,
@@ -136,7 +136,7 @@ const SettingsDefinition GoalPercentageCounterSettings::AllShotXPositionDef = {
 	"5.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::AllShotYPositionDef = {
-	"goalpercentagecounter_all_shot_overlay_y_position",
+	"customtrainingstatistics_all_shot_overlay_y_position",
 	"All Shots Overlay Y Position",
 	"",
 	.0f,
@@ -144,7 +144,7 @@ const SettingsDefinition GoalPercentageCounterSettings::AllShotYPositionDef = {
 	"205.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::AllShotFontSizeDef = {
-	"goalpercentagecounter_all_shot_font_size_factor",
+	"customtrainingstatistics_all_shot_font_size_factor",
 	"All Shots Text Size Factor",
 	"",
 	0.5f,
@@ -153,7 +153,7 @@ const SettingsDefinition GoalPercentageCounterSettings::AllShotFontSizeDef = {
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::PerShotXPositionDef = {
-	"goalpercentagecounter_per_shot_overlay_x_position",
+	"customtrainingstatistics_per_shot_overlay_x_position",
 	"Per Shot Overlay X Position",
 	"",
 	.0f,
@@ -161,7 +161,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PerShotXPositionDef = {
 	"5.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::PerShotYPositionDef = {
-	"goalpercentagecounter_per_shot_overlay_y_position",
+	"customtrainingstatistics_per_shot_overlay_y_position",
 	"Per Shot Overlay Y Position",
 	"",
 	.0f,
@@ -169,7 +169,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PerShotYPositionDef = {
 	"557.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::PerShotFontSizeDef = {
-	"goalpercentagecounter_per_shot_font_height_factor",
+	"customtrainingstatistics_per_shot_font_height_factor",
 	"Per Shot Text Size Factor",
 	"",
 	0.5f,
@@ -178,7 +178,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PerShotFontSizeDef = {
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::PanelColorDef = {
-	"goalpercentagecounter_panel_color",
+	"customtrainingstatistics_panel_color",
 	"Color of the background panel",
 	"",
 	std::optional<float>(),
@@ -187,7 +187,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PanelColorDef = {
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::FontColorDef = {
-	"goalpercentagecounter_text_color",
+	"customtrainingstatistics_text_color",
 	"Color of the text",
 	"",
 	std::optional<float>(),
@@ -196,7 +196,7 @@ const SettingsDefinition GoalPercentageCounterSettings::FontColorDef = {
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::SummaryKeybindingDef = {
-	"goalpercentagecounter_summary_keybinding",
+	"customtrainingstatistics_summary_keybinding",
 	"Open/Close Statistics Summary",
 	"Keybinding to toggle the summary window",
 	0.0f,

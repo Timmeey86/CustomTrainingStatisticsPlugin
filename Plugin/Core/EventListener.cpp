@@ -23,6 +23,13 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		statUpdater->processReset(_pluginState->TotalRounds);
 	}, "Reset the statistics.", PERMISSION_ALL);
 
+	// Allow resetting statistics to zero attempts/goals manually
+	_cvarManager->registerNotifier(TriggerNames::RestoreStatistics, [this, statUpdater](const std::vector<std::string>&) {
+		if (!_gameWrapper->IsInCustomTraining()) { return; }
+
+		statUpdater->restoreLastSession();
+	}, "Restore the statistics.", PERMISSION_ALL);
+
 	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {

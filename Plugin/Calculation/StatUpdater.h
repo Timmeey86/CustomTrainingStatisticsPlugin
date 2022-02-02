@@ -24,6 +24,7 @@ public:
 	void processInitialBallHit() override;
 	void processReset(int numberOfShots) override;
 	void updateData() override;
+	void restoreLastSession() override;
 
 private:
 	/** Increases the goal counter and updates streaks. */
@@ -34,6 +35,7 @@ private:
 	void recalculatePercentages(StatsData& statsData);
 		
 	ShotStats _internalShotStats; ///< A cache of the current stats (we don't use calculated data here, though)
+	ShotStats _previousStats; ///< Stores the stats of the previous session. This allows restoring them, e.g. if the session ended by accident.
 	std::shared_ptr<ShotStats> _externalShotStats;	///< The current stats as seen by everything outside of this class.
 
 	std::shared_ptr<PluginState> _pluginState;	///< The current state of the plugin

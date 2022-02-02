@@ -136,7 +136,7 @@ std::string SummaryUI::GetMenuName()
 
 std::string SummaryUI::GetMenuTitle()
 {
-	return "Goal Percentage Counter Summary";
+	return "Custom Training Statistics Summary";
 }
 
 void SummaryUI::SetImGuiContext(uintptr_t ctx)
