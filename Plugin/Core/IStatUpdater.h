@@ -28,4 +28,7 @@ public:
 
 	/** Updates the ShotStats object which is being used by other classes. This should not be updated before calling this method. */
 	virtual void updateData() = 0;
+
+	/** Restores any previously saved settings. */
+	virtual void restoreLastSession() = 0;
 };

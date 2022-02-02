@@ -61,6 +61,10 @@ void StatUpdater::processInitialBallHit()
 
 void StatUpdater::processReset(int numberOfShots)
 {
+	// Store the current session
+	_previousStats.AllShotStats = _externalShotStats->AllShotStats;
+	_previousStats.PerShotStats = std::vector<StatsData>(_externalShotStats->PerShotStats);
+
 	// Reset total stats
 	_internalShotStats.AllShotStats.Stats = PlayerStats();
 	_internalShotStats.AllShotStats.Data = CalculatedData();
@@ -90,6 +94,13 @@ void StatUpdater::updateData()
 		_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex) = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
 		recalculatePercentages(_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex));
 	}
+}
+
+void StatUpdater::restoreLastSession()
+{
+	_internalShotStats.AllShotStats = _previousStats.AllShotStats;
+	_internalShotStats.PerShotStats = std::vector<StatsData>(_previousStats.PerShotStats);
+	updateData();
 }
 
 double getPercentageValue(double attempts, double goals)
