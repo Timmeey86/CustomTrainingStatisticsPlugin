@@ -6,10 +6,12 @@
 
 CustomTrainingStateMachine::CustomTrainingStateMachine(
 	std::shared_ptr<CVarManagerWrapper> cvarManager, 
-	std::shared_ptr<IStatUpdater> statUpdater, 
+	std::shared_ptr<IStatUpdater> statUpdater,
+	std::shared_ptr<IStatWriter> statWriter,
 	std::shared_ptr<PluginState> pluginState)
 	: _cvarManager( cvarManager )
 	, _statUpdater( statUpdater )
+	, _statWriter( statWriter )
 	, _pluginState( pluginState )
 {
 	_currentState = CustomTrainingState::NotInCustomTraining;
@@ -88,6 +90,10 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 
 	// The player reloaded the same, or loaded a different training pack => Reset statistics
 	_statUpdater->processReset(_pluginState->TotalRounds);
+
+	// Initialize the data storage (most likely a file in the file system)
+	_statWriter->initializeStorage(trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString());
+	_statWriter->writeData();
 }
 
 void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper& trainingWrapper)
@@ -129,6 +135,9 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 	// Else: Ignore the event. This e.g. happens before OnTrainingModeLoaded
 
 	_pluginState->CurrentRoundIndex = newRoundIndex;
+	
+	// Store data at the begin of every round so we can try to restore data after a crash
+	_statWriter->writeData();
 }
 
 void CustomTrainingStateMachine::processTrainingShotAttempt()

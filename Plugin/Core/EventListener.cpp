@@ -9,11 +9,11 @@ EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shar
 {
 }
 
-void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpdater )
+void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter )
 {
 	if (!statUpdater) { return; }
 
-	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater, _pluginState);
+	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater, statWriter, _pluginState);
 	_stateMachine->hookToEvents(_gameWrapper);
 
 	// Allow resetting statistics to zero attempts/goals manually

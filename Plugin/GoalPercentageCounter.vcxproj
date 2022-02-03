@@ -121,6 +121,7 @@
     <ClCompile Include="Settings\PluginSettingsUI.cpp" />
     <ClCompile Include="Settings\SettingsDefinition.cpp" />
     <ClCompile Include="Settings\SettingsRegistration.cpp" />
+    <ClCompile Include="Storage\StatFileWriter.cpp" />
     <ClCompile Include="Summary\SummaryUI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +131,7 @@
     <ClInclude Include="Core\EventListener.h" />
     <ClInclude Include="Core\IStatDisplay.h" />
     <ClInclude Include="Core\IStatUpdater.h" />
+    <ClInclude Include="Core\IStatWriter.h" />
     <ClInclude Include="Data\CalculatedData.h" />
     <ClInclude Include="Data\GoalSpeed.h" />
     <ClInclude Include="Data\PlayerStats.h" />
@@ -159,6 +161,7 @@
     <ClInclude Include="Settings\PluginSettingsUI.h" />
     <ClInclude Include="Settings\SettingsDefinition.h" />
     <ClInclude Include="Settings\SettingsRegistration.h" />
+    <ClInclude Include="Storage\StatFileWriter.h" />
     <ClInclude Include="Summary\SummaryUI.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>

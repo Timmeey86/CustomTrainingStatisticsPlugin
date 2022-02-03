@@ -18,7 +18,7 @@ public:
 	EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState);
 
 	/** Hooks into events which are supposed to update statistics. */
-	void registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater);
+	void registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter);
 	
 	/** Hooks into events related to rendering a UI to the user. */
 	void registerRenderEvents(std::shared_ptr<IStatDisplay> statDisplay);
