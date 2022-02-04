@@ -125,6 +125,9 @@
     <ClCompile Include="Storage\StatFileWriter.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
+    <ClCompile Include="Storage\StatFileDefs.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -242,6 +245,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Storage\StatFileWriter.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\StatFileDefs.h">
       <Filter>Storage</Filter>
     </ClInclude>
   </ItemGroup>

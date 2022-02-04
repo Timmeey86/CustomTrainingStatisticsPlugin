@@ -121,6 +121,7 @@
     <ClCompile Include="Settings\PluginSettingsUI.cpp" />
     <ClCompile Include="Settings\SettingsDefinition.cpp" />
     <ClCompile Include="Settings\SettingsRegistration.cpp" />
+    <ClCompile Include="Storage\StatFileDefs.cpp" />
     <ClCompile Include="Storage\StatFileWriter.cpp" />
     <ClCompile Include="Summary\SummaryUI.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Settings\SettingsDefinition.h" />
     <ClInclude Include="Settings\SettingsRegistration.h" />
     <ClInclude Include="Storage\StatFileWriter.h" />
+    <ClInclude Include="Storage\StatFileDefs.h" />
     <ClInclude Include="Summary\SummaryUI.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
