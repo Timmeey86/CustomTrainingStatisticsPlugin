@@ -38,10 +38,6 @@ void StatFileWriter::initializeStorage(const std::string& trainingPackCode)
 	std::ostringstream stringStream;
 	stringStream << _gameWrapper->GetBakkesModPath().u8string() << u8"\\data\\CustomTrainingStatistics\\" << trainingPackCode;
 
-	// TODO:
-	// - Actually write stats
-	// - Write version number
-	// - Implement reader
 	auto folderPath = std::filesystem::u8path(stringStream.str());
 	if (!std::filesystem::exists(folderPath))
 	{

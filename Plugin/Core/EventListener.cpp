@@ -9,7 +9,7 @@ EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shar
 {
 }
 
-void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter )
+void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter)
 {
 	if (!statUpdater) { return; }
 

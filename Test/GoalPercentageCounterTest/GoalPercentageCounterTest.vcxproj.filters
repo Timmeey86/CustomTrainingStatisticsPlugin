@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Fixtures">
       <UniqueIdentifier>{efe6ecf9-de8e-4706-8e05-e2617868f990}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Mocks">
+      <UniqueIdentifier>{334fa9d7-a8eb-43da-b44c-ec9bd729dc25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounterTest.cpp">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="Fixtures\RunningMedianTestFixture.h">
       <Filter>Source Files\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="Mocks\IStatReaderMock.h">
+      <Filter>Source Files\Mocks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

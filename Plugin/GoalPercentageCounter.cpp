@@ -5,6 +5,7 @@
 #include "Core/EventListener.h"
 #include "Settings/SettingsRegistration.h"
 #include "Storage/StatFileWriter.h"
+#include "Storage/StatFileReader.h"
 
 // Note: In order to keep the automatic update chain working for users, this plugin is still called "Goal Percentage Counter" internally.
 //       It will however display as "Custom Training Statistics" in the settings menu.
@@ -29,7 +30,8 @@ void GoalPercentageCounter::onLoad()
 	initSummaryUi(cvarManager, _shotStats, _pluginState);
 
 	// Create handler classes
-	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, _pluginState);
+	auto statReader = std::make_shared<StatFileReader>(gameWrapper);
+	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, _pluginState, statReader);
 
 	// Enable rendering of output
 	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, _pluginState);

@@ -65,6 +65,9 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 			TrainingEditorWrapper trainingWrapper(caller.memory_address);
 			processEventRoundChanged(trainingWrapper);
 		}
+
+		// Set the training pack code to empty so a click on "Restore" won't do anything
+		_statUpdater->publishTrainingPackCode({});
 	});
 
 	// Make sure the state machine has been properly initialized when the user (or the VS plugin project) reloads the plugin while being in custom training
@@ -92,8 +95,11 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 	_statUpdater->processReset(_pluginState->TotalRounds);
 
 	// Initialize the data storage (most likely a file in the file system)
-	_statWriter->initializeStorage(trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString());
+	auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+	_statWriter->initializeStorage(trainingPackCode);
 	_statWriter->writeData();
+
+	_statUpdater->publishTrainingPackCode(trainingPackCode);
 }
 
 void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper& trainingWrapper)

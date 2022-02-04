@@ -3,9 +3,11 @@
 
 StatUpdater::StatUpdater(
 	std::shared_ptr<ShotStats> shotStats,
-	std::shared_ptr<PluginState> pluginState)
-	: _pluginState(pluginState)
-	, _externalShotStats(shotStats)
+	std::shared_ptr<PluginState> pluginState,
+	std::shared_ptr<IStatReader> statReader)
+	: _externalShotStats(shotStats)
+	, _pluginState(pluginState)
+	, _statReader(statReader)
 {
 }
 
@@ -61,10 +63,6 @@ void StatUpdater::processInitialBallHit()
 
 void StatUpdater::processReset(int numberOfShots)
 {
-	// Store the current session
-	_previousStats.AllShotStats = _externalShotStats->AllShotStats;
-	_previousStats.PerShotStats = std::vector<StatsData>(_externalShotStats->PerShotStats);
-
 	// Reset total stats
 	_internalShotStats.AllShotStats.Stats = PlayerStats();
 	_internalShotStats.AllShotStats.Data = CalculatedData();
@@ -98,9 +96,20 @@ void StatUpdater::updateData()
 
 void StatUpdater::restoreLastSession()
 {
-	_internalShotStats.AllShotStats = _previousStats.AllShotStats;
-	_internalShotStats.PerShotStats = std::vector<StatsData>(_previousStats.PerShotStats);
-	updateData();
+	if (_trainingPackCode.empty()) { return; }
+	auto resourcePaths = _statReader->getAvailableResourcePaths(_trainingPackCode);
+	if (!resourcePaths.empty())
+	{
+		auto stats = _statReader->readStats(resourcePaths.front());
+		_internalShotStats.AllShotStats = stats.AllShotStats;
+		_internalShotStats.PerShotStats = std::vector<StatsData>(stats.PerShotStats);
+		updateData();
+	}
+}
+
+void StatUpdater::publishTrainingPackCode(const std::string& trainingPackCode)
+{
+	_trainingPackCode = trainingPackCode;
 }
 
 double getPercentageValue(double attempts, double goals)
@@ -163,7 +172,7 @@ void StatUpdater::handleMiss(StatsData& statsData)
 	statsData.Stats.Last50Shots.push_back(false);
 	statsData.Stats.GoalStreakCounter = 0;
 	statsData.Stats.MissStreakCounter++;
-		
+
 	if (statsData.Stats.MissStreakCounter > statsData.Stats.LongestMissStreak)
 	{
 		statsData.Stats.LongestMissStreak = statsData.Stats.MissStreakCounter;
