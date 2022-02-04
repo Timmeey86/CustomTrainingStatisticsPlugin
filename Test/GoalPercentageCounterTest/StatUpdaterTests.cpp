@@ -226,8 +226,10 @@ TEST_F(StatUpdaterTestFixture, restoringStats_when_secondFileHasMoreThanZeroAtte
 	// The main point of this test is to test the control flow
 	ShotStats dummyStats;
 	dummyStats.PerShotStats.emplace_back();
+	dummyStats.PerShotStats.emplace_back();
 	dummyStats.AllShotStats.Stats.Attempts = 42;
 	dummyStats.PerShotStats[0].Stats.Attempts = 21;
+	dummyStats.PerShotStats[1].Stats.Attempts = 84;
 
 	// We expect the stat updater to ask the stat reader for the list of storage files for the current training pack.
 	// In this test, we act like two files would be present
@@ -245,12 +247,13 @@ TEST_F(StatUpdaterTestFixture, restoringStats_when_secondFileHasMoreThanZeroAtte
 		.WillOnce(Return(dummyStats));
 
 	// Act
-	statUpdater->processReset(1); // Simulate a pack with only one shot
+	statUpdater->processReset(2); // Simulate a pack with two shots
 	statUpdater->restoreLastSession();
 
 	// Assert
 	expectTotalStats(dummyStats.AllShotStats.Stats);
 	expectPerShotStats(dummyStats.PerShotStats[0].Stats, 0);
+	expectPerShotStats(dummyStats.PerShotStats[1].Stats, 1);
 }
 
 TEST_F(StatUpdaterTestFixture, restoringStats_when_noTrainingPackCodeIsSet_will_notReadFiles)

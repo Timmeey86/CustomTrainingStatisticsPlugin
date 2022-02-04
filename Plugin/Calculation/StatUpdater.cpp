@@ -107,7 +107,14 @@ void StatUpdater::restoreLastSession()
 		auto stats = _statReader->readStats(resourcePath);
 		_internalShotStats.AllShotStats = stats.AllShotStats;
 		_internalShotStats.PerShotStats = std::vector<StatsData>(stats.PerShotStats);
-		updateData();
+		_externalShotStats->AllShotStats = stats.AllShotStats;
+		_externalShotStats->PerShotStats = std::vector<StatsData>(stats.PerShotStats);
+
+		recalculatePercentages(_externalShotStats->AllShotStats);
+		for (auto index = 0; index < _externalShotStats->PerShotStats.size(); index++)
+		{
+			recalculatePercentages(_externalShotStats->PerShotStats[index]);
+		}
 		return;
 	}
 
