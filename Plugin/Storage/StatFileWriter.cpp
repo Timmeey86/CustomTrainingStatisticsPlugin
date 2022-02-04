@@ -92,7 +92,7 @@ void writeStatsData(std::ofstream& stream, const StatsData& statsData)
 	writeLine(stream, StatFileDefs::CurrentMissStreak, std::to_string(statsData.Stats.MissStreakCounter));
 	writeLine(stream, StatFileDefs::LongestGoalStreak, std::to_string(statsData.Stats.LongestGoalStreak));
 	writeLine(stream, StatFileDefs::LongestMissStreak, std::to_string(statsData.Stats.LongestMissStreak));
-	writeLine(stream, StatFileDefs::LongestMissStreak, bool_vector_to_string(statsData.Stats.Last50Shots));
+	writeLine(stream, StatFileDefs::LastNShotsPercentage, bool_vector_to_string(statsData.Stats.Last50Shots));
 	writeLine(stream, StatFileDefs::LatestGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMostRecent()));
 	writeLine(stream, StatFileDefs::MaxGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMax()));
 	writeLine(stream, StatFileDefs::MinGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMin()));
