@@ -98,13 +98,20 @@ void StatUpdater::restoreLastSession()
 {
 	if (_trainingPackCode.empty()) { return; }
 	auto resourcePaths = _statReader->getAvailableResourcePaths(_trainingPackCode);
-	if (!resourcePaths.empty())
+	for (const auto& resourcePath : resourcePaths)
 	{
-		auto stats = _statReader->readStats(resourcePaths.front());
+		// Skip any file which only has zero attempts stored
+		if (_statReader->peekAttemptAmount(resourcePath) == 0) { continue; }
+
+		// We found a promising file to be restored
+		auto stats = _statReader->readStats(resourcePath);
 		_internalShotStats.AllShotStats = stats.AllShotStats;
 		_internalShotStats.PerShotStats = std::vector<StatsData>(stats.PerShotStats);
 		updateData();
+		return;
 	}
+
+	// Reaching this point means there either are no files, or all of them have zero attempts => we can't do anything in this case
 }
 
 void StatUpdater::publishTrainingPackCode(const std::string& trainingPackCode)
