@@ -23,7 +23,6 @@ std::vector<std::string> StatFileReader::getAvailableResourcePaths(const std::st
 	{
 		try
 		{
-
 			for (const auto& entry : std::filesystem::directory_iterator(folderPath))
 			{
 				if (entry.is_regular_file())
@@ -38,6 +37,8 @@ std::vector<std::string> StatFileReader::getAvailableResourcePaths(const std::st
 		}
 	}
 
+	// Sort the file paths in descending order so the one with the most recent date appears first
+	std::sort(filePaths.begin(), filePaths.end(), std::greater<>());
 	return filePaths;
 }
 
