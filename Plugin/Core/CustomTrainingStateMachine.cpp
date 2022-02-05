@@ -6,10 +6,12 @@
 
 CustomTrainingStateMachine::CustomTrainingStateMachine(
 	std::shared_ptr<CVarManagerWrapper> cvarManager, 
-	std::shared_ptr<IStatUpdater> statUpdater, 
+	std::shared_ptr<IStatUpdater> statUpdater,
+	std::shared_ptr<IStatWriter> statWriter,
 	std::shared_ptr<PluginState> pluginState)
 	: _cvarManager( cvarManager )
 	, _statUpdater( statUpdater )
+	, _statWriter( statWriter )
 	, _pluginState( pluginState )
 {
 	_currentState = CustomTrainingState::NotInCustomTraining;
@@ -27,7 +29,11 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		if (ball.IsNull()) { return; }
 
 		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
-		processOnHitGoal();
+
+		if (ball.GetLocation().Y > 0)
+		{
+			processOnHitGoal();
+		}
 	});
 
 	// Happens whenever the ball is being touched
@@ -63,6 +69,9 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 			TrainingEditorWrapper trainingWrapper(caller.memory_address);
 			processEventRoundChanged(trainingWrapper);
 		}
+
+		// Set the training pack code to empty so a click on "Restore" won't do anything
+		_statUpdater->publishTrainingPackCode({});
 	});
 
 	// Make sure the state machine has been properly initialized when the user (or the VS plugin project) reloads the plugin while being in custom training
@@ -88,6 +97,13 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 
 	// The player reloaded the same, or loaded a different training pack => Reset statistics
 	_statUpdater->processReset(_pluginState->TotalRounds);
+
+	// Initialize the data storage (most likely a file in the file system)
+	auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+	_statWriter->initializeStorage(trainingPackCode);
+	_statWriter->writeData();
+
+	_statUpdater->publishTrainingPackCode(trainingPackCode);
 }
 
 void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper& trainingWrapper)
@@ -129,6 +145,9 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 	// Else: Ignore the event. This e.g. happens before OnTrainingModeLoaded
 
 	_pluginState->CurrentRoundIndex = newRoundIndex;
+	
+	// Store data at the begin of every round so we can try to restore data after a crash
+	_statWriter->writeData();
 }
 
 void CustomTrainingStateMachine::processTrainingShotAttempt()

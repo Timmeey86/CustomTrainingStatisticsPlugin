@@ -1,5 +1,7 @@
 #include "StatUpdaterTestFixture.h"
 
+const std::string StatUpdaterTestFixture::FakeTrainingPackCode = "ABCD-0123-EF45-6789";
+
 void StatUpdaterTestFixture::expectTotalStats(const PlayerStats& expectedStats) const
 {
 	ASSERT_TRUE(_shotStats != nullptr);

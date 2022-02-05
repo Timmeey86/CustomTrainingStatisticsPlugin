@@ -31,4 +31,7 @@ public:
 
 	/** Restores any previously saved settings. */
 	virtual void restoreLastSession() = 0;
+
+	/** Lets the stat updater know the code of the current training pack. This is useful for restoring state, for example. */
+	virtual void publishTrainingPackCode(const std::string& trainingPackCode) = 0;
 };

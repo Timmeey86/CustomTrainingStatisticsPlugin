@@ -9,6 +9,7 @@
 #include "../DLLImportExport.h"
 #include "../Data/PluginState.h"
 #include "IStatUpdater.h"
+#include "IStatWriter.h"
 #include "CustomTrainingState.h"
 
 /** This class is responsible for progressing to the appropriate follow-up states in case of events.
@@ -25,6 +26,7 @@ public:
 	CustomTrainingStateMachine(
 		std::shared_ptr<CVarManagerWrapper> cvarManager, 
 		std::shared_ptr<IStatUpdater> statUpdater, 
+		std::shared_ptr<IStatWriter> statWriter,
 		std::shared_ptr<PluginState> pluginState);
 
 	/** Hooks to any events whic are related to state transitions */
@@ -57,6 +59,7 @@ private:
 
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows logging.
 	std::shared_ptr<IStatUpdater> _statUpdater; ///< Stores the object which keeps track of statistics.
+	std::shared_ptr<IStatWriter> _statWriter; ///< Stores the object which allows storing stats permanently.
 	std::shared_ptr<PluginState> _pluginState; ///< Stores other state parameters of the plugin, not related to the custom training state
 
 	CustomTrainingState _currentState; ///< Stores the currently active state

@@ -72,6 +72,7 @@ robocopy $(BakkesModPath)dll $(OutDir) pluginsdk.dll bakkesmod.dll &gt; NUL</Com
   <ItemGroup>
     <ClInclude Include="Fixtures\RunningMedianTestFixture.h" />
     <ClInclude Include="Fixtures\StatUpdaterTestFixture.h" />
+    <ClInclude Include="Mocks\IStatReaderMock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

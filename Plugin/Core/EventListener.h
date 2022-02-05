@@ -8,6 +8,7 @@
 
 #include "IStatDisplay.h"
 #include "IStatUpdater.h"
+#include "IStatReader.h"
 #include "CustomTrainingStateMachine.h"
 
 /** Hooks into various rocket league events and calls the appropriate interface methods. */
@@ -18,7 +19,7 @@ public:
 	EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState);
 
 	/** Hooks into events which are supposed to update statistics. */
-	void registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater);
+	void registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter);
 	
 	/** Hooks into events related to rendering a UI to the user. */
 	void registerRenderEvents(std::shared_ptr<IStatDisplay> statDisplay);
@@ -31,6 +32,7 @@ private:
 	/** Returns true if events shall currently be sent. */
 	bool statUpdatesShallBeSent();
 
+	std::shared_ptr<IStatReader> _statReader; ///< Allows reading statistics from previous sessions
 	std::shared_ptr<GameWrapper> _gameWrapper; ///< Provides access to anything related to Rocket League
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Provides access to custom variables
 	std::shared_ptr<PluginState> _pluginState; ///< Stores the state of the plugin
