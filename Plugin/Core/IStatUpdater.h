@@ -33,5 +33,12 @@ public:
 	virtual void restoreLastSession() = 0;
 
 	/** Lets the stat updater know the code of the current training pack. This is useful for restoring state, for example. */
-	virtual void publishTrainingPackCode(const std::string& trainingPackCode) = 0;
+	virtual void publishTrainingPackCode(const std::string& trainingPackCode) = 0; 
+	
+	/** Allows manually toggling your last attempt. This is useful for training mechanics where only the player can decide wheter that counts or not.
+	 *
+	 * For example, the player might be training flip resets, mess up the flip reset, but still score. With this feature, they can make the attempt not count.
+	 * Also we all know kids will want to use this so they can pretend to be better at the pack than they actually are ;)
+	 */
+	virtual void toggleLastAttempt() = 0;
 };

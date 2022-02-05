@@ -15,6 +15,51 @@
 	pluginState->propertyName.A = value.A * 255.0f; \
 	}
 
+bool indexIsValid(const std::string& indexString, int& outVar)
+{
+	try
+	{
+		outVar = std::stoi(indexString);
+		return true;
+	}
+	catch (const std::invalid_argument&)
+	{
+		return false;
+	}
+}
+
+void handleBindingChange(std::shared_ptr<CVarManagerWrapper> cvarManager, const std::string& oldValue, CVarWrapper cvar, const std::string& bindCommand)
+{
+	// Check if oldIdx is valid (it should always be. If it hasn't been set, it is "0" (index of 'None') rather than an empty string or anything
+	int oldIdx;
+	if (!indexIsValid(oldValue, oldIdx))
+	{
+		return;
+	}
+
+	int newIdx = cvar.getIntValue();
+
+	// Check bounds of indices
+	if (0 <= oldIdx && oldIdx < GoalPercentageCounterSettings::KeybindingsArraySize &&
+		0 <= newIdx && newIdx < GoalPercentageCounterSettings::KeybindingsArraySize)
+	{
+		auto oldBind = std::string(GoalPercentageCounterSettings::KeybindingsArray[oldIdx]);
+		auto newBind = std::string(GoalPercentageCounterSettings::KeybindingsArray[newIdx]);
+
+		// Unbind old value unless it is "None"
+		if (!oldBind.empty() && oldBind != GoalPercentageCounterSettings::KeybindingsArray[0])
+		{
+			cvarManager->executeCommand("unbind " + oldBind, false);
+		}
+
+		// Bind new value unless it is "None"
+		if (newBind != GoalPercentageCounterSettings::KeybindingsArray[0])
+		{
+			cvarManager->setBind(newBind, bindCommand);
+		}
+	}
+}
+
 void SettingsRegistration::registerCVars(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
 {
 	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::EnableFlagDef, SET_BOOL_VALUE_FUNC(PluginIsEnabled));
@@ -54,39 +99,16 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::FontColorDef, SET_COLOR_VALUE_FUNC(FontColor));
 
 	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::SummaryKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
-		// Check if oldIdx is valid
-		int oldIdx;
-		try
-		{
-			oldIdx = std::stoi(oldValue);
-		}
-		catch (const std::invalid_argument&)
-		{
-			return;
-		}
-
-		int newIdx = cvar.getIntValue();
-
-		// Check bounds of indices
-		if (0 <= oldIdx && oldIdx < GoalPercentageCounterSettings::KeybindingsArraySize &&
-			0 <= newIdx && newIdx < GoalPercentageCounterSettings::KeybindingsArraySize)
-		{
-			std::string oldBind = std::string(GoalPercentageCounterSettings::KeybindingsArray[oldIdx]);
-			std::string newBind = std::string(GoalPercentageCounterSettings::KeybindingsArray[newIdx]);
-
-			// Unbind old value unless it is "None"
-			if (!oldBind.empty() && oldBind != GoalPercentageCounterSettings::KeybindingsArray[0])
-			{
-				cvarManager->executeCommand("unbind " + oldBind, false);
-			}
-
-			// Bind new value unless it is "None"
-			if (newBind != GoalPercentageCounterSettings::KeybindingsArray[0])
-			{
-				cvarManager->setBind(newBind, "togglemenu " + SummaryUI::MenuName + ";");
-			}
-		}
+		handleBindingChange(cvarManager, oldValue, cvar, "togglemenu " + SummaryUI::MenuName + ";");
 		});
+
+	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::RestoreLastSessionKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::RestoreStatistics } + ";");
+	});
+
+	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::ToggleLastAttemptKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::ToggleLastAttempt } + ";");
+	});
 }
 
 #undef SET_BOOL_VALUE_FUNC

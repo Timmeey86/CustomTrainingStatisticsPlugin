@@ -47,6 +47,8 @@ void StatUpdater::processAttempt()
 	{
 		_internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex).Stats.Attempts++;
 	}
+
+	updateStatsBackup();
 }
 
 void StatUpdater::processInitialBallHit()
@@ -76,6 +78,9 @@ void StatUpdater::processReset(int numberOfShots)
 
 	// Replace the whole external object with our freshly reset copy
 	*_externalShotStats = _internalShotStats;
+
+	// Reset the stats backup (indirectly).
+	updateStatsBackup();
 }
 
 void StatUpdater::updateData()
@@ -93,6 +98,7 @@ void StatUpdater::updateData()
 		recalculatePercentages(_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex));
 	}
 }
+
 
 void StatUpdater::restoreLastSession()
 {
@@ -191,4 +197,36 @@ void StatUpdater::handleMiss(StatsData& statsData)
 	{
 		statsData.Stats.LongestMissStreak = statsData.Stats.MissStreakCounter;
 	}
+}
+
+void StatUpdater::updateStatsBackup()
+{
+	_previousShotStats.AllShotStats = _internalShotStats.AllShotStats;
+	_previousShotStats.PerShotStats = std::vector<StatsData>(_internalShotStats.PerShotStats);
+}
+
+void StatUpdater::toggleLastAttempt()
+{
+	if (_internalShotStats.AllShotStats.Stats.Attempts <= 0 || _internalShotStats.AllShotStats.Stats.Last50Shots.empty())
+	{
+		return; // can't toggle anything in this case
+	}
+
+	if (0 > _pluginState->CurrentRoundIndex || _pluginState->CurrentRoundIndex >= _internalShotStats.PerShotStats.size())
+	{
+		return; // something is wrong with the current round index, or we are not initialized
+	}
+
+	bool lastShotWasAGoal = _internalShotStats.AllShotStats.Stats.Last50Shots.back() > 0;
+	_internalShotStats.AllShotStats = _previousShotStats.AllShotStats;
+	_internalShotStats.PerShotStats = std::vector<StatsData>(_previousShotStats.PerShotStats);
+	if (lastShotWasAGoal)
+	{
+		processMiss();
+	}
+	else
+	{
+		processGoal();
+	}
+	updateData();
 }

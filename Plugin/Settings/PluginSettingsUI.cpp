@@ -102,15 +102,13 @@ void PluginSettingsUI::RenderSettings()
 	{
 		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
 
-		if (ImGui::Button("Restore Last Session"))
-		{
-			_sendNotifierFunc(TriggerNames::RestoreStatistics);
-		}
-
 		ImGui::Separator();
 
 		ImGui::Text("Bindings (this creates bindings in the Bindings tab)");
-		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, 127);
+		const auto keybindingAmount = 127;
+		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
+		createDropdownMenu(GoalPercentageCounterSettings::RestoreLastSessionKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
+		createDropdownMenu(GoalPercentageCounterSettings::ToggleLastAttemptKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
 
 		ImGui::Separator();
 

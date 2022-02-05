@@ -8,4 +8,5 @@ class TriggerNames
 public:
 	static const char* ResetStatistics;
 	static const char* RestoreStatistics;
+	static const char* ToggleLastAttempt;
 };

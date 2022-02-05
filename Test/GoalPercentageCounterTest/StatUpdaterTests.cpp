@@ -265,3 +265,52 @@ TEST_F(StatUpdaterTestFixture, restoringStats_when_noTrainingPackCodeIsSet_will_
 	statUpdater->publishTrainingPackCode({});
 	statUpdater->restoreLastSession();
 }
+
+TEST_F(StatUpdaterTestFixture, togglingLastShot_when_noAttemptsHaveBeenMade_will_notChangeAnything)
+{
+	PlayerStats defaultStats;
+
+	statUpdater->processReset(2); // Simulate a pack with two shots
+	statUpdater->toggleLastAttempt();
+
+	expectTotalStats(defaultStats);
+	expectPerShotStats(defaultStats, 0);
+	expectPerShotStats(defaultStats, 1);
+}
+
+TEST_F(StatUpdaterTestFixture, togglingLastShot_when_attemptsHaveBeenMade_will_adaptStats)
+{
+	// Expect a goal
+	PlayerStats oneGoalStats;
+	PlayerStats defaultStats;
+	oneGoalStats.Attempts = 1;
+	oneGoalStats.Goals = 1;
+	oneGoalStats.InitialHits = 1;
+	oneGoalStats.GoalStreakCounter = 1;
+	oneGoalStats.LongestGoalStreak = 1;
+	oneGoalStats.Last50Shots.push_back(true);
+
+	const auto goalSpeed = 100.0f;
+	oneGoalStats.GoalSpeedStats.insert(goalSpeed);
+	_pluginState->setBallSpeed(goalSpeed / PluginState::UE_UNITS_TO_KPH); // We need to convert it to Unreal Engine units when setting it
+
+	// Record a miss and then toggle it
+	statUpdater->processReset(2); // Simulate a pack with two shots
+	statUpdater->processAttempt();
+	statUpdater->processInitialBallHit();
+	statUpdater->processMiss();
+
+	ASSERT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getCount(), 0);
+
+	statUpdater->toggleLastAttempt();
+
+
+	expectTotalStats(oneGoalStats);
+	expectPerShotStats(oneGoalStats, 0);
+	expectPerShotStats(defaultStats, 1);
+
+	EXPECT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getCount(), 1);
+	EXPECT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getMax(), goalSpeed);
+	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats.getCount(), 1);
+	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats.getMax(), goalSpeed);
+}

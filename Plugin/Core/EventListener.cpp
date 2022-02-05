@@ -30,6 +30,13 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 		statUpdater->restoreLastSession();
 	}, "Restore the statistics.", PERMISSION_ALL);
 
+	// Allow toggling the last attempt between miss and goal
+	_cvarManager->registerNotifier(TriggerNames::ToggleLastAttempt, [this, statUpdater](const std::vector<std::string>&) {
+		if (!_gameWrapper->IsInCustomTraining()) { return; }
+
+		statUpdater->toggleLastAttempt();
+	}, "Toggle the last attempt to be a goal or a miss", PERMISSION_ALL);
+
 	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
