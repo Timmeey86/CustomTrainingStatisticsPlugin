@@ -28,6 +28,7 @@ public:
 	void updateData() override;
 	void restoreLastSession() override; 
 	void publishTrainingPackCode(const std::string& trainingPackCode) override;
+	void toggleLastAttempt() override;
 
 private:
 	/** Increases the goal counter and updates streaks. */
@@ -36,12 +37,15 @@ private:
 	void handleMiss(StatsData& statsData);
 	/** Updates percentage values. */
 	void recalculatePercentages(StatsData& statsData);
+	/** Updates the internal backup of stats. This is used for the "toggle last attempt" feature. */
+	void updateStatsBackup();
 		
 	ShotStats _internalShotStats; ///< A cache of the current stats (we don't use calculated data here, though)
+	ShotStats _previousShotStats; ///< This is used in order to properly implement the "toggle last attempt" feature without messing up streaks/peaks
 	std::shared_ptr<ShotStats> _externalShotStats;	///< The current stats as seen by everything outside of this class.
 
 	std::shared_ptr<PluginState> _pluginState;	///< The current state of the plugin
 	std::shared_ptr<IStatReader> _statReader; ///< Used for restoring previous state
-	std::string _trainingPackCode; ///< The code of the currently active training pack.
+	std::string _trainingPackCode; ///< The code of the currently active training pack
 };
 

@@ -5,8 +5,10 @@
 
 #include <limits>
 
+#include "../DLLImportExport.h"
 
-class GoalSpeed
+
+class GOALPERCENTAGECOUNTER_IMPORT_EXPORT GoalSpeed
 {
 public:
 	GoalSpeed() = default;
