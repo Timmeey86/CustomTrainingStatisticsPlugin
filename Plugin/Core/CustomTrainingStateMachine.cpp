@@ -29,7 +29,11 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		if (ball.IsNull()) { return; }
 
 		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
-		processOnHitGoal();
+
+		if (ball.GetLocation().Y > 0)
+		{
+			processOnHitGoal();
+		}
 	});
 
 	// Happens whenever the ball is being touched
