@@ -48,7 +48,9 @@ public:
 	static const SettingsDefinition FontColorDef;			///< Definitions for the text color of the panel
 
 
-	static const SettingsDefinition SummaryKeybindingDef;	///< Definitions for the summary window keybinding
-	static constexpr int KeybindingsArraySize{ 127 };		///< Size of array of possible keybindings
-	static const char* KeybindingsArray[];					///< List of possible keybindings
+	static const SettingsDefinition SummaryKeybindingDef;				///< Definitions for the summary window keybinding
+	static const SettingsDefinition RestoreLastSessionKeybindingDef;	///< Definitions for the "Restore last session" keybinding
+	static const SettingsDefinition ToggleLastAttemptKeybindingDef;		///< Definitions for the "Toggle last attempt" keybinding
+	static constexpr int KeybindingsArraySize{ 127 };					///< Size of array of possible keybindings
+	static const char* KeybindingsArray[];								///< List of possible keybindings
 };
