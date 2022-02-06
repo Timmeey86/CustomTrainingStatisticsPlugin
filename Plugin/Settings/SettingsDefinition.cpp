@@ -10,6 +10,15 @@ const SettingsDefinition GoalPercentageCounterSettings::EnableFlagDef = {
 	"1.0f"
 };
 
+const SettingsDefinition GoalPercentageCounterSettings::DisplayStatDifference = {
+	"customtrainingstatistics_display_stat_difference",
+	"Display difference to previous session",
+	"Display the difference between the current and the previous session",
+	.0f,
+	1.0f,
+	"1.0f"
+};
+
 const SettingsDefinition GoalPercentageCounterSettings::DisplayAllShotStats = {
 	"customtrainingstatistics_display_all_shot_stats",
 	"Display All Shots Statistics",
@@ -25,7 +34,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayPerShotStats = {
 	"Displays the overlay which shows statistics for the current shot in the training session",
 	.0f,
 	1.0f,
-	".0f"
+	"1.0f"
 };
 
 
@@ -43,7 +52,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayInitialBallHitsDe
 	"Allows checking consistency with mechanics where the goal is to touch the ball, e.g. speed flip training packs",
 	.0f,
 	1.0f,
-	".0f"
+	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef = {
 	"customtrainingstatistics_display_total_success_rate",
@@ -149,7 +158,7 @@ const SettingsDefinition GoalPercentageCounterSettings::AllShotFontSizeDef = {
 	"",
 	0.5f,
 	2.0f,
-	"1.0f"
+	"0.8f"
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::PerShotXPositionDef = {
@@ -166,7 +175,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PerShotYPositionDef = {
 	"",
 	.0f,
 	2160.0f,
-	"557.0f"
+	"525.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::PerShotFontSizeDef = {
 	"customtrainingstatistics_per_shot_font_height_factor",
@@ -174,7 +183,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PerShotFontSizeDef = {
 	"",
 	0.5f,
 	2.0f,
-	"1.0f"
+	"0.8f"
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::PanelColorDef = {
@@ -183,7 +192,7 @@ const SettingsDefinition GoalPercentageCounterSettings::PanelColorDef = {
 	"",
 	std::optional<float>(),
 	std::optional<float>(),
-	"(0.4, 0.4, 0.4, 0.8)" // RGBA Color string (expected by CVarManager in this format)
+	"(0.15, 0.15, 0.15, 0.8)" // RGBA Color string (expected by CVarManager in this format)
 };
 
 const SettingsDefinition GoalPercentageCounterSettings::FontColorDef = {
@@ -206,7 +215,7 @@ const SettingsDefinition GoalPercentageCounterSettings::SummaryKeybindingDef = {
 
 const SettingsDefinition GoalPercentageCounterSettings::RestoreLastSessionKeybindingDef = {
 	"customtrainingstatistics_restorelastsession_keybinding",
-	"Restore statistics from the previous session of the same pack.",
+	"Restore Previous Session",
 	"Keybinding to restore statistics from the previous session of the same pack. You need to press this key/button before starting your first attempt.",
 	0.0f,
 	static_cast<float>(GoalPercentageCounterSettings::KeybindingsArraySize - 1),
@@ -215,7 +224,7 @@ const SettingsDefinition GoalPercentageCounterSettings::RestoreLastSessionKeybin
 
 const SettingsDefinition GoalPercentageCounterSettings::ToggleLastAttemptKeybindingDef = {
 	"customtrainingstatistics_togglelastattempt_keybinding",
-	"Toggle the last attempt (make it count as a miss or a goal)",
+	"Toggle Last Goal/Miss",
 	"Keybinding to toggle the last attempt. This is useful for complex mechanics or defender packs.",
 	0.0f,
 	static_cast<float>(GoalPercentageCounterSettings::KeybindingsArraySize - 1),

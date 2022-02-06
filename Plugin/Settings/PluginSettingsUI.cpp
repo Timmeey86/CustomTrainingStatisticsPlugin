@@ -156,5 +156,9 @@ void PluginSettingsUI::RenderSettings()
 		createIntSlider(GoalPercentageCounterSettings::PerShotXPositionDef);
 		createIntSlider(GoalPercentageCounterSettings::PerShotYPositionDef);
 		createFloatSlider(GoalPercentageCounterSettings::PerShotFontSizeDef);
+
+		ImGui::Separator();
+
+		createCheckbox(GoalPercentageCounterSettings::DisplayStatDifference);
 	}
 }

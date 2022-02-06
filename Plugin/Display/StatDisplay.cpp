@@ -19,7 +19,7 @@ StatDisplay::StatDisplay(
 std::string to_percentage_string(double value)
 {
 	std::ostringstream stream;
-	stream << std::fixed << std::setprecision(2) << value << "%";
+	stream << std::fixed << std::setprecision(2) << value;
 	return stream.str();
 }
 
@@ -54,7 +54,7 @@ void StatDisplay::drawCenter(CanvasWrapper& canvas, const DisplayOptions& displa
 }
 
 // Draws a stat consisting of a label and a string value into one "row"
-void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const SingleStatStrings& statStrings)
+void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const SingleStatStrings& statStrings, float diffDataBorder)
 {
 	auto leftTextBorder = (float)displayOpts.OverlayXPosition + 5.0f * displayOpts.TextWidthFactor;
 	auto topTextBorder = (float)displayOpts.OverlayYPosition + (5.0f + (float)rowNumber * 15.0f) * displayOpts.TextHeightFactor;
@@ -83,7 +83,7 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 			diffColor.G = .0;
 		}
 		canvas.SetColor(diffColor);
-		canvas.SetPosition(Vector2F{ leftTextBorder + 230.0f * displayOpts.TextWidthFactor, topTextBorder });
+		canvas.SetPosition(Vector2F{ diffDataBorder * displayOpts.TextWidthFactor, topTextBorder });
 		canvas.DrawString(statStrings.DiffValue.value(), displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 		canvas.SetColor(currentColor);
 	}
@@ -101,24 +101,11 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	if (pluginState->InitialBallHitsShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hits:", std::to_string(statsData.Stats.InitialHits), "" });
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.InitialHitPercentage);
-		}
 	}
 	if (pluginState->CurrentStreaksShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Current Goal Streak:", std::to_string(statsData.Stats.GoalStreakCounter), "" });
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Current Miss Streak:", std::to_string(statsData.Stats.MissStreakCounter), "" });
-	}
-	if (pluginState->TotalSuccessRateShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.SuccessPercentage);
-		}
 	}
 	if (pluginState->LongestStreaksShallBeDisplayed)
 	{
@@ -133,18 +120,34 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.LongestMissStreak);
 		}
 	}
+	if (pluginState->TotalSuccessRateShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.SuccessPercentage);
+		}
+	}
+	if (pluginState->InitialBallHitsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.InitialHitPercentage);
+		}
+	}
+	if (pluginState->LastNShotPercentageShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage), "%" });
+	}
 	if (pluginState->PeakInfoShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak Success Rate:", to_percentage_string(statsData.Data.PeakSuccessPercentage), "" });
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak Success Rate:", to_percentage_string(statsData.Data.PeakSuccessPercentage), "%" });
 		if (diffData)
 		{
 			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.PeakSuccessPercentage);
 		}
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak At Shot#:", std::to_string(statsData.Data.PeakShotNumber), "" });
-	}
-	if (pluginState->LastNShotPercentageShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage), "" });
 	}
 
 	// Goal speed stats
@@ -187,10 +190,19 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 		_pluginState->MedianGoalSpeedShallBeDisplayed ||
 		_pluginState->MeanGoalSpeedShallBeDisplayed;
 	
-	_displayWidth = isDisplayingSpeed ? 230.0f : 200.0f;
-	if (diffData)
+	_displayWidth = 215.0f;
+	auto diffDataBorder = _displayWidth + 5.0f;
+	if (isDisplayingSpeed)
 	{
-		_displayWidth += 60.0f;
+		_displayWidth += 20.0f;
+	}
+	if (diffData && _pluginState->PreviousSessionDiffShallBeDisplayed)
+	{
+		_displayWidth += 40.0f;
+		if (!isDisplayingSpeed)
+		{
+			_displayWidth += 20.0f;
+		}
 	}
 
 	// Draw a panel so we can read the text on all kinds of maps
@@ -207,7 +219,7 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 	counter++;
 	for (const auto& statStrings : statsToBeRendered)
 	{
-		drawStat(canvas, opts, counter, statStrings);
+		drawStat(canvas, opts, counter, statStrings, diffDataBorder);
 		counter++;
 	}
 }
