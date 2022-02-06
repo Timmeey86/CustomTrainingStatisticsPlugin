@@ -22,6 +22,8 @@ void StatUpdater::processGoal()
 		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
 		handleGoal(currStatsData);
 	}
+
+	_statsHaveJustBeenRestored = false;
 }
 
 void StatUpdater::processMiss()
@@ -35,6 +37,8 @@ void StatUpdater::processMiss()
 		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
 		handleMiss(currStatsData);
 	}
+
+	_statsHaveJustBeenRestored = false;
 }
 
 void StatUpdater::processAttempt()
@@ -121,6 +125,9 @@ void StatUpdater::restoreLastSession()
 		{
 			recalculatePercentages(_externalShotStats->PerShotStats[index]);
 		}
+		// We successfully restored statistics from the last session. The "Toggle last attempt" feature must be disabled until a goal or a miss was recorded
+		// after restoring
+		_statsHaveJustBeenRestored = true;
 		return;
 	}
 
@@ -215,6 +222,11 @@ void StatUpdater::toggleLastAttempt()
 	if (0 > _pluginState->CurrentRoundIndex || _pluginState->CurrentRoundIndex >= _internalShotStats.PerShotStats.size())
 	{
 		return; // something is wrong with the current round index, or we are not initialized
+	}
+
+	if (_statsHaveJustBeenRestored)
+	{
+		return; // The user restored stats but didn't complete an attempt after that => there is no "last attempt" we could toggle
 	}
 
 	bool lastShotWasAGoal = _internalShotStats.AllShotStats.Stats.Last50Shots.back() > 0;

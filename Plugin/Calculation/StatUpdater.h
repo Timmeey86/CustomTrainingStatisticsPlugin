@@ -47,5 +47,7 @@ private:
 	std::shared_ptr<PluginState> _pluginState;	///< The current state of the plugin
 	std::shared_ptr<IStatReader> _statReader; ///< Used for restoring previous state
 	std::string _trainingPackCode; ///< The code of the currently active training pack
+
+	bool _statsHaveJustBeenRestored = false; ///< This prevents the "toggle last attempt" feature from being used after restoring the last session
 };
 
