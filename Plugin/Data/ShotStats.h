@@ -11,4 +11,6 @@ public:
 
 	StatsData AllShotStats;								///< Statistics for all shots
 	std::vector<StatsData> PerShotStats;	///< Statistics for each shot individually
+
+	inline bool hasAttempts() const { return AllShotStats.Stats.Attempts > 0; }
 };

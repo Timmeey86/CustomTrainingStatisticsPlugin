@@ -96,14 +96,14 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 	_pluginState->CurrentRoundIndex = -1;
 
 	// The player reloaded the same, or loaded a different training pack => Reset statistics
+	auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+	_statUpdater->publishTrainingPackCode(trainingPackCode);
 	_statUpdater->processReset(_pluginState->TotalRounds);
 
 	// Initialize the data storage (most likely a file in the file system)
-	auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
 	_statWriter->initializeStorage(trainingPackCode);
 	_statWriter->writeData();
 
-	_statUpdater->publishTrainingPackCode(trainingPackCode);
 }
 
 void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper& trainingWrapper)

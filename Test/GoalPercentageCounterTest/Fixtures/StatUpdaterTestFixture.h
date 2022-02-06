@@ -24,7 +24,7 @@ public:
 	void SetUp() override
 	{
 		_statReader = std::make_shared<::testing::StrictMock<IStatReaderMock>>();
-		statUpdater = std::make_shared<StatUpdater>(_shotStats, _pluginState, _statReader);
+		statUpdater = std::make_shared<StatUpdater>(_shotStats, nullptr /* not testing stat differences */, _pluginState, _statReader);
 		statUpdater->publishTrainingPackCode(FakeTrainingPackCode);
 		_pluginState->TotalRounds = 2;
 		_pluginState->CurrentRoundIndex = 0;

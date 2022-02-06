@@ -31,10 +31,11 @@ void GoalPercentageCounter::onLoad()
 
 	// Create handler classes
 	auto statReader = std::make_shared<StatFileReader>(gameWrapper);
-	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, _pluginState, statReader);
+	auto differenceData = std::make_shared<ShotStats>(); // will store the difference between the previous session and the current one
+	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader);
 
 	// Enable rendering of output
-	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, _pluginState);
+	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, differenceData, _pluginState);
 
 	// Enable storage of stats on the file system (crash recovery / maybe training trend in future)
 	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats);

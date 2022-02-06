@@ -3,9 +3,11 @@
 
 StatUpdater::StatUpdater(
 	std::shared_ptr<ShotStats> shotStats,
+	std::shared_ptr<ShotStats> differenceStats,
 	std::shared_ptr<PluginState> pluginState,
 	std::shared_ptr<IStatReader> statReader)
 	: _externalShotStats(shotStats)
+	, _differenceStats(differenceStats)
 	, _pluginState(pluginState)
 	, _statReader(statReader)
 {
@@ -65,6 +67,8 @@ void StatUpdater::processInitialBallHit()
 	{
 		_internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex).Stats.InitialHits++;
 	}
+
+	updateStatsBackup();
 }
 
 void StatUpdater::processReset(int numberOfShots)
@@ -85,6 +89,12 @@ void StatUpdater::processReset(int numberOfShots)
 
 	// Reset the stats backup (indirectly).
 	updateStatsBackup();
+
+	if (_differenceStats)
+	{
+		updateCompareBase(0 /* Do not skip any sessions */);
+		*_differenceStats = retrieveSessionDiff();
+	}
 }
 
 void StatUpdater::updateData()
@@ -101,37 +111,112 @@ void StatUpdater::updateData()
 		_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex) = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
 		recalculatePercentages(_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex));
 	}
+
+	if (_differenceStats)
+	{
+		*_differenceStats = retrieveSessionDiff();
+	}
 }
 
-
-void StatUpdater::restoreLastSession()
+ShotStats getPreviousShotStats(std::shared_ptr<IStatReader> statReader, const std::string& trainingPackCode, const int numberOfSkips = 0)
 {
-	if (_trainingPackCode.empty()) { return; }
-	auto resourcePaths = _statReader->getAvailableResourcePaths(_trainingPackCode);
+	if (trainingPackCode.empty()) { return {}; }
+
+	auto resourcePaths = statReader->getAvailableResourcePaths(trainingPackCode);
+	auto skippedPacks = 0;
 	for (const auto& resourcePath : resourcePaths)
 	{
 		// Skip any file which only has zero attempts stored
-		if (_statReader->peekAttemptAmount(resourcePath) == 0) { continue; }
-
-		// We found a promising file to be restored
-		auto stats = _statReader->readStats(resourcePath);
-		_internalShotStats.AllShotStats = stats.AllShotStats;
-		_internalShotStats.PerShotStats = std::vector<StatsData>(stats.PerShotStats);
-		_externalShotStats->AllShotStats = stats.AllShotStats;
-		_externalShotStats->PerShotStats = std::vector<StatsData>(stats.PerShotStats);
-
-		recalculatePercentages(_externalShotStats->AllShotStats);
-		for (auto index = 0; index < _externalShotStats->PerShotStats.size(); index++)
+		if (statReader->peekAttemptAmount(resourcePath) == 0) { continue; }
+		
+		// The file seems valid, check if we're supposed to skip a couple of files
+		if (numberOfSkips > skippedPacks)
 		{
-			recalculatePercentages(_externalShotStats->PerShotStats[index]);
+			skippedPacks++;
+			continue; // skip the pack as requested
 		}
-		// We successfully restored statistics from the last session. The "Toggle last attempt" feature must be disabled until a goal or a miss was recorded
-		// after restoring
-		_statsHaveJustBeenRestored = true;
-		return;
+
+		// At this point, we have skipped enough files (if any) and have found a valid pack
+		return statReader->readStats(resourcePath);
 	}
 
-	// Reaching this point means there either are no files, or all of them have zero attempts => we can't do anything in this case
+	// At this point, no valid pack has been found, or too many packs have been skipped
+	return {};
+}
+
+void StatUpdater::restoreLastSession()
+{
+	auto stats = getPreviousShotStats(_statReader, _trainingPackCode);
+	if (!stats.hasAttempts())
+	{
+		return; // We couldn't restore the last session
+	}
+	// else: we successfully retrieved the previous session stats. Update our data structures with this information
+
+	_internalShotStats.AllShotStats = stats.AllShotStats;
+	_internalShotStats.PerShotStats = std::vector<StatsData>(stats.PerShotStats);
+	_externalShotStats->AllShotStats = stats.AllShotStats;
+	_externalShotStats->PerShotStats = std::vector<StatsData>(stats.PerShotStats);
+
+	recalculatePercentages(_externalShotStats->AllShotStats);
+	for (auto index = 0; index < _externalShotStats->PerShotStats.size(); index++)
+	{
+		recalculatePercentages(_externalShotStats->PerShotStats[index]);
+	}
+	// We successfully restored statistics from the last session. The "Toggle last attempt" feature must be disabled until a goal or a miss was recorded
+	// after restoring
+	_statsHaveJustBeenRestored = true;
+
+	// Since we restored the previous session, we must now compare against the one before that 
+	if (_differenceStats)
+	{
+		updateCompareBase(1 /* skip one valid session */);
+	}
+}
+
+void StatUpdater::updateCompareBase(int numberOfSessionsToBeSkipped)
+{
+	// Retrieve the previous shot stats, unless the current session had been restored from that file already,
+	// in which case we try retrieving the stats before that.
+	_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, numberOfSessionsToBeSkipped);
+
+	if (numberOfSessionsToBeSkipped > 0 && !_compareBase.hasAttempts())
+	{
+		// There seems to be at most one attempt with valid stats, and we skipped it
+		// => Try to fallback to use the session we restored from as a diff (better than nothing)
+		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, 0);
+	}
+}
+
+ShotStats StatUpdater::retrieveSessionDiff() const
+{
+	if (!_compareBase.hasAttempts())
+	{
+		// Nothing available to diff with
+		return {};
+	}
+
+	if (_compareBase.PerShotStats.size() != _externalShotStats->PerShotStats.size())
+	{
+		// This should never happen since it would mean the amount of shots in the training pack changed between the last two sessions.
+		// It could however happen if we don't initiaize something properly so it is here as a last resort.
+		return {};
+	}
+
+	// At this point we have found a pack we can diff with. We abuse the ShotStats struct in order to store the differences in there
+	// since we basically need the same amount of stats.
+	ShotStats diffStats;
+	diffStats.AllShotStats.Data = _externalShotStats->AllShotStats.Data.getDifferences(_compareBase.AllShotStats.Data);
+	diffStats.AllShotStats.Stats = _externalShotStats->AllShotStats.Stats.getDifferences(_compareBase.AllShotStats.Stats);
+	diffStats.AllShotStats.Stats.Attempts = 1;	// We set this so we can make use of ShotStats::hasAttempts() in order to check if this is a valid object
+												// (yeah, that's kinda hacky).
+	for (int index = 0; index < _compareBase.PerShotStats.size(); index++)
+	{
+		diffStats.PerShotStats.emplace_back();
+		diffStats.PerShotStats.back().Data = _externalShotStats->PerShotStats[index].Data.getDifferences(_compareBase.PerShotStats[index].Data);
+		diffStats.PerShotStats.back().Stats = _externalShotStats->PerShotStats[index].Stats.getDifferences(_compareBase.PerShotStats[index].Stats);
+	}
+	return diffStats;
 }
 
 void StatUpdater::publishTrainingPackCode(const std::string& trainingPackCode)
@@ -214,7 +299,7 @@ void StatUpdater::updateStatsBackup()
 
 void StatUpdater::toggleLastAttempt()
 {
-	if (_internalShotStats.AllShotStats.Stats.Attempts <= 0 || _internalShotStats.AllShotStats.Stats.Last50Shots.empty())
+	if (!_internalShotStats.hasAttempts() || _internalShotStats.AllShotStats.Stats.Last50Shots.empty())
 	{
 		return; // can't toggle anything in this case
 	}
