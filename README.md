@@ -11,22 +11,21 @@ It is currently developed by [Timmeey86](https://github.com/Timmeey86) and [Bran
 - Repeating a single shot within a custom training pack over and over again, and measuring your progress, where:
   - each shot ends with a scoring a goal
   - each shot ends with hitting the ball at least once (e.g. speed flip training packs)
-- Repeating several different shots within a custom training pack multiple times, while tracking the overall goal percentage
+  - each shot gets manually judged as a "goal" or a "miss" by you
+- Repeating several different shots within a custom training pack multiple times, while tracking the overall statistics, and the statistics per shot
 
 # Core Features
 
 - Displaying the total statistics of a longer custom training session
 - Displaying separate statistics for each shot
 - Displaying a summary of your statistics on demand
+- Restoring your previous training session after a break / a crash / the next day (Does not work for goal speed unfortunately)
+- Displaying differences of certain stats between your current and your previous training session
 - Customizing the overlay to make it as pleasant and as little annoying as possible for you
-
-# Known Limitations
-
-- The plugin can currently only be used for training mechanics which either end with you scoring a goal, or hitting the ball. For counting things like the number of flip resets you made, there are already other existing plugins.
 
 # How to Install Manually
 
-Note: The plug-in is much easier to install through the official Bakkesmod website:
+Note: The plug-in is much easier to install through the official Bakkesmod website, but there might be an older version:
 https://bakkesplugins.com/plugins/view/302
 
 The following guide is if you want a newer update earlier
