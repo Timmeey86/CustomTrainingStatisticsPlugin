@@ -171,6 +171,7 @@ void StatUpdater::restoreLastSession()
 	if (_differenceStats)
 	{
 		updateCompareBase(1 /* skip one valid session */);
+		*_differenceStats = retrieveSessionDiff();
 	}
 }
 
