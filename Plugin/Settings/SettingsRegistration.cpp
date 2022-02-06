@@ -98,6 +98,8 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::PanelColorDef, SET_COLOR_VALUE_FUNC(PanelColor));
 	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::FontColorDef, SET_COLOR_VALUE_FUNC(FontColor));
 
+	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayStatDifference, SET_BOOL_VALUE_FUNC(PreviousSessionDiffShallBeDisplayed));
+
 	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::SummaryKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
 		handleBindingChange(cvarManager, oldValue, cvar, "togglemenu " + SummaryUI::MenuName + ";");
 		});

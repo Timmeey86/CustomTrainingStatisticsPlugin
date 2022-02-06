@@ -27,7 +27,7 @@ void SummaryUI::renderSummaryHeader()
 		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
 	auto statsToBeRendered = StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState);
-	int numColumns = statsToBeRendered.size() + 1; // +1 for shot number
+	int numColumns = (int)statsToBeRendered.size() + 1; // +1 for shot number
 	ImGui::Columns(numColumns, "goal_percentage_counter_summary_stats_header");
 	ImGui::Separator();
 
@@ -51,11 +51,11 @@ void SummaryUI::renderSummaryBody()
 		false,
 		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
-	int numColumns = StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState).size() + 1; // +1 for shot number
+	int numColumns = (int)StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState).size() + 1; // +1 for shot number
 	ImGui::Columns(numColumns, "goal_percentage_counter_summary_stats_body");
 	ImGui::Separator();
 
-	ImGuiListClipper clipper(_shotStats->PerShotStats.size() + 1); // +1 for AllShotStats
+	ImGuiListClipper clipper((int)_shotStats->PerShotStats.size() + 1); // +1 for AllShotStats
 	while (clipper.Step())
 	{
 		for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i)

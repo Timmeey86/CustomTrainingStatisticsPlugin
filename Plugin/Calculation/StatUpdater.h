@@ -15,6 +15,7 @@ public:
 	/** Creates a new object which is able to update statistics properly. */
 	StatUpdater(
 		std::shared_ptr<ShotStats> shotStats,
+		std::shared_ptr<ShotStats> differenceStats,
 		std::shared_ptr<PluginState> pluginState,
 		std::shared_ptr<IStatReader> statReader
 	);
@@ -26,7 +27,8 @@ public:
 	void processInitialBallHit() override;
 	void processReset(int numberOfShots) override;
 	void updateData() override;
-	void restoreLastSession() override; 
+	void restoreLastSession() override;
+
 	void publishTrainingPackCode(const std::string& trainingPackCode) override;
 	void toggleLastAttempt() override;
 
@@ -39,10 +41,17 @@ private:
 	void recalculatePercentages(StatsData& statsData);
 	/** Updates the internal backup of stats. This is used for the "toggle last attempt" feature. */
 	void updateStatsBackup();
+	/** Retrieves the differences between the current session and the previous one, or if stats had been restored from the previous session,
+	 * between the current one and the one before the previous one. */
+	ShotStats retrieveSessionDiff() const;
+	/** Updates the compare base to be used for the "session diff" feature. */
+	void updateCompareBase(int numberOfSessionsToBeSkipped);
 		
 	ShotStats _internalShotStats; ///< A cache of the current stats (we don't use calculated data here, though)
 	ShotStats _previousShotStats; ///< This is used in order to properly implement the "toggle last attempt" feature without messing up streaks/peaks
+	ShotStats _compareBase; ///< Session differences are compared to this object.
 	std::shared_ptr<ShotStats> _externalShotStats;	///< The current stats as seen by everything outside of this class.
+	std::shared_ptr<ShotStats> _differenceStats; ///< Stores the differences between the current and the previous session.
 
 	std::shared_ptr<PluginState> _pluginState;	///< The current state of the plugin
 	std::shared_ptr<IStatReader> _statReader; ///< Used for restoring previous state

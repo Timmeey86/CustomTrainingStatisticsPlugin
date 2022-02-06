@@ -20,4 +20,20 @@ public:
 	int LongestMissStreak = 0;		///< Stores the largest amount of consecutively scored misses
 	int InitialHits = 0;			///< Stores the number of times the ball was hit at least once during an attempt.
 	GoalSpeed GoalSpeedStats;		///< Stores statistics about the goal speed
+
+	/** Compares this object to other and returns the result as a new PlayerStats instance.
+	 *  The resulting percentages will be positive if "this" is better than "other".
+	 * 
+	 * We only compare values which make sense to be compared, i.e. we don't compare stats which reference only a part of the shots made.
+	 * We also don't compare goal speed stats at the moment since we currently can't restore them anyway.
+	 */
+	PlayerStats getDifferences(const PlayerStats& other) const 
+	{
+		PlayerStats diff;
+		diff.Goals = Goals - other.Goals;
+		diff.LongestGoalStreak = LongestGoalStreak - other.LongestGoalStreak;
+		diff.LongestMissStreak = other.LongestMissStreak - LongestMissStreak; // We turn this value around so a positive value is something good, like with the other stats
+		diff.InitialHits = InitialHits - other.InitialHits;
+		return diff;
+	}
 };

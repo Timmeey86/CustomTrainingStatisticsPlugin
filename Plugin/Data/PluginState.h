@@ -24,7 +24,7 @@ public:
 	bool PluginIsEnabled = true;						///< True while the user has not disabled the plugin in the settings UI.
 	bool IsMetric = true;								///< Whether or not the ball speed is in metric or imperial
 	bool AllShotStatsShallBeDisplayed = true;			///< The overlay for all shot stats will be displayed while true
-	bool PerShotStatsShallBeDisplayed = false;			///< The overlay for per shot stats will be displayed while true
+	bool PerShotStatsShallBeDisplayed = true;			///< The overlay for per shot stats will be displayed while true
 	bool AttemptsAndGoalsShallBeDisplayed = true;		///< True while attempts and goals shall appear in the stat display.
 	bool TotalSuccessRateShallBeDisplayed = true;		///< True while the total success rate shall appear in the stat display.
 	bool CurrentStreaksShallBeDisplayed = true;			///< True while the current miss/goal streaks shall appear in the stat display.
@@ -36,17 +36,17 @@ public:
 	bool MinGoalSpeedShallBeDisplayed = true;			///< True while the minimum recent goal speed shall appear in the stat display.
 	bool MedianGoalSpeedShallBeDisplayed = true;		///< True while the median goal speed shall appear in the stat display.
 	bool MeanGoalSpeedShallBeDisplayed = false;			///< True while the mean goal speed shall appear in the stat display.
+	bool PreviousSessionDiffShallBeDisplayed = true;	///< True while the percentage differences to the previous session shall be displayed.
 
 	/** True while initial ball hits and ball hit percentage shall appear in the stat display. 
-	 *  False by default since this is only useful for edge cases like speed flip training.
 	 */
-	bool InitialBallHitsShallBeDisplayed = false;			
+	bool InitialBallHitsShallBeDisplayed = true;
 	int CurrentRoundIndex = -1;								///< The index of the current round, -1 when not initialized
 	int TotalRounds = -1;									///< The total number of rounds in the current training pack
 	int MenuStackSize = 0;									///< The total number of open menus (1 for the "Pause" Menu in custom training, 2 for "Settings" or "Change Mode/Match")
 
-	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, 1.0f, 2.0f, 1.5f }; ///< Stores the user-defined value for the overlay and text for all shots stats
-	DisplayOptions PerShotOpts{"Per Shot Statistics", 5, 467, 1.0f, 2.0f, 1.5f};  ///< Stores the user-defined value for the overlay and text for per round stats
+	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, .8f, 1.6f, 1.2f }; ///< Stores the user-defined value for the overlay and text for all shots stats
+	DisplayOptions PerShotOpts{"Per Shot Statistics", 5, 520, .8f, 1.6f, 1.2f};  ///< Stores the user-defined value for the overlay and text for per round stats
 
 	LinearColor PanelColor = LinearColor();
 	LinearColor FontColor = LinearColor();

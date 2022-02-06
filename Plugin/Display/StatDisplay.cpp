@@ -7,8 +7,10 @@
 
 StatDisplay::StatDisplay(
 	const std::shared_ptr<const ShotStats> shotStats,
+	const std::shared_ptr<const ShotStats> diffStats,
 	const std::shared_ptr<const PluginState> pluginState)
 		: _shotStats(shotStats)
+		, _diffStats(diffStats)
 		, _pluginState(pluginState)
 {
 }
@@ -17,7 +19,7 @@ StatDisplay::StatDisplay(
 std::string to_percentage_string(double value)
 {
 	std::ostringstream stream;
-	stream << std::fixed << std::setprecision(2) << value << "%";
+	stream << std::fixed << std::setprecision(2) << value;
 	return stream.str();
 }
 
@@ -28,9 +30,22 @@ std::string to_float_string(float value, int precision = 2)
 	return stream.str();
 }
 
+std::string to_diff_percentage_string(double value)
+{
+	std::ostringstream stream;
+	stream << (value >= 0 ? "+" : "") << std::fixed << std::setprecision(2) << value;
+	return stream.str();
+}
+
+std::string to_diff_value_string(int value)
+{
+	std::ostringstream stream;
+	stream << (value >= 0 ? "+" : "") << value;
+	return stream.str();
+}
 void StatDisplay::drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const
 {
-	int numCharsLeft = floor(label.length() * 0.5);
+	int numCharsLeft = (int)floor((double)label.length() * 0.5);
 	auto leftTextBorder = (float)displayOpts.OverlayXPosition + ((_displayWidth / 2.0f) - (7.0f * numCharsLeft)) * displayOpts.TextWidthFactor;
 	auto topTextBorder = (float)displayOpts.OverlayYPosition + (5.0f + (float)rowNumber * 15.0f) * displayOpts.TextHeightFactor;
 
@@ -39,7 +54,7 @@ void StatDisplay::drawCenter(CanvasWrapper& canvas, const DisplayOptions& displa
 }
 
 // Draws a stat consisting of a label and a string value into one "row"
-void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const SingleStatStrings& statStrings)
+void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const SingleStatStrings& statStrings, float diffDataBorder)
 {
 	auto leftTextBorder = (float)displayOpts.OverlayXPosition + 5.0f * displayOpts.TextWidthFactor;
 	auto topTextBorder = (float)displayOpts.OverlayYPosition + (5.0f + (float)rowNumber * 15.0f) * displayOpts.TextHeightFactor;
@@ -50,9 +65,31 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 	canvas.DrawString(statStrings.Value, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 	canvas.SetPosition(Vector2F{ leftTextBorder + 190.0f * displayOpts.TextWidthFactor, topTextBorder });
 	canvas.DrawString(statStrings.Unit, displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
+
+	if (statStrings.DiffValue.has_value())
+	{
+		auto currentColor = canvas.GetColor();
+		LinearColor diffColor;
+		diffColor.B = .0;
+		diffColor.A = 255.0;
+		if (std::stod(statStrings.DiffValue.value()) >= .0)
+		{
+			diffColor.R = .0;
+			diffColor.G = 255.0;
+		}
+		else
+		{
+			diffColor.R = 255.0;
+			diffColor.G = .0;
+		}
+		canvas.SetColor(diffColor);
+		canvas.SetPosition(Vector2F{ diffDataBorder * displayOpts.TextWidthFactor, topTextBorder });
+		canvas.DrawString(statStrings.DiffValue.value(), displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
+		canvas.SetColor(currentColor);
+	}
 }
 
-std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
 {
 	std::list<SingleStatStrings> statNamesAndValues;
 
@@ -64,30 +101,53 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	if (pluginState->InitialBallHitsShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hits:", std::to_string(statsData.Stats.InitialHits), "" });
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage), "" });
 	}
 	if (pluginState->CurrentStreaksShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Current Goal Streak:", std::to_string(statsData.Stats.GoalStreakCounter), "" });
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Current Miss Streak:", std::to_string(statsData.Stats.MissStreakCounter), "" });
 	}
-	if (pluginState->TotalSuccessRateShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "" });
-	}
 	if (pluginState->LongestStreaksShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Longest Goal Streak:", std::to_string(statsData.Stats.LongestGoalStreak), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.LongestGoalStreak);
+		}
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Longest Miss Streak:", std::to_string(statsData.Stats.LongestMissStreak), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.LongestMissStreak);
+		}
 	}
-	if (pluginState->PeakInfoShallBeDisplayed)
+	if (pluginState->TotalSuccessRateShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak Success Rate:", to_percentage_string(statsData.Data.PeakSuccessPercentage), "" });
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak At Shot#:", std::to_string(statsData.Data.PeakShotNumber), "" });
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.SuccessPercentage);
+		}
+	}
+	if (pluginState->InitialBallHitsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.InitialHitPercentage);
+		}
 	}
 	if (pluginState->LastNShotPercentageShallBeDisplayed)
 	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage), "" });
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage), "%" });
+	}
+	if (pluginState->PeakInfoShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak Success Rate:", to_percentage_string(statsData.Data.PeakSuccessPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.PeakSuccessPercentage);
+		}
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak At Shot#:", std::to_string(statsData.Data.PeakShotNumber), "" });
 	}
 
 	// Goal speed stats
@@ -121,16 +181,29 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	return statNamesAndValues;
 }
 
-void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData)
+void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData, const StatsData* const diffData)
 {
-	auto statsToBeRendered = GetStatsToBeRendered(statsData, _pluginState);
+	auto statsToBeRendered = GetStatsToBeRendered(statsData, _pluginState, diffData);
 	bool isDisplayingSpeed = _pluginState->MostRecentGoalSpeedShallBeDisplayed ||
 		_pluginState->MaxGoalSpeedShallBeDisplayed ||
 		_pluginState->MinGoalSpeedShallBeDisplayed ||
 		_pluginState->MedianGoalSpeedShallBeDisplayed ||
 		_pluginState->MeanGoalSpeedShallBeDisplayed;
 	
-	_displayWidth = isDisplayingSpeed ? 230.0f : 200.0f;
+	_displayWidth = 215.0f;
+	auto diffDataBorder = _displayWidth + 5.0f;
+	if (isDisplayingSpeed)
+	{
+		_displayWidth += 20.0f;
+	}
+	if (diffData && _pluginState->PreviousSessionDiffShallBeDisplayed)
+	{
+		_displayWidth += 40.0f;
+		if (!isDisplayingSpeed)
+		{
+			_displayWidth += 20.0f;
+		}
+	}
 
 	// Draw a panel so we can read the text on all kinds of maps
 	canvas.SetColor(_pluginState->PanelColor);
@@ -146,7 +219,7 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 	counter++;
 	for (const auto& statStrings : statsToBeRendered)
 	{
-		drawStat(canvas, opts, counter, statStrings);
+		drawStat(canvas, opts, counter, statStrings, diffDataBorder);
 		counter++;
 	}
 }
@@ -155,7 +228,8 @@ void StatDisplay::renderAllShotStats(CanvasWrapper& canvas)
 {
 	if (_pluginState->AllShotStatsShallBeDisplayed)
 	{
-		renderStatsData(canvas, _pluginState->AllShotsOpts, _shotStats->AllShotStats);
+		auto diffStats = (_pluginState->PreviousSessionDiffShallBeDisplayed && _diffStats->hasAttempts() ? &_diffStats->AllShotStats : nullptr);
+		renderStatsData(canvas, _pluginState->AllShotsOpts, _shotStats->AllShotStats, diffStats);
 	}
 }
 
@@ -167,7 +241,8 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas)
 		if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _shotStats->PerShotStats.size())
 		{
 			const auto& statsData = _shotStats->PerShotStats.at(_pluginState->CurrentRoundIndex);
-			renderStatsData(canvas, _pluginState->PerShotOpts, statsData);
+			auto diffStats = (_pluginState->PreviousSessionDiffShallBeDisplayed && _diffStats->hasAttempts() ? &_diffStats->PerShotStats[_pluginState->CurrentRoundIndex] : nullptr);
+			renderStatsData(canvas, _pluginState->PerShotOpts, statsData, diffStats);
 		}
 	}
 }
