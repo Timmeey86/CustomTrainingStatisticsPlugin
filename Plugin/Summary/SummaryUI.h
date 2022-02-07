@@ -15,6 +15,7 @@ public:
 	void initSummaryUi(
 		const std::shared_ptr<CVarManagerWrapper> cvarManager,
 		const std::shared_ptr<const ShotStats> shotStats,
+		const std::shared_ptr<const ShotStats> diffData,
 		const std::shared_ptr<const PluginState> pluginState);
 
 	/** Do ImGui rendering here */
@@ -55,6 +56,7 @@ private:
 
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows registering and retrieving custom variables.
 	std::shared_ptr<const ShotStats> _shotStats;
+	std::shared_ptr<const ShotStats> _diffData;
 	std::shared_ptr<const PluginState> _pluginState;
 	bool _shouldBlockInput = false;
 	bool _isWindowOpen = false;

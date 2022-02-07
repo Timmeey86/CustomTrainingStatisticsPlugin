@@ -26,12 +26,13 @@ void GoalPercentageCounter::onLoad()
 	// Initialize the Settings page of the bakkesmod menu (F2)
 	initPluginSettingsUi(commandExecutionFunction, cvarManager);
 
+	auto differenceData = std::make_shared<ShotStats>(); // will store the difference between the previous session and the current one
+
 	// Initialize the stats summary page
-	initSummaryUi(cvarManager, _shotStats, _pluginState);
+	initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
 
 	// Create handler classes
 	auto statReader = std::make_shared<StatFileReader>(gameWrapper);
-	auto differenceData = std::make_shared<ShotStats>(); // will store the difference between the previous session and the current one
 	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader);
 
 	// Enable rendering of output

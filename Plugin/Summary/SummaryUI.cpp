@@ -5,22 +5,24 @@
 
 #include <string>
 
-const std::string SummaryUI::MenuName = "goal_percentage_counter_summary";
+const std::string SummaryUI::MenuName = "custom_training_statistics_summary";
 
 void SummaryUI::initSummaryUi(
 	const std::shared_ptr<CVarManagerWrapper> cvarManager,
 	const std::shared_ptr<const ShotStats> shotStats,
+	const std::shared_ptr<const ShotStats> diffData,
 	const std::shared_ptr<const PluginState> pluginState)
 {
 	_cvarManager = cvarManager;
 	_shotStats = shotStats;
+	_diffData = diffData;
 	_pluginState = pluginState;
 }
 
 void SummaryUI::renderSummaryHeader()
 {
 	ImGui::BeginChild(
-		"#GoalPercentageCounterSummaryStatsHeader",
+		"#CustomTrainingStatisticsSummaryStats",
 		//ImVec2(0, 0),
 		ImVec2(0, ImGui::GetTextLineHeight() + ImGui::GetStyle().ItemSpacing.y * 2 + ImGui::GetStyle().FramePadding.y),
 		false,
@@ -28,7 +30,7 @@ void SummaryUI::renderSummaryHeader()
 
 	auto statsToBeRendered = StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState);
 	int numColumns = (int)statsToBeRendered.size() + 1; // +1 for shot number
-	ImGui::Columns(numColumns, "goal_percentage_counter_summary_stats_header");
+	ImGui::Columns(numColumns, "custom_training_statistics_summary_stats_header");
 	ImGui::Separator();
 
 	ImGui::Text("Shot Number:");
@@ -46,14 +48,13 @@ void SummaryUI::renderSummaryHeader()
 void SummaryUI::renderSummaryBody()
 {
 	ImGui::BeginChild(
-		"#GoalPercentageCounterSummaryStatsBody",
+		"#CustomTrainingStatisticsSummaryStatsBody",
 		ImVec2(0, 0),
 		false,
 		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
 	int numColumns = (int)StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState).size() + 1; // +1 for shot number
-	ImGui::Columns(numColumns, "goal_percentage_counter_summary_stats_body");
-	ImGui::Separator();
+	ImGui::Columns(numColumns, "custom_training_statistics_summary_stats_body");
 
 	ImGuiListClipper clipper((int)_shotStats->PerShotStats.size() + 1); // +1 for AllShotStats
 	while (clipper.Step())
@@ -61,6 +62,7 @@ void SummaryUI::renderSummaryBody()
 		for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i)
 		{
 			StatsData statsData;
+			const StatsData* statsDataDiff = nullptr;
 			// Get row data
 			if (i < _shotStats->PerShotStats.size())
 			{
@@ -68,27 +70,40 @@ void SummaryUI::renderSummaryBody()
 				ImGui::NextColumn();
 
 				statsData = _shotStats->PerShotStats.at(i);
+				if (_diffData && _pluginState->PreviousSessionDiffShallBeDisplayed && _diffData->hasAttempts())
+				{
+					statsDataDiff = &_diffData->PerShotStats.at(i);
+				}
 			}
 			else
 			{
 				ImGui::Text("All Shots");
 				ImGui::NextColumn();
 				statsData = _shotStats->AllShotStats;
+				if (_diffData && _pluginState->PreviousSessionDiffShallBeDisplayed && _diffData->hasAttempts())
+				{
+					statsDataDiff = &_diffData->AllShotStats;
+				}
 			}
 
-			auto statsToBeRendered = StatDisplay::GetStatsToBeRendered(statsData, _pluginState);
+			auto statsToBeRendered = StatDisplay::GetStatsToBeRendered(statsData, _pluginState, statsDataDiff);
 			for (auto&& statStrings : statsToBeRendered)
 			{
-				// TODO: Adapt this code to make use of statStrings.Unit
-
 				// ImGui displays text as a c string so percent signs are escaped
 				// Need to add an extra percent sign so it will display
-				if (statStrings.Value.back() == '%')
+				if (statStrings.Unit.back() == '%')
 				{
-					statStrings.Value.push_back('%');
+					statStrings.Unit.push_back('%');
 				}
 
-				ImGui::Text(statStrings.Value.c_str());
+				ImGui::Text((statStrings.Value + " " + statStrings.Unit).c_str());
+
+				if (statStrings.DiffValue.has_value())
+				{
+					auto textColor = (std::stod(statStrings.DiffValue.value()) > .0 ? ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f } : ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f });
+					ImGui::SameLine();
+					ImGui::TextColored(textColor, statStrings.DiffValue.value().c_str());
+				}
 				ImGui::NextColumn();
 			}
 
