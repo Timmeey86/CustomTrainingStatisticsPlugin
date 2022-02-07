@@ -19,12 +19,12 @@ void SummaryUI::initSummaryUi(
 	_pluginState = pluginState;
 }
 
-void SummaryUI::renderSummaryHeader()
+void SummaryUI::renderSummary()
 {
 	ImGui::BeginChild(
 		"#CustomTrainingStatisticsSummaryStats",
-		//ImVec2(0, 0),
-		ImVec2(0, ImGui::GetTextLineHeight() + ImGui::GetStyle().ItemSpacing.y * 2 + ImGui::GetStyle().FramePadding.y),
+		ImVec2(0, 0),
+		//ImVec2(0, ImGui::GetTextLineHeight() + ImGui::GetStyle().ItemSpacing.y * 2 + ImGui::GetStyle().FramePadding.y),
 		false,
 		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
@@ -42,19 +42,7 @@ void SummaryUI::renderSummaryHeader()
 	}
 
 	ImGui::Separator();
-	ImGui::EndChild();
-}
-
-void SummaryUI::renderSummaryBody()
-{
-	ImGui::BeginChild(
-		"#CustomTrainingStatisticsSummaryStatsBody",
-		ImVec2(0, 0),
-		false,
-		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
-
-	int numColumns = (int)StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState).size() + 1; // +1 for shot number
-	ImGui::Columns(numColumns, "custom_training_statistics_summary_stats_body");
+	ImGui::Separator();
 
 	ImGuiListClipper clipper((int)_shotStats->PerShotStats.size() + 1); // +1 for AllShotStats
 	while (clipper.Step())
@@ -135,8 +123,7 @@ void SummaryUI::Render()
 
 	// Render data
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	renderSummaryHeader();
-	renderSummaryBody();
+	renderSummary();
 	ImGui::PopStyleVar();
 
 	// End GUI
