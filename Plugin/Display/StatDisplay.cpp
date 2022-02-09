@@ -83,7 +83,7 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 			diffColor.G = .0;
 		}
 		canvas.SetColor(diffColor);
-		canvas.SetPosition(Vector2F{ diffDataBorder * displayOpts.TextWidthFactor, topTextBorder });
+		canvas.SetPosition(Vector2F{ displayOpts.OverlayXPosition + diffDataBorder * displayOpts.TextWidthFactor, topTextBorder });
 		canvas.DrawString(statStrings.DiffValue.value(), displayOpts.TextWidthFactor, displayOpts.TextHeightFactor, false);
 		canvas.SetColor(currentColor);
 	}
