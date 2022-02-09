@@ -88,7 +88,7 @@ void SummaryUI::renderSummary()
 
 				if (statStrings.DiffValue.has_value())
 				{
-					auto textColor = (std::stod(statStrings.DiffValue.value()) > .0 ? ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f } : ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f });
+					auto textColor = (std::stod(statStrings.DiffValue.value()) >= .0 ? ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f } : ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f });
 					ImGui::SameLine();
 					ImGui::TextColored(textColor, statStrings.DiffValue.value().c_str());
 				}
