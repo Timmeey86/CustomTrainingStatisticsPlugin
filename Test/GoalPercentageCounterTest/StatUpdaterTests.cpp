@@ -115,10 +115,9 @@ TEST_F(StatUpdaterTestFixture, the_51st_goal_removes_oldest_last_50_shots_entry)
 		statUpdater->processAttempt();
 		statUpdater->processInitialBallHit();
 		statUpdater->processGoal();
+		statUpdater->updateData();
 		expectedStats.Last50Shots.push_back(true);
 	}
-
-	statUpdater->updateData();
 
 	expectTotalStats(expectedStats);
 	expectPerShotStats(expectedStats, 0);
@@ -299,6 +298,7 @@ TEST_F(StatUpdaterTestFixture, togglingLastShot_when_attemptsHaveBeenMade_will_a
 	statUpdater->processAttempt();
 	statUpdater->processInitialBallHit();
 	statUpdater->processMiss();
+	statUpdater->updateData();
 
 	ASSERT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getCount(), 0);
 
@@ -313,4 +313,60 @@ TEST_F(StatUpdaterTestFixture, togglingLastShot_when_attemptsHaveBeenMade_will_a
 	EXPECT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getMax(), goalSpeed);
 	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats.getCount(), 1);
 	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats.getMax(), goalSpeed);
+}
+
+// Peak percentage is supposed to not be calculated before 20 attempts have been made
+TEST_F(StatUpdaterTestFixture, scoring_when_lessThan20AttemptsHaveBeenMade_will_notAffectPeakPercentage)
+{
+	statUpdater->processReset(2);
+	for (auto i = 0; i < 19; i++)
+	{
+		statUpdater->processAttempt();
+		statUpdater->processInitialBallHit();
+		statUpdater->processGoal();
+		statUpdater->updateData();
+
+		EXPECT_EQ(_shotStats->AllShotStats.Data.PeakSuccessPercentage, 0);
+	}
+}
+
+// Peak percentage should be calculated when exactly 20 shots have been made
+TEST_F(StatUpdaterTestFixture, finishingAttempt_when_doing20thAttempt_will_calculatePeakPercentage)
+{
+	// Score one goal and 19 misses
+	statUpdater->processReset(2);
+	statUpdater->processAttempt();
+	statUpdater->processInitialBallHit();
+	statUpdater->processGoal();
+	statUpdater->updateData();
+	
+	for (auto i = 0; i < 19; i++)
+	{
+		statUpdater->processAttempt();
+		statUpdater->processMiss();
+		statUpdater->updateData();
+	}
+
+	EXPECT_FLOAT_EQ(_shotStats->AllShotStats.Data.PeakSuccessPercentage, 5.0f);
+}
+
+// Peak percentage should not go down when the total percentage goes down
+TEST_F(StatUpdaterTestFixture, missing_when_doing21stAttempt_will_notDecreasePeakPercentage)
+{
+	// Score one goal and 20 misses
+	statUpdater->processReset(2);
+	statUpdater->processAttempt();
+	statUpdater->processInitialBallHit();
+	statUpdater->processGoal();
+	statUpdater->updateData();
+
+	for (auto i = 0; i < 20; i++)
+	{
+		statUpdater->processAttempt();
+		statUpdater->processMiss();
+		statUpdater->updateData();
+	}
+
+	// While the total success rate should be less than 5% (1/21), the peak should remain at 5%
+	EXPECT_FLOAT_EQ(_shotStats->AllShotStats.Data.PeakSuccessPercentage, 5.0f);
 }

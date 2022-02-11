@@ -38,7 +38,7 @@ private:
 	/** Increases the miss counter and updates streaks. */
 	void handleMiss(StatsData& statsData);
 	/** Updates percentage values. */
-	void recalculatePercentages(StatsData& statsData);
+	void recalculatePercentages(StatsData& statsData, StatsData& internalStatsData);
 	/** Updates the internal backup of stats. This is used for the "toggle last attempt" feature. */
 	void updateStatsBackup();
 	/** Retrieves the differences between the current session and the previous one, or if stats had been restored from the previous session,

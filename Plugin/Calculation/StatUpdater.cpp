@@ -104,12 +104,12 @@ void StatUpdater::updateData()
 	//       As long as the state machine works correctly, it is enough to update only the current shot (and the summary object)
 
 	_externalShotStats->AllShotStats = _internalShotStats.AllShotStats;
-	recalculatePercentages(_externalShotStats->AllShotStats);
+	recalculatePercentages(_externalShotStats->AllShotStats, _internalShotStats.AllShotStats);
 
 	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
 	{
 		_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex) = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
-		recalculatePercentages(_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex));
+		recalculatePercentages(_externalShotStats->PerShotStats.at(_pluginState->CurrentRoundIndex), _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex));
 	}
 
 	if (_differenceStats)
@@ -158,10 +158,10 @@ void StatUpdater::restoreLastSession()
 	_externalShotStats->AllShotStats = stats.AllShotStats;
 	_externalShotStats->PerShotStats = std::vector<StatsData>(stats.PerShotStats);
 
-	recalculatePercentages(_externalShotStats->AllShotStats);
+	recalculatePercentages(_externalShotStats->AllShotStats, _internalShotStats.AllShotStats);
 	for (auto index = 0; index < _externalShotStats->PerShotStats.size(); index++)
 	{
-		recalculatePercentages(_externalShotStats->PerShotStats[index]);
+		recalculatePercentages(_externalShotStats->PerShotStats[index], _internalShotStats.PerShotStats[index]);
 	}
 	// We successfully restored statistics from the last session. The "Toggle last attempt" feature must be disabled until a goal or a miss was recorded
 	// after restoring
@@ -230,39 +230,42 @@ double getPercentageValue(double attempts, double goals)
 	return round((goals / attempts) * 10000.0) / 100.0;
 }
 
-void StatUpdater::recalculatePercentages(StatsData& statsData)
+void StatUpdater::recalculatePercentages(StatsData& statsData, StatsData& internalStatsData)
 {
 	auto successPercentage = .0;
 	auto initialHitPercentage = .0;
-	if (statsData.Stats.Attempts > 0)
+	if (internalStatsData.Stats.Attempts > 0)
 	{
 		// Calculate the success percentage in percent, including two decimal digits
-		successPercentage = getPercentageValue(statsData.Stats.Attempts, statsData.Stats.Goals);
-		initialHitPercentage = getPercentageValue(statsData.Stats.Attempts, statsData.Stats.InitialHits);
+		successPercentage = getPercentageValue(internalStatsData.Stats.Attempts, internalStatsData.Stats.Goals);
+		initialHitPercentage = getPercentageValue(internalStatsData.Stats.Attempts, internalStatsData.Stats.InitialHits);
 	}
-	statsData.Data.SuccessPercentage = successPercentage;
-	statsData.Data.InitialHitPercentage = initialHitPercentage;
+	internalStatsData.Data.SuccessPercentage = successPercentage;
+	internalStatsData.Data.InitialHitPercentage = initialHitPercentage;
 
 	// Update the percentage for the last 50 shots
 	// Ignore the event if this is a reset after a goal
-	while (statsData.Stats.Last50Shots.size() > 50)
+	while (internalStatsData.Stats.Last50Shots.size() > 50)
 	{
-		statsData.Stats.Last50Shots.erase(statsData.Stats.Last50Shots.begin());
+		internalStatsData.Stats.Last50Shots.erase(internalStatsData.Stats.Last50Shots.begin());
 	}
 	successPercentage = .0;
-	if (!statsData.Stats.Last50Shots.empty())
+	if (!internalStatsData.Stats.Last50Shots.empty())
 	{
-		auto numberOfGoals = std::count(statsData.Stats.Last50Shots.begin(), statsData.Stats.Last50Shots.end(), true);
-		successPercentage = getPercentageValue((double)statsData.Stats.Last50Shots.size(), (double)numberOfGoals);
+		auto numberOfGoals = std::count(internalStatsData.Stats.Last50Shots.begin(), internalStatsData.Stats.Last50Shots.end(), true);
+		successPercentage = getPercentageValue((double)internalStatsData.Stats.Last50Shots.size(), (double)numberOfGoals);
 	}
-	statsData.Data.Last50ShotsPercentage = successPercentage;
+	internalStatsData.Data.Last50ShotsPercentage = successPercentage;
 
 	// Update the peak percentage only after 20 shots since otherwise a couple of lucky early shots would create a wrong impression
-	if (statsData.Stats.Attempts > 20 && statsData.Data.Last50ShotsPercentage > statsData.Data.PeakSuccessPercentage)
+	if (internalStatsData.Stats.Attempts >= 20 && internalStatsData.Data.Last50ShotsPercentage > internalStatsData.Data.PeakSuccessPercentage)
 	{
-		statsData.Data.PeakSuccessPercentage = statsData.Data.Last50ShotsPercentage;
-		statsData.Data.PeakShotNumber = statsData.Stats.Attempts;
+		internalStatsData.Data.PeakSuccessPercentage = internalStatsData.Data.Last50ShotsPercentage;
+		internalStatsData.Data.PeakShotNumber = internalStatsData.Stats.Attempts;
 	}
+
+	// Update external stats
+	statsData = internalStatsData;
 }
 
 void StatUpdater::handleGoal(StatsData& statsData)
