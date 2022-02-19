@@ -17,10 +17,16 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	_stateMachine->hookToEvents(_gameWrapper);
 
 	// Allow resetting statistics to zero attempts/goals manually
-	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater, statWriter](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 		
 		statUpdater->processReset(_pluginState->TotalRounds);
+		// After manually resetting we have to overwrite the current file with zero attempts since otherwise
+		// a stat restore after the reset would restore the session which was reset, rather than the one before.
+		// We want to support the use case where the player started an attempt, then remembered they intended to restore the previous session
+		// which they can't, since they started already. With this change, they can press reset, and then restore the previous session,
+		// since the current session's file will be skipped as it has no attempts
+		statWriter->writeData();
 	}, "Reset the statistics.", PERMISSION_ALL);
 
 	// Allow resetting statistics to zero attempts/goals manually
