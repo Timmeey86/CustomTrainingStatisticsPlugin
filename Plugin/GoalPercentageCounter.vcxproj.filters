@@ -131,6 +131,9 @@
     <ClCompile Include="Storage\StatFileReader.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
+    <ClCompile Include="Settings\PersistentStorage.cpp">
+      <Filter>SettingsUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -258,6 +261,9 @@
     </ClInclude>
     <ClInclude Include="Storage\StatFileReader.h">
       <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\PersistentStorage.h">
+      <Filter>SettingsUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
