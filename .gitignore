@@ -355,3 +355,4 @@ MigrationBackup/
 /Test/gmock.dir
 plugins/
 .opencppcov
+*.zip
