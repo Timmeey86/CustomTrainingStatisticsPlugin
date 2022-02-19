@@ -60,55 +60,59 @@ void handleBindingChange(std::shared_ptr<CVarManagerWrapper> cvarManager, const 
 	}
 }
 
-void SettingsRegistration::registerCVars(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
+void SettingsRegistration::registerCVars(
+	std::function<void(const std::string&)> sendNotifierFunc, 
+	std::shared_ptr<CVarManagerWrapper> cvarManager, 
+	std::shared_ptr<PersistentStorage> persistentStorage,
+	std::shared_ptr<PluginState> pluginState)
 {
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::EnableFlagDef, SET_BOOL_VALUE_FUNC(PluginIsEnabled));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::EnableFlagDef, SET_BOOL_VALUE_FUNC(PluginIsEnabled));
 
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef, SET_BOOL_VALUE_FUNC(AttemptsAndGoalsShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayInitialBallHitsDef, SET_BOOL_VALUE_FUNC(InitialBallHitsShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayCurrentStreaksDef, SET_BOOL_VALUE_FUNC(CurrentStreaksShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayTotalSuccessRateDef, SET_BOOL_VALUE_FUNC(TotalSuccessRateShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayLongestStreaksDef, SET_BOOL_VALUE_FUNC(LongestStreaksShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayPeakInfoDef, SET_BOOL_VALUE_FUNC(PeakInfoShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayLastNShotPercentageDef, SET_BOOL_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef, SET_BOOL_VALUE_FUNC(MostRecentGoalSpeedShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef, SET_BOOL_VALUE_FUNC(MaxGoalSpeedShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMinGoalSpeedDef, SET_BOOL_VALUE_FUNC(MinGoalSpeedShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef, SET_BOOL_VALUE_FUNC(MedianGoalSpeedShallBeDisplayed));
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef, SET_BOOL_VALUE_FUNC(MeanGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef, SET_BOOL_VALUE_FUNC(AttemptsAndGoalsShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayInitialBallHitsDef, SET_BOOL_VALUE_FUNC(InitialBallHitsShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayCurrentStreaksDef, SET_BOOL_VALUE_FUNC(CurrentStreaksShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayTotalSuccessRateDef, SET_BOOL_VALUE_FUNC(TotalSuccessRateShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayLongestStreaksDef, SET_BOOL_VALUE_FUNC(LongestStreaksShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayPeakInfoDef, SET_BOOL_VALUE_FUNC(PeakInfoShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayLastNShotPercentageDef, SET_BOOL_VALUE_FUNC(LastNShotPercentageShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef, SET_BOOL_VALUE_FUNC(MostRecentGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef, SET_BOOL_VALUE_FUNC(MaxGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMinGoalSpeedDef, SET_BOOL_VALUE_FUNC(MinGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef, SET_BOOL_VALUE_FUNC(MedianGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef, SET_BOOL_VALUE_FUNC(MeanGoalSpeedShallBeDisplayed));
 
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayAllShotStats, SET_BOOL_VALUE_FUNC(AllShotStatsShallBeDisplayed));
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotXPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayXPosition));
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotYPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayYPosition));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::AllShotFontSizeDef, [pluginState](float value) {
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayAllShotStats, SET_BOOL_VALUE_FUNC(AllShotStatsShallBeDisplayed));
+	registerIntSliderSetting(persistentStorage, GoalPercentageCounterSettings::AllShotXPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayXPosition));
+	registerIntSliderSetting(persistentStorage, GoalPercentageCounterSettings::AllShotYPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayYPosition));
+	registerFloatSliderSetting(persistentStorage, GoalPercentageCounterSettings::AllShotFontSizeDef, [pluginState](float value) {
 		pluginState->AllShotsOpts.TextSizeFactor = value;
 		pluginState->AllShotsOpts.TextWidthFactor = 2.0f * value;
 		pluginState->AllShotsOpts.TextHeightFactor = 1.5f * value;
 		});
 
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayPerShotStats, SET_BOOL_VALUE_FUNC(PerShotStatsShallBeDisplayed));
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotXPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayXPosition));
-	registerIntSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotYPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayYPosition));
-	registerFloatSliderSetting(cvarManager, GoalPercentageCounterSettings::PerShotFontSizeDef, [pluginState](float value) {
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayPerShotStats, SET_BOOL_VALUE_FUNC(PerShotStatsShallBeDisplayed));
+	registerIntSliderSetting(persistentStorage, GoalPercentageCounterSettings::PerShotXPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayXPosition));
+	registerIntSliderSetting(persistentStorage, GoalPercentageCounterSettings::PerShotYPositionDef, SET_INT_VALUE_FUNC(PerShotOpts.OverlayYPosition));
+	registerFloatSliderSetting(persistentStorage, GoalPercentageCounterSettings::PerShotFontSizeDef, [pluginState](float value) {
 		pluginState->PerShotOpts.TextSizeFactor = value;
 		pluginState->PerShotOpts.TextWidthFactor = 2.0f * value;
 		pluginState->PerShotOpts.TextHeightFactor = 1.5f * value;
 		});
 
-	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::PanelColorDef, SET_COLOR_VALUE_FUNC(PanelColor));
-	registerColorEditSetting(cvarManager, GoalPercentageCounterSettings::FontColorDef, SET_COLOR_VALUE_FUNC(FontColor));
+	registerColorEditSetting(persistentStorage, GoalPercentageCounterSettings::PanelColorDef, SET_COLOR_VALUE_FUNC(PanelColor));
+	registerColorEditSetting(persistentStorage, GoalPercentageCounterSettings::FontColorDef, SET_COLOR_VALUE_FUNC(FontColor));
 
-	registerCheckboxSetting(cvarManager, GoalPercentageCounterSettings::DisplayStatDifference, SET_BOOL_VALUE_FUNC(PreviousSessionDiffShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayStatDifference, SET_BOOL_VALUE_FUNC(PreviousSessionDiffShallBeDisplayed));
 
-	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::SummaryKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::SummaryKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
 		handleBindingChange(cvarManager, oldValue, cvar, "togglemenu " + SummaryUI::MenuName + ";");
 		});
 
-	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::RestoreLastSessionKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::RestoreLastSessionKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
 		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::RestoreStatistics } + ";");
 	});
 
-	registerDropdownMenuSetting(cvarManager, GoalPercentageCounterSettings::ToggleLastAttemptKeybindingDef, [cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::ToggleLastAttemptKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
 		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::ToggleLastAttempt } + ";");
 	});
 }
@@ -118,9 +122,9 @@ void SettingsRegistration::registerCVars(std::function<void(const std::string&)>
 #undef SET_FLOAT_VALUE_FUNC
 #undef SET_COLOR_VALUE_FUNC
 
-CVarWrapper SettingsRegistration::registerCVar(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition)
+CVarWrapper SettingsRegistration::registerCVar(std::shared_ptr<PersistentStorage> persistentStorage, const SettingsDefinition& settingsDefinition)
 {
-	return cvarManager->registerCvar(
+	return persistentStorage->RegisterPersistentCvar(
 		settingsDefinition.VariableName,
 		settingsDefinition.DefaultValue,
 		settingsDefinition.DisplayText,
@@ -131,34 +135,27 @@ CVarWrapper SettingsRegistration::registerCVar(std::shared_ptr<CVarManagerWrappe
 		settingsDefinition.MaxValue.value_or(.0f)
 	);
 }
-void SettingsRegistration::registerCheckboxSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(bool)> setValueFunc)
+void SettingsRegistration::registerCheckboxSetting(std::shared_ptr<PersistentStorage> persistentStorage, const SettingsDefinition& settingsDefinition, std::function<void(bool)> setValueFunc)
 {
-	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getBoolValue()); });
+	registerCVar(persistentStorage, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getBoolValue()); });
 }
 
-void SettingsRegistration::registerIntSliderSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(int)> setValueFunc)
+void SettingsRegistration::registerIntSliderSetting(std::shared_ptr<PersistentStorage> persistentStorage, const SettingsDefinition& settingsDefinition, std::function<void(int)> setValueFunc)
 {
-	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getIntValue()); });
+	registerCVar(persistentStorage, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getIntValue()); });
 }
 
-void SettingsRegistration::registerFloatSliderSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(float)> setValueFunc)
+void SettingsRegistration::registerFloatSliderSetting(std::shared_ptr<PersistentStorage> persistentStorage, const SettingsDefinition& settingsDefinition, std::function<void(float)> setValueFunc)
 {
-	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getFloatValue()); });
+	registerCVar(persistentStorage, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getFloatValue()); });
 }
 
-void SettingsRegistration::registerColorEditSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(const LinearColor&)> setValueFunc)
+void SettingsRegistration::registerColorEditSetting(std::shared_ptr<PersistentStorage> persistentStorage, const SettingsDefinition& settingsDefinition, std::function<void(const LinearColor&)> setValueFunc)
 {
-	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getColorValue()); });
-	
-	// Apply the initial color from the settings
-	auto cvar = cvarManager->getCvar(settingsDefinition.VariableName);
-	if (cvar)
-	{
-		setValueFunc(cvar.getColorValue());
-	}
+	registerCVar(persistentStorage, settingsDefinition).addOnValueChanged([setValueFunc](const std::string&, CVarWrapper cvar) { setValueFunc(cvar.getColorValue()); });
 }
 
-void SettingsRegistration::registerDropdownMenuSetting(std::shared_ptr<CVarManagerWrapper> cvarManager, const SettingsDefinition& settingsDefinition, std::function<void(const std::string&, CVarWrapper)> handleDropdown)
+void SettingsRegistration::registerDropdownMenuSetting(std::shared_ptr<PersistentStorage> persistentStorage, const SettingsDefinition& settingsDefinition, std::function<void(const std::string&, CVarWrapper)> handleDropdown)
 {
-	registerCVar(cvarManager, settingsDefinition).addOnValueChanged([handleDropdown](const std::string& oldValue, CVarWrapper cvar) { handleDropdown(oldValue, cvar); });
+	registerCVar(persistentStorage, settingsDefinition).addOnValueChanged([handleDropdown](const std::string& oldValue, CVarWrapper cvar) { handleDropdown(oldValue, cvar); });
 }
