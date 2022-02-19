@@ -89,6 +89,11 @@ void PersistentStorage::AddCVar(const std::string& s)
 	}
 }
 
+CVarWrapper PersistentStorage::GetCVar(const std::string& s)
+{
+	return cv_->getCvar(s);
+}
+
 std::filesystem::path PersistentStorage::GetStorageFilePath(const std::shared_ptr<GameWrapper>& gw, std::string file_name)
 {
 	return gw->GetBakkesModPath() / "cfg" / file_name.append(".cfg");

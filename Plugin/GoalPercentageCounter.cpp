@@ -4,6 +4,7 @@
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Settings/SettingsRegistration.h"
+#include "Settings/PersistentStorage.h"
 #include "Storage/StatFileWriter.h"
 #include "Storage/StatFileReader.h"
 
@@ -20,8 +21,11 @@ void GoalPercentageCounter::onLoad()
 		});
 	};
 
+	// Prevents settings from being cleared when we update (or recompile) the plugin
+	auto persistentStorage = std::make_shared<PersistentStorage>(this, "CustomTrainingStatistics", true, true);
+
 	// Register CVars before doing anything else, so they are properly restored from the config
-	SettingsRegistration::registerCVars(commandExecutionFunction, cvarManager, _pluginState);	
+	SettingsRegistration::registerCVars(commandExecutionFunction, cvarManager, persistentStorage, _pluginState);
 
 	// Initialize the Settings page of the bakkesmod menu (F2)
 	initPluginSettingsUi(commandExecutionFunction, cvarManager);

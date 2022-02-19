@@ -69,6 +69,13 @@ public:
     void AddCVar(const std::string& s);
 
     /// <summary>
+    /// Returns the cvar with the given name. The cvar has to be registered first.
+    /// </summary>
+    /// <param name="s">The cvar name</param>
+    /// <returns>The cvar</returns>
+    CVarWrapper GetCVar(const std::string& s);
+
+    /// <summary>
     /// Adds cvars to be persistent. The cvars have to be registered first.
     /// </summary>
     /// <param name="cvars">List of cvar names</param>
