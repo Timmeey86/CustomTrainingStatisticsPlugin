@@ -96,6 +96,7 @@
     <ClCompile Include="Calculation\StatUpdater.cpp" />
     <ClCompile Include="Core\CustomTrainingStateMachine.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
+    <ClCompile Include="Core\StatUpdaterEventBridge.cpp" />
     <ClCompile Include="Data\GoalSpeed.cpp" />
     <ClCompile Include="Data\RunningMean.cpp" />
     <ClCompile Include="Data\RunningMedian.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Core\IStatReader.h" />
     <ClInclude Include="Core\IStatUpdater.h" />
     <ClInclude Include="Core\IStatWriter.h" />
+    <ClInclude Include="Core\StatUpdaterEventBridge.h" />
     <ClInclude Include="Data\CalculatedData.h" />
     <ClInclude Include="Data\GoalSpeed.h" />
     <ClInclude Include="Data\PlayerStats.h" />

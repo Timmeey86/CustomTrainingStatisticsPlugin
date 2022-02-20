@@ -3,6 +3,7 @@
 #include "Calculation/StatUpdater.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
+#include "Core/StatUpdaterEventBridge.h"
 #include "Settings/SettingsRegistration.h"
 #include "Settings/PersistentStorage.h"
 #include "Storage/StatFileWriter.h"
@@ -45,8 +46,14 @@ void GoalPercentageCounter::onLoad()
 	// Enable storage of stats on the file system (crash recovery / maybe training trend in future)
 	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats);
 
+
 	// Set up event registration
 	_eventListener = std::make_shared<EventListener>(gameWrapper, cvarManager, _pluginState);
+
+	// Register any event receivers before hooking into the events (otherwise they won't receive the events)
+	_eventListener->addEventReceiver(std::make_shared<StatUpdaterEventBridge>(statUpdater, _pluginState));
+
+	// Hook into events now 
 	_eventListener->registerGameStateEvents();
 	_eventListener->registerUpdateEvents(statUpdater, statWriter);
 	_eventListener->registerRenderEvents(statDisplay);

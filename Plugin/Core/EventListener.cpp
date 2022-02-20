@@ -13,14 +13,18 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 {
 	if (!statUpdater) { return; }
 
-	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater, statWriter, _pluginState);
-	_stateMachine->hookToEvents(_gameWrapper);
+	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statWriter, _pluginState);
+	_stateMachine->hookToEvents(_gameWrapper, _eventReceivers);
 
 	// Allow resetting statistics to zero attempts/goals manually
-	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater, statWriter](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statWriter](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
-		
-		statUpdater->processReset(_pluginState->TotalRounds);
+
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onResetStatisticsTriggered();
+		}
+
 		// After manually resetting we have to overwrite the current file with zero attempts since otherwise
 		// a stat restore after the reset would restore the session which was reset, rather than the one before.
 		// We want to support the use case where the player started an attempt, then remembered they intended to restore the previous session
@@ -30,17 +34,23 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	}, "Reset the statistics.", PERMISSION_ALL);
 
 	// Allow resetting statistics to zero attempts/goals manually
-	_cvarManager->registerNotifier(TriggerNames::RestoreStatistics, [this, statUpdater](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::RestoreStatistics, [this](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 
-		statUpdater->restoreLastSession();
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onRestorePreviousSessionTriggered();
+		}
 	}, "Restore the statistics.", PERMISSION_ALL);
 
 	// Allow toggling the last attempt between miss and goal
-	_cvarManager->registerNotifier(TriggerNames::ToggleLastAttempt, [this, statUpdater](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::ToggleLastAttempt, [this](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 
-		statUpdater->toggleLastAttempt();
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onTogglePreviousAttemptTriggered();
+		}
 	}, "Toggle the last attempt to be a goal or a miss", PERMISSION_ALL);
 
 	// Happens when custom taining mode is loaded or restarted
@@ -52,7 +62,13 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 			if (TrainingEditorWrapper trainingWrapper(caller.memory_address); 
 				!trainingWrapper.IsNull())
 			{
-				_stateMachine->processOnTrainingModeLoaded(trainingWrapper);
+				auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+				for (auto eventReceiver : _eventReceivers)
+				{
+					eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingPackCode);
+				}
+
+				_stateMachine->processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, _eventReceivers);
 			}
 
 			// Reset other state variables
@@ -94,4 +110,9 @@ void EventListener::registerGameStateEvents()
 bool EventListener::statUpdatesShallBeSent()
 {
 	return _gameWrapper->IsInCustomTraining() && _pluginState->PluginIsEnabled;
+}
+
+void EventListener::addEventReceiver(std::shared_ptr<AbstractEventReceiver> eventReceiver)
+{
+	_eventReceivers.emplace_back(eventReceiver);
 }

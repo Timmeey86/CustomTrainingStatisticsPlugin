@@ -6,21 +6,19 @@
 
 CustomTrainingStateMachine::CustomTrainingStateMachine(
 	std::shared_ptr<CVarManagerWrapper> cvarManager, 
-	std::shared_ptr<IStatUpdater> statUpdater,
 	std::shared_ptr<IStatWriter> statWriter,
 	std::shared_ptr<PluginState> pluginState)
 	: _cvarManager( cvarManager )
-	, _statUpdater( statUpdater )
 	, _statWriter( statWriter )
 	, _pluginState( pluginState )
 {
 	_currentState = CustomTrainingState::NotInCustomTraining;
 }
 
-void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>& gameWrapper)
+void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>& gameWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 	// Happens whenever a goal was scored
-	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, gameWrapper](const std::string&) {
+	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, gameWrapper, eventReceivers](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 
 		// Prevent additional goal events which occur during goal replay from being processed
@@ -31,52 +29,69 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 			if (gameServer.IsNull()) { return; }
 			auto ball = gameServer.GetBall();
 			if (ball.IsNull()) { return; }
+			TrainingEditorWrapper trainingWrapper(gameServer.memory_address);
+			if (trainingWrapper.IsNull()) { return; }
 
 			_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
 
 			if (ball.GetLocation().Y > 0)
 			{
-				processOnHitGoal();
+				processOnHitGoal(trainingWrapper, eventReceivers);
 			}
 		}
 	});
 
 	// Happens whenever the ball is being touched
-	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnCarTouch", [this, gameWrapper](const std::string&) {
+	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnCarTouch", [this, gameWrapper, eventReceivers](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 
-		processOnCarTouch();
+		auto gameServer = gameWrapper->GetGameEventAsServer();
+		if (gameServer.IsNull()) { return; }
+		TrainingEditorWrapper trainingWrapper(gameServer.memory_address);
+		if (trainingWrapper.IsNull()) { return; }
+
+		processOnCarTouch(trainingWrapper, eventReceivers);
 	});
 
 	// Happens whenever a button was pressed after loading a new shot
-	gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this, gameWrapper](const std::string&) {
+	gameWrapper->HookEvent("Function TAGame.TrainingEditorMetrics_TA.TrainingShotAttempt", [this, gameWrapper, eventReceivers](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 
-		processTrainingShotAttempt();
+		auto gameServer = gameWrapper->GetGameEventAsServer();
+		if (gameServer.IsNull()) { return; }
+		TrainingEditorWrapper trainingWrapper(gameServer.memory_address);
+		if (trainingWrapper.IsNull()) { return; }
+
+		processTrainingShotAttempt(trainingWrapper, eventReceivers);
 	});
 
 	// Happens whenever a shot is changed or loaded in custom training
 	gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function TAGame.GameEvent_TrainingEditor_TA.EventRoundChanged",
-		[this, gameWrapper](ActorWrapper caller, void*, const std::string&) {
+		[this, gameWrapper, eventReceivers](ActorWrapper caller, void*, const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 
 		TrainingEditorWrapper trainingWrapper(caller.memory_address);
-		processEventRoundChanged(trainingWrapper);
+		processEventRoundChanged(trainingWrapper, eventReceivers);
 	});
 
 	// Happens whenever the current custom training map gets unloaded, e.g. because of leaving to the main menu or loading a different training pack
 	gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function TAGame.GameEvent_TrainingEditor_TA.Destroyed",
-		[this, gameWrapper](ActorWrapper caller, void*, const std::string&) {
+		[this, gameWrapper, eventReceivers](ActorWrapper caller, void*, const std::string&) {
+
+		TrainingEditorWrapper trainingWrapper(caller.memory_address);
+		if (trainingWrapper.IsNull()) { return; }
 
 		// Finish the current attempt if an attempt was started, otherwise ignore the event
 		if (_currentState == CustomTrainingState::AttemptInProgress)
 		{
-			TrainingEditorWrapper trainingWrapper(caller.memory_address);
-			processEventRoundChanged(trainingWrapper);
+			processEventRoundChanged(trainingWrapper, eventReceivers);
 		}
 
 		// Set the training pack code to empty so a click on "Restore" won't do anything
-		_statUpdater->publishTrainingPackCode({});
+		for (auto eventReceiver : eventReceivers)
+		{
+			eventReceiver->onTrainingModeLoaded(trainingWrapper, {});
+		}
 	});
 
 	// Make sure the state machine has been properly initialized when the user (or the VS plugin project) reloads the plugin while being in custom training
@@ -86,14 +101,15 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		if (serverWrapper.IsNull()) { return; }
 
 		auto trainingWrapper = TrainingEditorWrapper(serverWrapper.memory_address);
-		processOnTrainingModeLoaded(trainingWrapper);
-		processEventRoundChanged(trainingWrapper);
+		auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+		processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, eventReceivers);
+		processEventRoundChanged(trainingWrapper, eventReceivers);
 	}
 	
 	// Note: The calling class hooks into OnTrainingModeLoaded
 }
 
-void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper)
+void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 	// Jump to the resetting state from whereever we were before - it doesn't matter since we reset everything anyway
 	setCurrentState(CustomTrainingState::Resetting);
@@ -101,9 +117,10 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 	_pluginState->CurrentRoundIndex = -1;
 
 	// The player reloaded the same, or loaded a different training pack => Reset statistics
-	auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
-	_statUpdater->publishTrainingPackCode(trainingPackCode);
-	_statUpdater->processReset(_pluginState->TotalRounds);
+	for (auto eventReceiver : eventReceivers)
+	{
+		eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingPackCode);
+	}
 
 	// Initialize the data storage (most likely a file in the file system)
 	_statWriter->initializeStorage(trainingPackCode);
@@ -111,7 +128,7 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 
 }
 
-void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper& trainingWrapper)
+void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 	auto newRoundIndex = trainingWrapper.GetActiveRoundNumber();
 	if (_currentState == CustomTrainingState::Resetting)
@@ -134,17 +151,26 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 		{
 			// Temporarily enter pseudo state "Processing Goal"
 			setCurrentState(CustomTrainingState::ProcessingGoal);
-			_statUpdater->processGoal();
+			for (auto eventReceiver : eventReceivers)
+			{
+				eventReceiver->onAttemptFinishedWithGoal(trainingWrapper);
+			}
 		}
 		else
 		{
 			// Temporarily enter pseudo state "Processing Miss"
 			setCurrentState(CustomTrainingState::ProcessingMiss);
-			_statUpdater->processMiss();
+			for (auto eventReceiver : eventReceivers)
+			{
+				eventReceiver->onAttemptFinishedWithoutGoal(trainingWrapper);
+			}
 		}
 		
 		// Automatically transition to the next state after updating calculations
-		_statUpdater->updateData();
+		for (auto eventReceiver : eventReceivers)
+		{
+			eventReceiver->onAttemptFinished(trainingWrapper);
+		}
 		setCurrentState(CustomTrainingState::PreparingNewShot);
 	}
 	// Else: Ignore the event. This e.g. happens before OnTrainingModeLoaded
@@ -155,7 +181,7 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 	_statWriter->writeData();
 }
 
-void CustomTrainingStateMachine::processTrainingShotAttempt()
+void CustomTrainingStateMachine::processTrainingShotAttempt(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 #if DEBUG_STATE_MACHINE
 	if (_currentState != CustomTrainingState::PreparingNewShot)
@@ -168,24 +194,37 @@ void CustomTrainingStateMachine::processTrainingShotAttempt()
 	setCurrentState(CustomTrainingState::AttemptInProgress);
 	_goalWasScoredInCurrentAttempt = false;
 	_ballWasHitInCurrentAttempt = false;
-	_statUpdater->processAttempt();
+
+	for (auto eventReceiver : eventReceivers)
+	{
+		eventReceiver->onAttemptStarted();
+	}
 }
 
-void CustomTrainingStateMachine::processOnCarTouch()
+void CustomTrainingStateMachine::processOnCarTouch(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 	if (!_ballWasHitInCurrentAttempt)
 	{
 		_ballWasHitInCurrentAttempt = true;
-		_statUpdater->processInitialBallHit();
 	}
-	// else: The ball was hit more often, or we are in goal replay => ignore the event
+	// else: The ball was hit more often, or we are in goal replay => nothing to do here, but others might want to know
+
+	for (auto eventReceiver : eventReceivers)
+	{
+		eventReceiver->onBallHit(trainingWrapper, _ballWasHitInCurrentAttempt);
+	}
 }
 
-void CustomTrainingStateMachine::processOnHitGoal()
+void CustomTrainingStateMachine::processOnHitGoal(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 	_goalWasScoredInCurrentAttempt = true;
 
 	// Note: We do not process the goal yet. This will happen when leaving the current state
+	
+	for (auto eventReceiver : eventReceivers)
+	{
+		eventReceiver->onGoalScored(trainingWrapper);
+	}
 }
 
 void CustomTrainingStateMachine::setCurrentState(CustomTrainingState newState)
