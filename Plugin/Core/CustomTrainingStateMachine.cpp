@@ -23,16 +23,21 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.OnHitGoal", [this, gameWrapper](const std::string&) {
 		if (!gameWrapper->IsInCustomTraining()) { return; }
 
-		auto gameServer = gameWrapper->GetGameEventAsServer();
-		if (gameServer.IsNull()) { return; }
-		auto ball = gameServer.GetBall();
-		if (ball.IsNull()) { return; }
-
-		_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
-
-		if (ball.GetLocation().Y > 0)
+		// Prevent additional goal events which occur during goal replay from being processed
+		// The variable will be reset when the player starts the next attempt
+		if (!_goalWasScoredInCurrentAttempt)
 		{
-			processOnHitGoal();
+			auto gameServer = gameWrapper->GetGameEventAsServer();
+			if (gameServer.IsNull()) { return; }
+			auto ball = gameServer.GetBall();
+			if (ball.IsNull()) { return; }
+
+			_pluginState->setBallSpeed(ball.GetVelocity().magnitude());
+
+			if (ball.GetLocation().Y > 0)
+			{
+				processOnHitGoal();
+			}
 		}
 	});
 
@@ -178,13 +183,9 @@ void CustomTrainingStateMachine::processOnCarTouch()
 
 void CustomTrainingStateMachine::processOnHitGoal()
 {
-	if (!_goalWasScoredInCurrentAttempt)
-	{
-		_goalWasScoredInCurrentAttempt = true;
+	_goalWasScoredInCurrentAttempt = true;
 
-		// Note: We do not process the goal yet. This will happen when leaving the current state
-	}
-	// else: We are most likely in goal replay => ignore the event
+	// Note: We do not process the goal yet. This will happen when leaving the current state
 }
 
 void CustomTrainingStateMachine::setCurrentState(CustomTrainingState newState)
