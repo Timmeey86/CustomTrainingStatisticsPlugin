@@ -130,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calculation\StatUpdater.h" />
+    <ClInclude Include="Core\AbstractEventReceiver.h" />
     <ClInclude Include="Core\CustomTrainingStateMachine.h" />
     <ClInclude Include="Core\CustomTrainingState.h" />
     <ClInclude Include="Core\EventListener.h" />

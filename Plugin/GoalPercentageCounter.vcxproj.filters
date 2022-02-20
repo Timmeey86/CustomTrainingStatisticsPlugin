@@ -265,6 +265,9 @@
     <ClInclude Include="Settings\PersistentStorage.h">
       <Filter>SettingsUI</Filter>
     </ClInclude>
+    <ClInclude Include="Core\AbstractEventReceiver.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GoalPercentageCounter.rc">
