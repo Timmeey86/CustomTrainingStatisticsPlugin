@@ -75,17 +75,33 @@ public:
 	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
 	 * \param	isInitialHit		true if this ist he first hit of the ball during the attempt.
 	 */
-	virtual void onBallHit(TrainingEditorWrapper& trainingWrapper, bool isInitialHit) { (void)trainingWrapper; /* ignore event unless overridden. */ }
+	virtual void onBallHit(TrainingEditorWrapper& trainingWrapper, bool isInitialHit) { (void)trainingWrapper; (void)isInitialHit; /* ignore event unless overridden. */ }
+
+	/** This gets called whenever the ball touches the ground, excluding wall and ceiling.
+	 * 
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	ball				Provides access to information about the ball. Goes out of scope after this call.
+	 */
+	virtual void onBallGroundHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
+	/** This gets called whenever the ball touches the wall. Note that wall hits very close to the ground or the ceiling might not get classified as a wall hit.
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	ball				Provides access to information about the ball. Goes out of scope after this call.
+	 */
+	virtual void onBallWallHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
+	/** This gets called whenever the ball touches the ceiling.
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	ball				Provides access to information about the ball. Goes out of scope after this call.
+	 */
+	virtual void onBallCeilingHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
 
 	// Future extensions:
 	// - Backboard gets hit
-	// - Ball hits ground
 	// - Car touches ground
 	// - Car lifts off ground
 	// - Ball lifts off ground (might not be required)
-	// - Ball touches wall
 	// - Car touches wall
-	// - Ball touches ceiling
 	// - Car touches ceiling
 	// - Car wheels touch ball (flip reset, not sure if we can detect this)
 };

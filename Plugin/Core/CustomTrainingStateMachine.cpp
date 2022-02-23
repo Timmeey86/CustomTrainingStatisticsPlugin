@@ -94,6 +94,47 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		}
 	});
 
+	// Happens whenever the ball touches the ground, the wall, or the ceiling. 
+	gameWrapper->HookEventWithCallerPost<BallWrapper>("Function TAGame.Ball_TA.IsGroundHit",
+		[this, gameWrapper, eventReceivers](BallWrapper ball, void*, const std::string&) {
+		// We only process this while an attempt is active, in order to exclude goal replay etc
+		if (!_pluginState->PluginIsEnabled || _currentState != CustomTrainingState::AttemptInProgress) { return; }
+
+		auto gameServer = gameWrapper->GetGameEventAsServer();
+		if (gameServer.IsNull()) { return; }
+		TrainingEditorWrapper trainingWrapper(gameServer.memory_address);
+		if (trainingWrapper.IsNull()) { return; }
+
+		if (ball.IsNull()) { return; }
+
+		auto location = ball.GetLocation();
+
+		// When the ball touches the ground, it mostly has  Z of about 93.5, but sometimes it jumps to 95 or even 97, dependent on when the event comes.
+		// TODO: Is there a more reliable location in the event parameters maybe?
+		if (location.Z <= 100.0f)
+		{
+			for (auto eventReceiver : eventReceivers)
+			{
+				eventReceiver->onBallGroundHit(trainingWrapper, ball);
+			}
+		}
+		else if (location.Z >= 1950.0f)
+		{
+			for (auto eventReceiver : eventReceivers)
+			{
+				eventReceiver->onBallCeilingHit(trainingWrapper, ball);
+			}
+		}
+		else
+		{
+			for (auto eventReceiver : eventReceivers)
+			{
+				eventReceiver->onBallWallHit(trainingWrapper, ball);
+			}
+		}
+		_cvarManager->log(fmt::format("X: {}, Y: {}, Z: {}", location.X, location.Y, location.Z));
+	});
+
 	// Make sure the state machine has been properly initialized when the user (or the VS plugin project) reloads the plugin while being in custom training
 	if (gameWrapper->IsInCustomTraining())
 	{
@@ -203,16 +244,17 @@ void CustomTrainingStateMachine::processTrainingShotAttempt(TrainingEditorWrappe
 
 void CustomTrainingStateMachine::processOnCarTouch(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
+	for (auto eventReceiver : eventReceivers)
+	{
+		eventReceiver->onBallHit(trainingWrapper, !_ballWasHitInCurrentAttempt);
+	}
+
 	if (!_ballWasHitInCurrentAttempt)
 	{
 		_ballWasHitInCurrentAttempt = true;
 	}
 	// else: The ball was hit more often, or we are in goal replay => nothing to do here, but others might want to know
 
-	for (auto eventReceiver : eventReceivers)
-	{
-		eventReceiver->onBallHit(trainingWrapper, _ballWasHitInCurrentAttempt);
-	}
 }
 
 void CustomTrainingStateMachine::processOnHitGoal(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
