@@ -5,15 +5,44 @@
 #include <iosfwd>
 
 CustomTrainingStateMachine::CustomTrainingStateMachine(
-	std::shared_ptr<CVarManagerWrapper> cvarManager, 
+	std::shared_ptr<CVarManagerWrapper> cvarManager,
 	std::shared_ptr<IStatWriter> statWriter,
 	std::shared_ptr<PluginState> pluginState)
-	: _cvarManager( cvarManager )
-	, _statWriter( statWriter )
-	, _pluginState( pluginState )
+	: _cvarManager(cvarManager)
+	, _statWriter(statWriter)
+	, _pluginState(pluginState)
 {
 	_currentState = CustomTrainingState::NotInCustomTraining;
 }
+
+// Allows passing Vectors to fmt::format
+template <> struct fmt::formatter<Vector> {
+	char presentation = 'f';
+
+	constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) {
+		auto it = ctx.begin();
+		it++;
+		return it;
+	}
+
+	template <typename FormatContext>
+	auto format(const Vector& v, FormatContext& ctx) -> decltype(ctx.out()) {
+		return format_to(ctx.out(), "X: {}, Y : {}, Z : {}", v.X, v.Y, v.Z);
+	}
+};
+
+// Calculates the distance between two vectors
+float distance(const Vector& v1, const Vector& v2)
+{
+	return fabsf(
+		sqrtf(
+			powf(v2.X - v1.X, 2.0f) +
+			powf(v2.Y - v1.Y, 2.0f) +
+			powf(v2.Z - v1.Z, 2.0f)
+		)
+	);
+}
+
 
 void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>& gameWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
@@ -132,8 +161,62 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 				eventReceiver->onBallWallHit(trainingWrapper, ball);
 			}
 		}
-		_cvarManager->log(fmt::format("X: {}, Y: {}, Z: {}", location.X, location.Y, location.Z));
 	});
+
+	// Happens whenever the car lifts off the ground, wall or ceiling and then "lands" on any of these again 
+	gameWrapper->HookEventWithCallerPost<CarWrapper>("Function TAGame.Car_TA.OnGroundChanged",
+		[this, gameWrapper, eventReceivers](CarWrapper car, void*, const std::string&) {
+
+		// We only process this while an attempt is active, in order to exclude goal replay etc
+		//if (!_pluginState->PluginIsEnabled || _currentState != CustomTrainingState::AttemptInProgress) { return; }
+
+		auto gameServer = gameWrapper->GetGameEventAsServer();
+		if (gameServer.IsNull()) { return; }
+		TrainingEditorWrapper trainingWrapper(gameServer.memory_address);
+		if (trainingWrapper.IsNull()) { return; }
+
+		auto ball = trainingWrapper.GetBall();
+		if (ball.IsNull()) { return; }
+
+		if (!car.IsOnGround() && !car.IsOnWall())
+		{
+			_cvarManager->log("Car lifted off");
+		}
+		else
+		{
+			auto carLocation = car.GetLocation();
+			auto ballLocation = ball.GetLocation();
+			if (distance(carLocation, ballLocation) < 108.0f)
+			{
+				_cvarManager->log("Car landed on ball");
+			}
+			else
+			{
+				if (car.IsOnWall())
+				{
+					_cvarManager->log("Car landed on wall");
+				}
+				else if (car.IsOnGround())
+				{
+					if (car.GetLocation().Z >= 1950.0f)
+					{
+						_cvarManager->log("Car landed on ceiling");
+					}
+					else
+					{
+						_cvarManager->log("Car landed on ground");
+					}
+				}
+			}
+		}
+
+		for (auto eventReceiver : eventReceivers)
+		{
+			//eventReceiver->tbd(trainingWrapper, car);
+		}
+
+	});
+
 
 	// Make sure the state machine has been properly initialized when the user (or the VS plugin project) reloads the plugin while being in custom training
 	if (gameWrapper->IsInCustomTraining())
@@ -146,7 +229,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, eventReceivers);
 		processEventRoundChanged(trainingWrapper, eventReceivers);
 	}
-	
+
 	// Note: The calling class hooks into OnTrainingModeLoaded
 }
 
@@ -206,7 +289,7 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 				eventReceiver->onAttemptFinishedWithoutGoal(trainingWrapper);
 			}
 		}
-		
+
 		// Automatically transition to the next state after updating calculations
 		for (auto eventReceiver : eventReceivers)
 		{
@@ -217,7 +300,7 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 	// Else: Ignore the event. This e.g. happens before OnTrainingModeLoaded
 
 	_pluginState->CurrentRoundIndex = newRoundIndex;
-	
+
 	// Store data at the begin of every round so we can try to restore data after a crash
 	_statWriter->writeData();
 }
@@ -262,7 +345,7 @@ void CustomTrainingStateMachine::processOnHitGoal(TrainingEditorWrapper& trainin
 	_goalWasScoredInCurrentAttempt = true;
 
 	// Note: We do not process the goal yet. This will happen when leaving the current state
-	
+
 	for (auto eventReceiver : eventReceivers)
 	{
 		eventReceiver->onGoalScored(trainingWrapper);

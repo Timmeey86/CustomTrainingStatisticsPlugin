@@ -98,7 +98,7 @@ public:
 
 	// Future extensions:
 	// - Backboard gets hit
-	// - Car touches ground
+	// - Car touches ground - TAGame.Car_TA.OnGroundChanged
 	// - Car lifts off ground
 	// - Ball lifts off ground (might not be required)
 	// - Car touches wall
