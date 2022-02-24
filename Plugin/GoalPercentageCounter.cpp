@@ -53,7 +53,10 @@ void GoalPercentageCounter::onLoad()
 
 	// Register any event receivers before hooking into the events (otherwise they won't receive the events)
 	_eventListener->addEventReceiver(std::make_shared<StatUpdaterEventBridge>(statUpdater, _pluginState));
-	auto airDribbleCounter = std::make_shared<AirDribbleAmountCounter>([this](int amount) { cvarManager->log(fmt::format("Amount: {}", amount)); });
+	auto airDribbleCounter = std::make_shared<AirDribbleAmountCounter>(
+		[this](int amount) { cvarManager->log(fmt::format("Max # of dribble touches: {}", amount)); },
+		[this](float time) { cvarManager->log(fmt::format("Max air dribble time: {}", time)); }
+	);
 	_eventListener->addEventReceiver(airDribbleCounter);
 
 	// Hook into events now 

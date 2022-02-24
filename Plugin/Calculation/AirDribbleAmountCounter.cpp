@@ -1,8 +1,9 @@
 #include <pch.h>
 #include "AirDribbleAmountCounter.h"
 
-AirDribbleAmountCounter::AirDribbleAmountCounter(std::function<void(int)> setMaxTouchAmountFunc)
+AirDribbleAmountCounter::AirDribbleAmountCounter(std::function<void(int)> setMaxTouchAmountFunc, std::function<void(float)> setMaxAirDribbleTimeFunc)
 	: _setMaxTouchAmountFunc(setMaxTouchAmountFunc)
+	, _setMaxAirDribbleTimeFunc(setMaxAirDribbleTimeFunc)
 {
 }
 
@@ -10,6 +11,7 @@ void AirDribbleAmountCounter::onAttemptStarted()
 {
 	_currentState = AirDribbleState::ResetLocalMaximum;
 	_maximumAmountOfTouches = 0;
+	_maxAirDribbleTime = .0f;
 	finishShot();
 }
 
@@ -28,6 +30,21 @@ void AirDribbleAmountCounter::onBallHit(TrainingEditorWrapper& trainingWrapper, 
 		{
 			_maximumAmountOfTouches = _currentAmountOfTouches;
 			_setMaxTouchAmountFunc(_maximumAmountOfTouches);
+		}
+
+		if (_firstBallTouchFrameTime < .0f)
+		{
+			_firstBallTouchFrameTime = trainingWrapper.GetTotalGameTimePlayed();
+		}
+		else
+		{
+			_lastBallTouchFrameTime = trainingWrapper.GetTotalGameTimePlayed();
+			auto dribbleDuration = _lastBallTouchFrameTime - _firstBallTouchFrameTime;
+			if (dribbleDuration > _maxAirDribbleTime)
+			{
+				_maxAirDribbleTime = dribbleDuration;
+				_setMaxAirDribbleTimeFunc(_maxAirDribbleTime);
+			}
 		}
 	}
 	// else: Ignore the ball hit in any other state
@@ -66,5 +83,7 @@ void AirDribbleAmountCounter::onCarLandingOnSurface(TrainingEditorWrapper& train
 void AirDribbleAmountCounter::finishShot()
 {
 	_currentAmountOfTouches = 0;
+	_firstBallTouchFrameTime = -1.0f;
+	_lastBallTouchFrameTime = -1.0f;
 	_currentState = AirDribbleState::WaitingForTakeoff;
 }

@@ -25,7 +25,7 @@ class AirDribbleAmountCounter : public AbstractEventReceiver
 {
 public:
 	/** Creates a new air dribble amount counter, which will call setMaxTouchAmountFunc each time a new maximum has been reached during the current attempt. */
-	AirDribbleAmountCounter(std::function<void(int)> setMaxTouchAmountFunc);
+	AirDribbleAmountCounter(std::function<void(int)> setMaxTouchAmountFunc, std::function<void(float)> setMaxAirDribbleTimeFunc);
 
 	// Resets the touch counter whenever a new attempt starts, and treats the car as being on the ground.
 	void onAttemptStarted() override;
@@ -45,6 +45,10 @@ private:
 
 	int _maximumAmountOfTouches = 0; ///< The maximum amount of touches during the current attempt.
 	int _currentAmountOfTouches = 0; ///< The current amount of ball touches after lifting off the ground.
+	float _firstBallTouchFrameTime = -1.0f; ///< The point in time where the car lifted off.
+	float _lastBallTouchFrameTime = -1.0F; ///< The point in time where the car last touched the ball (while dribbling).
+	float _maxAirDribbleTime = .0f; ///< The maximum air dribble duration between the first and the last touch.
 	std::function<void(int)> _setMaxTouchAmountFunc; ///< The function to be called when a new maximum has been reached.
+	std::function<void(float)> _setMaxAirDribbleTimeFunc; ///< The function to be called when a new maximum has been reached.
 	AirDribbleState _currentState = AirDribbleState::WaitingForTakeoff;
 };
