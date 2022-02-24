@@ -161,6 +161,10 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 				eventReceiver->onBallWallHit(trainingWrapper, ball);
 			}
 		}
+		for (auto eventReceiver : eventReceivers)
+		{
+			eventReceiver->onBallSurfaceHit(trainingWrapper, ball);
+		}
 	});
 
 	// Happens whenever the car lifts off the ground, wall or ceiling and then "lands" on any of these again 
@@ -168,8 +172,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		[this, gameWrapper, eventReceivers](CarWrapper car, void*, const std::string&) {
 
 		// We only process this while an attempt is active, in order to exclude goal replay etc
-		// TEMP Disabled so we can test/debug more easily in free play. If you see this line in master, create a PR in order to restore the abort condition
-		//if (!_pluginState->PluginIsEnabled || _currentState != CustomTrainingState::AttemptInProgress) { return; }
+		if (!_pluginState->PluginIsEnabled || _currentState != CustomTrainingState::AttemptInProgress) { return; }
 
 		auto gameServer = gameWrapper->GetGameEventAsServer();
 		if (gameServer.IsNull()) { return; }
@@ -205,7 +208,6 @@ void CustomTrainingStateMachine::processOnGroundChanged(CarWrapper& car, Trainin
 		}
 		return;
 	}
-
 	
 	if (auto ball = trainingWrapper.GetBall(); 
 		!ball.IsNull() && distance(car.GetLocation(), ball.GetLocation()) < 108.0f)

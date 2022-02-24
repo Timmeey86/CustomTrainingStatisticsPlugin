@@ -98,6 +98,13 @@ public:
 	 */
 	virtual void onBallCeilingHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
 
+	/** This gets called whenever the ball touches the ground, wall or celiing. Note that this gets called in addition to the other onBallXYZHit hooks.
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	ball				Provides access to information about the ball. Goes out of scope after this call.
+	 */
+	virtual void onBallSurfaceHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
+
 	/** This gets called whenever the car lifts off the ground (or the ball!).
 	 *
 	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.

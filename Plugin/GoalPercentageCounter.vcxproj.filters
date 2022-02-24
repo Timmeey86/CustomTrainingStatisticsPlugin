@@ -137,6 +137,9 @@
     <ClCompile Include="Core\StatUpdaterEventBridge.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Calculation\AirDribbleAmountCounter.cpp">
+      <Filter>Calculation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -273,6 +276,9 @@
     </ClInclude>
     <ClInclude Include="Core\StatUpdaterEventBridge.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation\AirDribbleAmountCounter.h">
+      <Filter>Calculation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

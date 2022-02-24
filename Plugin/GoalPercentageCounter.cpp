@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GoalPercentageCounter.h"
 #include "Calculation/StatUpdater.h"
+#include "Calculation/AirDribbleAmountCounter.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Core/StatUpdaterEventBridge.h"
@@ -52,6 +53,8 @@ void GoalPercentageCounter::onLoad()
 
 	// Register any event receivers before hooking into the events (otherwise they won't receive the events)
 	_eventListener->addEventReceiver(std::make_shared<StatUpdaterEventBridge>(statUpdater, _pluginState));
+	auto airDribbleCounter = std::make_shared<AirDribbleAmountCounter>([this](int amount) { cvarManager->log(fmt::format("Amount: {}", amount)); });
+	_eventListener->addEventReceiver(airDribbleCounter);
 
 	// Hook into events now 
 	_eventListener->registerGameStateEvents();

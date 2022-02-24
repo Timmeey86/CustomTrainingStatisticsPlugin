@@ -93,6 +93,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Calculation\AirDribbleAmountCounter.cpp" />
     <ClCompile Include="Calculation\StatUpdater.cpp" />
     <ClCompile Include="Core\CustomTrainingStateMachine.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="Summary\SummaryUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Calculation\AirDribbleAmountCounter.h" />
     <ClInclude Include="Calculation\StatUpdater.h" />
     <ClInclude Include="Core\AbstractEventReceiver.h" />
     <ClInclude Include="Core\CustomTrainingStateMachine.h" />
