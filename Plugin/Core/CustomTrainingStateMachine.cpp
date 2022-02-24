@@ -168,6 +168,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		[this, gameWrapper, eventReceivers](CarWrapper car, void*, const std::string&) {
 
 		// We only process this while an attempt is active, in order to exclude goal replay etc
+		// TEMP Disabled so we can test/debug more easily in free play. If you see this line in master, create a PR in order to restore the abort condition
 		//if (!_pluginState->PluginIsEnabled || _currentState != CustomTrainingState::AttemptInProgress) { return; }
 
 		auto gameServer = gameWrapper->GetGameEventAsServer();
@@ -175,46 +176,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		TrainingEditorWrapper trainingWrapper(gameServer.memory_address);
 		if (trainingWrapper.IsNull()) { return; }
 
-		auto ball = trainingWrapper.GetBall();
-		if (ball.IsNull()) { return; }
-
-		if (!car.IsOnGround() && !car.IsOnWall())
-		{
-			_cvarManager->log("Car lifted off");
-		}
-		else
-		{
-			auto carLocation = car.GetLocation();
-			auto ballLocation = ball.GetLocation();
-			if (distance(carLocation, ballLocation) < 108.0f)
-			{
-				_cvarManager->log("Car landed on ball");
-			}
-			else
-			{
-				if (car.IsOnWall())
-				{
-					_cvarManager->log("Car landed on wall");
-				}
-				else if (car.IsOnGround())
-				{
-					if (car.GetLocation().Z >= 1950.0f)
-					{
-						_cvarManager->log("Car landed on ceiling");
-					}
-					else
-					{
-						_cvarManager->log("Car landed on ground");
-					}
-				}
-			}
-		}
-
-		for (auto eventReceiver : eventReceivers)
-		{
-			//eventReceiver->tbd(trainingWrapper, car);
-		}
-
+		processOnGroundChanged(car, trainingWrapper, eventReceivers);
 	});
 
 
@@ -231,6 +193,59 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 	}
 
 	// Note: The calling class hooks into OnTrainingModeLoaded
+}
+
+void CustomTrainingStateMachine::processOnGroundChanged(CarWrapper& car, TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
+{
+	if (!car.IsOnGround() && !car.IsOnWall())
+	{
+		for (auto eventReceiver : eventReceivers)
+		{
+			eventReceiver->onCarLiftOff(trainingWrapper, car);
+		}
+		return;
+	}
+
+	
+	if (auto ball = trainingWrapper.GetBall(); 
+		!ball.IsNull() && distance(car.GetLocation(), ball.GetLocation()) < 108.0f)
+	{
+		for (auto eventReceiver : eventReceivers)
+		{
+			eventReceiver->onCarLandingOnBall(trainingWrapper, car, ball);
+		}
+		return;
+	}
+
+	if (car.IsOnWall())
+	{
+		for (auto eventReceiver : eventReceivers)
+		{
+			eventReceiver->onCarLandingOnWall(trainingWrapper, car);
+		}
+	}
+	else if (car.IsOnGround())
+	{
+		if (car.GetLocation().Z >= 1950.0f)
+		{
+			for (auto eventReceiver : eventReceivers)
+			{
+				eventReceiver->onCarLandingOnCeiling(trainingWrapper, car);
+			}
+		}
+		else
+		{
+			for (auto eventReceiver : eventReceivers)
+			{
+				eventReceiver->onCarLandingOnGround(trainingWrapper, car);
+			}
+		}
+	}
+	// Send an additional event for listeners only interested in the car landing anywhere (except for the ball)
+	for (auto eventReceiver : eventReceivers)
+	{
+		eventReceiver->onCarLandingOnSurface(trainingWrapper, car);
+	}
 }
 
 void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)

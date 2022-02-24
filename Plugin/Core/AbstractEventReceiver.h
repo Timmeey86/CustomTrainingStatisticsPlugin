@@ -83,12 +83,14 @@ public:
 	 * \param	ball				Provides access to information about the ball. Goes out of scope after this call.
 	 */
 	virtual void onBallGroundHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
+
 	/** This gets called whenever the ball touches the wall. Note that wall hits very close to the ground or the ceiling might not get classified as a wall hit.
 	 *
 	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
 	 * \param	ball				Provides access to information about the ball. Goes out of scope after this call.
 	 */
 	virtual void onBallWallHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
+
 	/** This gets called whenever the ball touches the ceiling.
 	 *
 	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
@@ -96,12 +98,47 @@ public:
 	 */
 	virtual void onBallCeilingHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; (void)ball; /* ignore event unless overridden. */ }
 
-	// Future extensions:
-	// - Backboard gets hit
-	// - Car touches ground - TAGame.Car_TA.OnGroundChanged
-	// - Car lifts off ground
-	// - Ball lifts off ground (might not be required)
-	// - Car touches wall
-	// - Car touches ceiling
-	// - Car wheels touch ball (flip reset, not sure if we can detect this)
+	/** This gets called whenever the car lifts off the ground (or the ball!).
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	car					Provides access to information about the car. Goes out of scope after this call.
+	*/
+	virtual void onCarLiftOff(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) { (void)trainingWrapper; (void)car; /* ignore event unless overridden. */ }
+
+	/** This gets called whenever the car "lands" on the ball, i.e. the player gets a flip reset on the ball.
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	car					Provides access to information about the car. Goes out of scope after this call.
+	 * \param	ball				Provides access to information about the ball. Goes out of scope after this call.
+	*/
+	virtual void onCarLandingOnBall(TrainingEditorWrapper& trainingWrapper, CarWrapper& car, BallWrapper& ball) { (void)trainingWrapper; (void)car; (void)ball; /* ignore event unless overridden. */ }
+
+	/** This gets called whenever the car "lands" on the ground (excluding wall and ceiling)
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	car					Provides access to information about the car. Goes out of scope after this call.
+	*/
+	virtual void onCarLandingOnGround(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) { (void)trainingWrapper; (void)car; /* ignore event unless overridden. */ }
+
+	/** This gets called whenever the car "lands" on the wall (also the walls inside the goal area)
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	car					Provides access to information about the car. Goes out of scope after this call.
+	*/
+	virtual void onCarLandingOnWall(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) { (void)trainingWrapper; (void)car; /* ignore event unless overridden. */ }
+
+	/** This gets called whenever the car "lands" on the ceiling (this currently does not work for the goal ceiling part most likely.
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	car					Provides access to information about the car. Goes out of scope after this call.
+	*/
+	virtual void onCarLandingOnCeiling(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) { (void)trainingWrapper; (void)car; /* ignore event unless overridden. */ }
+
+	/** This gets called whenever the car lands on any surface which is not the ball. Note that this gets called in addition to the other onCarLandingXYZ hooks.
+	 *
+	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
+	 * \param	car					Provides access to information about the car. Goes out of scope after this call.
+	*/
+	virtual void onCarLandingOnSurface(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) { (void)trainingWrapper; (void)car; /* ignore event unless overridden. */ }
+
 };
