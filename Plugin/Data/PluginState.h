@@ -36,7 +36,6 @@ public:
 	bool MinGoalSpeedShallBeDisplayed = true;			///< True while the minimum recent goal speed shall appear in the stat display.
 	bool MedianGoalSpeedShallBeDisplayed = true;		///< True while the median goal speed shall appear in the stat display.
 	bool MeanGoalSpeedShallBeDisplayed = false;			///< True while the mean goal speed shall appear in the stat display.
-
 	bool PreviousSessionDiffShallBeDisplayed = true;	///< True while the percentage differences to the previous session shall be displayed.
 
 	/** True while initial ball hits and ball hit percentage shall appear in the stat display. 

@@ -52,8 +52,8 @@ private:
 	int _maximumAmountOfTouches = 0; ///< The maximum amount of touches during the current attempt.
 	std::function<void(int)> _setMaxTouchAmountFunc; ///< The function to be called when a new maximum amount of touches has been reached.
 
-	float _firstBallTouchFrameTime = -1.0f; ///< The point in time where the car lifted off.
-	float _lastBallTouchFrameTime = -1.0F; ///< The point in time where the car last touched the ball (while dribbling).
+	float _firstBallTouchGameTime = -1.0f; ///< The point in time where the car lifted off.
+	float _lastBallTouchGameTime = -1.0F; ///< The point in time where the car last touched the ball (while dribbling).
 	float _maxAirDribbleTime = .0f; ///< The maximum air dribble duration between the first and the last touch.
 	std::function<void(float)> _setMaxAirDribbleTimeFunc; ///< The function to be called when a new maximum air dribble time has been reached.
 	

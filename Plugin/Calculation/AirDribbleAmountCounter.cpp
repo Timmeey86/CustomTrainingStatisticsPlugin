@@ -37,14 +37,14 @@ void AirDribbleAmountCounter::onBallHit(TrainingEditorWrapper& trainingWrapper, 
 			_setMaxTouchAmountFunc(_maximumAmountOfTouches);
 		}
 
-		if (_firstBallTouchFrameTime < .0f)
+		if (_firstBallTouchGameTime < .0f)
 		{
-			_firstBallTouchFrameTime = trainingWrapper.GetTotalGameTimePlayed();
+			_firstBallTouchGameTime = trainingWrapper.GetTotalGameTimePlayed();
 		}
 		else
 		{
-			_lastBallTouchFrameTime = trainingWrapper.GetTotalGameTimePlayed();
-			auto dribbleDuration = _lastBallTouchFrameTime - _firstBallTouchFrameTime;
+			_lastBallTouchGameTime = trainingWrapper.GetTotalGameTimePlayed();
+			auto dribbleDuration = _lastBallTouchGameTime - _firstBallTouchGameTime;
 			if (dribbleDuration > _maxAirDribbleTime)
 			{
 				_maxAirDribbleTime = dribbleDuration;
@@ -102,8 +102,8 @@ void AirDribbleAmountCounter::onCarLandingOnBall(TrainingEditorWrapper& training
 void AirDribbleAmountCounter::finishShot()
 {
 	_currentAmountOfTouches = 0;
-	_firstBallTouchFrameTime = -1.0f;
-	_lastBallTouchFrameTime = -1.0f;
+	_firstBallTouchGameTime = -1.0f;
+	_lastBallTouchGameTime = -1.0f;
 	_currentAmountOfFlipResets = 0;
 	_currentState = AirDribbleState::WaitingForTakeoff;
 }

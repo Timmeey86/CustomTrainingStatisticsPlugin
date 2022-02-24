@@ -2,6 +2,7 @@
 #include "GoalPercentageCounter.h"
 #include "Calculation/StatUpdater.h"
 #include "Calculation/AirDribbleAmountCounter.h"
+#include "Calculation/GroundDribbleTimeCounter.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Core/StatUpdaterEventBridge.h"
@@ -53,12 +54,18 @@ void GoalPercentageCounter::onLoad()
 
 	// Register any event receivers before hooking into the events (otherwise they won't receive the events)
 	_eventListener->addEventReceiver(std::make_shared<StatUpdaterEventBridge>(statUpdater, _pluginState));
+
 	auto airDribbleCounter = std::make_shared<AirDribbleAmountCounter>(
 		[this](int amount) { cvarManager->log(fmt::format("Max # of dribble touches: {}", amount)); },
 		[this](float time) { cvarManager->log(fmt::format("Max air dribble time: {}", time)); },
 		[this](int amount) { cvarManager->log(fmt::format("Max # of flip resets: {}", amount)); }
 	);
 	_eventListener->addEventReceiver(airDribbleCounter);
+
+	auto groundDribbleCounter = std::make_shared<GroundDribbleTimeCounter>(
+		[this](float time) { cvarManager->log(fmt::format("Max ground dribble time: {}", time)); }
+	);
+	_eventListener->addEventReceiver(groundDribbleCounter);
 
 	// Hook into events now 
 	_eventListener->registerGameStateEvents();

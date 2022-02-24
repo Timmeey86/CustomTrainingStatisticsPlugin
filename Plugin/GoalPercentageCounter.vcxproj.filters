@@ -140,6 +140,9 @@
     <ClCompile Include="Calculation\AirDribbleAmountCounter.cpp">
       <Filter>Calculation</Filter>
     </ClCompile>
+    <ClCompile Include="Calculation\GroundDribbleTimeCounter.cpp">
+      <Filter>Calculation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -278,6 +281,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Calculation\AirDribbleAmountCounter.h">
+      <Filter>Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation\GroundDribbleTimeCounter.h">
       <Filter>Calculation</Filter>
     </ClInclude>
   </ItemGroup>
