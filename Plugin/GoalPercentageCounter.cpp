@@ -55,7 +55,8 @@ void GoalPercentageCounter::onLoad()
 	_eventListener->addEventReceiver(std::make_shared<StatUpdaterEventBridge>(statUpdater, _pluginState));
 	auto airDribbleCounter = std::make_shared<AirDribbleAmountCounter>(
 		[this](int amount) { cvarManager->log(fmt::format("Max # of dribble touches: {}", amount)); },
-		[this](float time) { cvarManager->log(fmt::format("Max air dribble time: {}", time)); }
+		[this](float time) { cvarManager->log(fmt::format("Max air dribble time: {}", time)); },
+		[this](int amount) { cvarManager->log(fmt::format("Max # of flip resets: {}", amount)); }
 	);
 	_eventListener->addEventReceiver(airDribbleCounter);
 

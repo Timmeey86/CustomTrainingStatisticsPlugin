@@ -1,9 +1,13 @@
 #include <pch.h>
 #include "AirDribbleAmountCounter.h"
 
-AirDribbleAmountCounter::AirDribbleAmountCounter(std::function<void(int)> setMaxTouchAmountFunc, std::function<void(float)> setMaxAirDribbleTimeFunc)
+AirDribbleAmountCounter::AirDribbleAmountCounter(
+	std::function<void(int)> setMaxTouchAmountFunc, 
+	std::function<void(float)> setMaxAirDribbleTimeFunc,
+	std::function<void(int)> setMaxFlipResetsFunc)
 	: _setMaxTouchAmountFunc(setMaxTouchAmountFunc)
 	, _setMaxAirDribbleTimeFunc(setMaxAirDribbleTimeFunc)
+	, _setMaxFlipResetsFunc(setMaxFlipResetsFunc)
 {
 }
 
@@ -12,6 +16,7 @@ void AirDribbleAmountCounter::onAttemptStarted()
 	_currentState = AirDribbleState::ResetLocalMaximum;
 	_maximumAmountOfTouches = 0;
 	_maxAirDribbleTime = .0f;
+	_maximumAmountOfFlipResets = 0;
 	finishShot();
 }
 
@@ -80,10 +85,25 @@ void AirDribbleAmountCounter::onCarLandingOnSurface(TrainingEditorWrapper& train
 	finishShot();
 }
 
+void AirDribbleAmountCounter::onCarLandingOnBall(TrainingEditorWrapper& trainingWrapper, CarWrapper& car, BallWrapper& ball)
+{
+	// only handle flip resets while both the car and the ball are in the air
+	if (_currentState == AirDribbleState::CarInAir && _currentAmountOfTouches > 0)
+	{
+		_currentAmountOfFlipResets++;
+		if (_currentAmountOfFlipResets > _maximumAmountOfFlipResets)
+		{
+			_maximumAmountOfFlipResets = _currentAmountOfFlipResets;
+			_setMaxFlipResetsFunc(_maximumAmountOfFlipResets);
+		}
+	}
+}
+
 void AirDribbleAmountCounter::finishShot()
 {
 	_currentAmountOfTouches = 0;
 	_firstBallTouchFrameTime = -1.0f;
 	_lastBallTouchFrameTime = -1.0f;
+	_currentAmountOfFlipResets = 0;
 	_currentState = AirDribbleState::WaitingForTakeoff;
 }
