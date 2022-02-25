@@ -3,6 +3,7 @@
 #include "Calculation/StatUpdater.h"
 #include "Calculation/AirDribbleAmountCounter.h"
 #include "Calculation/GroundDribbleTimeCounter.h"
+#include "Calculation/DoubleTapGoalCounter.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Core/StatUpdaterEventBridge.h"
@@ -66,6 +67,12 @@ void GoalPercentageCounter::onLoad()
 		[this](float time) { cvarManager->log(fmt::format("Max ground dribble time: {}", time)); }
 	);
 	_eventListener->addEventReceiver(groundDribbleCounter);
+
+	auto doubleTapGoalCounter = std::make_shared<DoubleTapGoalCounter>(
+		[this]() { cvarManager->log("Double tap goal scored!"); },
+		cvarManager
+	);
+	_eventListener->addEventReceiver(doubleTapGoalCounter);
 
 	// Hook into events now 
 	_eventListener->registerGameStateEvents();
