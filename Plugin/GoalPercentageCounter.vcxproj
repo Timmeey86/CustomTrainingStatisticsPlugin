@@ -94,6 +94,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Calculation\AirDribbleAmountCounter.cpp" />
+    <ClCompile Include="Calculation\CloseMissCounter.cpp" />
     <ClCompile Include="Calculation\DoubleTapGoalCounter.cpp" />
     <ClCompile Include="Calculation\GroundDribbleTimeCounter.cpp" />
     <ClCompile Include="Calculation\StatUpdater.cpp" />
@@ -134,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calculation\AirDribbleAmountCounter.h" />
+    <ClInclude Include="Calculation\CloseMissCounter.h" />
     <ClInclude Include="Calculation\DoubleTapGoalCounter.h" />
     <ClInclude Include="Calculation\GroundDribbleTimeCounter.h" />
     <ClInclude Include="Calculation\StatUpdater.h" />

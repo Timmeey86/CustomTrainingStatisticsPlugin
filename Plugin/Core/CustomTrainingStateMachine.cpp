@@ -165,6 +165,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		{
 			eventReceiver->onBallSurfaceHit(trainingWrapper, ball);
 		}
+
 	});
 
 	// Happens whenever the car lifts off the ground, wall or ceiling and then "lands" on any of these again 

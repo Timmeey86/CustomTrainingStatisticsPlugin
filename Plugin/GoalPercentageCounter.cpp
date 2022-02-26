@@ -4,6 +4,7 @@
 #include "Calculation/AirDribbleAmountCounter.h"
 #include "Calculation/GroundDribbleTimeCounter.h"
 #include "Calculation/DoubleTapGoalCounter.h"
+#include "Calculation/CloseMissCounter.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Core/StatUpdaterEventBridge.h"
@@ -73,6 +74,11 @@ void GoalPercentageCounter::onLoad()
 		cvarManager
 	);
 	_eventListener->addEventReceiver(doubleTapGoalCounter);
+
+	auto closeMissCounter = std::make_shared<CloseMissCounter>(
+		[this]() { cvarManager->log("Close miss during previous attempt!"); }
+	);
+	_eventListener->addEventReceiver(closeMissCounter);
 
 	// Hook into events now 
 	_eventListener->registerGameStateEvents();

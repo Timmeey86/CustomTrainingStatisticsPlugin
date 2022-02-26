@@ -146,6 +146,9 @@
     <ClCompile Include="Calculation\DoubleTapGoalCounter.cpp">
       <Filter>Calculation</Filter>
     </ClCompile>
+    <ClCompile Include="Calculation\CloseMissCounter.cpp">
+      <Filter>Calculation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -290,6 +293,9 @@
       <Filter>Calculation</Filter>
     </ClInclude>
     <ClInclude Include="Calculation\DoubleTapGoalCounter.h">
+      <Filter>Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation\CloseMissCounter.h">
       <Filter>Calculation</Filter>
     </ClInclude>
   </ItemGroup>
