@@ -6,6 +6,10 @@ const auto YDrawLocation = 5100.0f;
 const auto XBracketWidth = 8000 / ShotDistributionTracker::XBrackets;
 const auto ZBracketHeight = 4000 / ShotDistributionTracker::ZBrackets;
 
+// TODO: Use https://github.com/CinderBlocc/RenderingTools in order to get rid of glitches when turning the camera
+// TODO: Allow shot locations as an alternative to heatmap
+// TODO: Draw heatmap and locations only when requested (both at the same time should be possible
+
 ShotDistributionTracker::ShotDistributionTracker()
 {
 }
@@ -18,10 +22,10 @@ void ShotDistributionTracker::onTrainingModeLoaded(TrainingEditorWrapper& traini
 	{
 		for (auto z = 0; z < ZBrackets; z++)
 		{
-			_heatmapData[x][z] = 0;
+			_heatmapData[x][z] = .0f;
 		}
 	}
-	_maximumValue = 0;
+	_maximumValue = .0f;
 }
 
 void ShotDistributionTracker::incrementHeatmapEntry(Vector ballLocation)
@@ -31,13 +35,25 @@ void ShotDistributionTracker::incrementHeatmapEntry(Vector ballLocation)
 	// Get the array bracket for the Z dimension
 	auto zBracket = (int)ballLocation.Z / ZBracketHeight;
 
-	if (xBracket >= 0 && xBracket < XBrackets && zBracket >= 0 && zBracket < ZBrackets)
+	for (auto x = xBracket - 5; x < XBrackets && x <= xBracket + 5; x++)
 	{
-		auto& newValue = _heatmapData[xBracket][zBracket];
-		newValue++;
-		if (newValue > _maximumValue)
+		auto xDifference = abs((float)(x - xBracket));
+		auto xMagnitude = 0.5f / pow(2.0f, xDifference); 
+
+		for (auto z = zBracket - 5; z < ZBrackets && z <= zBracket + 5; z++)
 		{
-			_maximumValue = newValue;
+			auto zDifference = abs((float)(z - zBracket));
+			auto zMagnitude = 0.5f / pow(2.0f, zDifference);
+
+			if (x >= 0 && z >= 0)
+			{
+				auto& newValue = _heatmapData[x][z];
+				newValue += (xMagnitude + zMagnitude);
+				if (newValue > _maximumValue)
+				{
+					_maximumValue = newValue;
+				}
+			}
 		}
 	}
 }
@@ -100,23 +116,53 @@ void ShotDistributionTracker::renderOneFrame(CanvasWrapper& canvas)
 			auto topLeft = Vector{ leftBorder, YDrawLocation, topBorder };
 
 			// If there are zero hits, don't paint it
-			// If there is at least one hit, make it blue for one hit, green for the maximum amount of hits, and something inbetween for the remainder
 			if (numberOfHitsInBracket > 0)
 			{
-				auto adjustedMax = _maximumValue - 1;
-				auto blueFactor = .0f;
-				auto greenFactor = .0f;
-				if (adjustedMax == 0)
+				// calculate the color like this:
+				// 0% of max value: black
+				// 20% of max value: pure Blue
+				// 40% of max value: blue + green (cyan)
+				// 60% of max value: pure green
+				// 80% of max value: green + red (yellow)
+				// 100% of max value: pure red
+				
+				auto percentageOfMaximum = numberOfHitsInBracket / _maximumValue;
+
+				// Red: 0%-60% = 0, 80%-100% = 1
+				// Green: 0-20% = 0, 40-60% = 1, 80-100% = 0
+				// Blue: 0% = 0, 20-40% = 1, 60-100% = 0
+				float redFactor, greenFactor, blueFactor;
+				if (percentageOfMaximum <= .2f)
 				{
-					blueFactor = 1.0f; 
+					redFactor = .0f;
+					greenFactor = .0f;
+					blueFactor = percentageOfMaximum * 5.0f; // Scale to 0-100
+				}
+				else if (percentageOfMaximum <= .4f)
+				{
+					redFactor = .0f;
+					greenFactor = (percentageOfMaximum - .2f) * 5.0f;
+					blueFactor = 1.0f;
+				}
+				else if (percentageOfMaximum <= .6f)
+				{
+					redFactor = .0f;
 					greenFactor = 1.0f;
+					blueFactor = 1.0f - ((percentageOfMaximum - .4f) * 5.0f);
+				}
+				else if (percentageOfMaximum <= .8f)
+				{
+					redFactor = (percentageOfMaximum - .6f) * 5.0f;
+					greenFactor = 1.0f;
+					blueFactor = .0f;
 				}
 				else
 				{
-					greenFactor = (float)(numberOfHitsInBracket - 1) / (float)adjustedMax;
-					blueFactor = 1.0f - greenFactor;
+					redFactor = 1.0f;
+					greenFactor = 1.0f - ((percentageOfMaximum - .8f) * 5.0f);
+					blueFactor = .0f;
 				}
-				auto heatColor = LinearColor{ .0f, 255.0f * greenFactor,  255.0f * blueFactor, 100.0f };
+				auto heatColor = LinearColor{ 255.0f * redFactor, 255.0f * greenFactor, 255.0f * blueFactor, 50.0f + percentageOfMaximum * 200.0f };
 
 				auto bottomLeftProj = canvas.Project(bottomLeft);
 				auto bottomRightProj = canvas.Project(bottomRight);
@@ -124,7 +170,7 @@ void ShotDistributionTracker::renderOneFrame(CanvasWrapper& canvas)
 				auto topLeftProj = canvas.Project(topLeft);
 				canvas.SetColor(heatColor);
 
-				// We're using rectangles instead of triangles right now since it triangles unfortunately ignore transparency
+				// We're using rectangles instead of triangles right now since triangles unfortunately ignore transparency
 				//canvas.FillTriangle(bottomLeftProj, topRightProj, bottomRightProj);
 				//canvas.FillTriangle(bottomLeftProj, topLeftProj, topRightProj);
 

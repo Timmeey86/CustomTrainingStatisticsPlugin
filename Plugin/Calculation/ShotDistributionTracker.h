@@ -23,14 +23,14 @@ public:
 
 	void renderOneFrame(CanvasWrapper& canvas) override;
 
-	static const int XBrackets = 40;
-	static const int ZBrackets = 20;
+	static const int XBrackets = 160;
+	static const int ZBrackets = 80;
 
 
 private:
 	void incrementHeatmapEntry(Vector ballLocation);
-	std::array<std::array<int, ZBrackets>, XBrackets> _heatmapData; ///< Stores the number of hits in each cell
-	int _maximumValue = 0;
+	std::array<std::array<float, ZBrackets>, XBrackets> _heatmapData; ///< Stores the number of hits in each cell
+	float _maximumValue = 0;
 
 	bool _furtherWallHitsShallBeIgnored = false; ///< True while wall hits shall be ignored. This is necessary since rolling the ball up the wall would produce a myriad of hits.
 };
