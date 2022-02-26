@@ -68,7 +68,7 @@ public:
 	 *
 	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
 	 */
-	virtual void onGoalScored(TrainingEditorWrapper& trainingWrapper) { (void)trainingWrapper; /* ignore event unless overridden. */ }
+	virtual void onGoalScored(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) { (void)trainingWrapper; /* ignore event unless overridden. */ }
 
 	/** This gets called whenever the ball was hit during an attempt. 
 	 * 

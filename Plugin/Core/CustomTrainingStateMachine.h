@@ -58,7 +58,7 @@ private:
 	/** Processes (or ignores) an OnCarTouch event. */
 	void processOnCarTouch(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
 	/** Processes (or ignores) an OnHitGoal event. */
-	void processOnHitGoal(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
+	void processOnHitGoal(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
 	/** Processes (or ignores) an OnGroundChanged event, where "ground" can also be wall, ceiling, or the ball. */
 	void processOnGroundChanged(CarWrapper& car, TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
 	/** Updates the current state. */

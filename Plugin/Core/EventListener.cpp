@@ -3,13 +3,13 @@
 #include "../Data/TriggerNames.h"
 
 EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
-	: _gameWrapper( gameWrapper )
-	, _cvarManager( cvarManager )
-	, _pluginState( pluginState )
+	: _gameWrapper(gameWrapper)
+	, _cvarManager(cvarManager)
+	, _pluginState(pluginState)
 {
 }
 
-void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter)
+void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter)
 {
 	if (!statUpdater) { return; }
 
@@ -56,25 +56,25 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
-			if (!_pluginState->PluginIsEnabled) { return; }
-						
-			// Update the state machine with this event
-			if (TrainingEditorWrapper trainingWrapper(caller.memory_address); 
-				!trainingWrapper.IsNull())
-			{
-				auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
-				for (auto eventReceiver : _eventReceivers)
-				{
-					eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingPackCode);
-				}
+		if (!_pluginState->PluginIsEnabled) { return; }
 
-				_stateMachine->processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, _eventReceivers);
+		// Update the state machine with this event
+		if (TrainingEditorWrapper trainingWrapper(caller.memory_address);
+			!trainingWrapper.IsNull())
+		{
+			auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+			for (auto eventReceiver : _eventReceivers)
+			{
+				eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingPackCode);
 			}
 
-			// Reset other state variables
-			_pluginState->MenuStackSize = 0;
-			_pluginState->IsMetric = _gameWrapper->GetbMetric();
-		});
+			_stateMachine->processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, _eventReceivers);
+		}
+
+		// Reset other state variables
+		_pluginState->MenuStackSize = 0;
+		_pluginState->IsMetric = _gameWrapper->GetbMetric();
+	});
 
 	// Happens whenever a menu is opened (also when opening a nested menu)
 	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", [this](const std::string&) {
@@ -91,14 +91,17 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	});
 }
 
-void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisplay )
+void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDisplay>> statDisplays)
 {
-	if (!statDisplay) { return; }
+	if (statDisplays.empty()) { return; }
 
-	_gameWrapper->RegisterDrawable([this, statDisplay](CanvasWrapper canvas) {
+	_gameWrapper->RegisterDrawable([this, statDisplays](CanvasWrapper canvas) {
 		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining())
 		{
-			statDisplay->renderOneFrame(canvas);
+			for (auto statDisplay : statDisplays)
+			{
+				statDisplay->renderOneFrame(canvas);
+			}
 		}
 	});
 }

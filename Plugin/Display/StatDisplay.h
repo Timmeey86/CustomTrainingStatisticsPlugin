@@ -48,6 +48,5 @@ private:
 	const std::shared_ptr<const PluginState> _pluginState;	///< The state of the plugin.
 
 	float _displayWidth{ 230.0f };
-	
 };
 

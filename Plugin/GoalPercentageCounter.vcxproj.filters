@@ -149,6 +149,9 @@
     <ClCompile Include="Calculation\CloseMissCounter.cpp">
       <Filter>Calculation</Filter>
     </ClCompile>
+    <ClCompile Include="Calculation\ShotDistributionTracker.cpp">
+      <Filter>Calculation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -296,6 +299,9 @@
       <Filter>Calculation</Filter>
     </ClInclude>
     <ClInclude Include="Calculation\CloseMissCounter.h">
+      <Filter>Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation\ShotDistributionTracker.h">
       <Filter>Calculation</Filter>
     </ClInclude>
   </ItemGroup>

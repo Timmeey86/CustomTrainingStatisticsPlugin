@@ -163,7 +163,7 @@ void DoubleTapGoalCounter::onCarLandingOnSurface(TrainingEditorWrapper& training
 }
 
 
-void DoubleTapGoalCounter::onGoalScored(TrainingEditorWrapper& trainingWrapper)
+void DoubleTapGoalCounter::onGoalScored(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball)
 {
 	(void)trainingWrapper;
 

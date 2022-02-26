@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <vector>
 #include "../Core/AbstractEventReceiver.h"
 
 /** Defines states of a close miss. */

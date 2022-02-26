@@ -24,7 +24,7 @@ public:
 	void registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter);
 	
 	/** Hooks into events related to rendering a UI to the user. */
-	void registerRenderEvents(std::shared_ptr<IStatDisplay> statDisplay);
+	void registerRenderEvents(std::vector<std::shared_ptr<IStatDisplay>> statDisplays);
 
 	/** Registers events which update the game state. */
 	void registerGameStateEvents();

@@ -37,7 +37,7 @@ public:
 
 	void onAttemptStarted() override;
 	void onCarLiftOff(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) override;
-	void onGoalScored(TrainingEditorWrapper& trainingWrapper) override;
+	void onGoalScored(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) override;
 	void onBallHit(TrainingEditorWrapper& trainingWrapper, bool isInitialHit) override;
 	void onBallSurfaceHit(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) override;
 	void onCarLandingOnSurface(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) override;

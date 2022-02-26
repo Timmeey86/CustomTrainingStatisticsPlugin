@@ -5,6 +5,7 @@
 #include "Calculation/GroundDribbleTimeCounter.h"
 #include "Calculation/DoubleTapGoalCounter.h"
 #include "Calculation/CloseMissCounter.h"
+#include "Calculation/ShotDistributionTracker.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Core/StatUpdaterEventBridge.h"
@@ -44,9 +45,6 @@ void GoalPercentageCounter::onLoad()
 	auto statReader = std::make_shared<StatFileReader>(gameWrapper);
 	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader);
 
-	// Enable rendering of output
-	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, differenceData, _pluginState);
-
 	// Enable storage of stats on the file system (crash recovery / maybe training trend in future)
 	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats);
 
@@ -80,10 +78,17 @@ void GoalPercentageCounter::onLoad()
 	);
 	_eventListener->addEventReceiver(closeMissCounter);
 
+	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>();
+	_eventListener->addEventReceiver(shotDistributionTracker);
+
 	// Hook into events now 
 	_eventListener->registerGameStateEvents();
 	_eventListener->registerUpdateEvents(statUpdater, statWriter);
-	_eventListener->registerRenderEvents(statDisplay);
+
+
+	// Enable rendering of output
+	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, differenceData, _pluginState);
+	_eventListener->registerRenderEvents({ statDisplay, shotDistributionTracker });
 
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 }

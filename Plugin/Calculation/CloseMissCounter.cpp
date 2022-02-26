@@ -1,6 +1,8 @@
 #include <pch.h>
 #include "CloseMissCounter.h"
 
+const auto GoalYThreshold = 5000.0f;
+
 CloseMissCounter::CloseMissCounter(std::function<void()> notifyCloseMissFunc)
 	: _notifyCloseMissFunc(notifyCloseMissFunc)
 {
@@ -20,7 +22,7 @@ void CloseMissCounter::onBallWallHit(TrainingEditorWrapper& trainingWrapper, Bal
 	}
 
 	auto location = ball.GetLocation();
-	if (abs(location.X) < 1200.0f && location.Z < 900.0f && location.Y > 5000.0f )
+	if (location.Y > GoalYThreshold && abs(location.X) < 1200.0f && location.Z < 900.0f)
 	{
 		// The ball bounced off the backboard near the orange goal (or the goal posts)
 		_currentState = CloseMissState::WaitingForEndOfAttempt;

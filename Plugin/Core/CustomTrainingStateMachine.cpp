@@ -65,7 +65,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 
 			if (ball.GetLocation().Y > 0)
 			{
-				processOnHitGoal(trainingWrapper, eventReceivers);
+				processOnHitGoal(trainingWrapper, ball, eventReceivers);
 			}
 		}
 	});
@@ -358,7 +358,7 @@ void CustomTrainingStateMachine::processOnCarTouch(TrainingEditorWrapper& traini
 
 }
 
-void CustomTrainingStateMachine::processOnHitGoal(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
+void CustomTrainingStateMachine::processOnHitGoal(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 	_goalWasScoredInCurrentAttempt = true;
 
@@ -366,7 +366,7 @@ void CustomTrainingStateMachine::processOnHitGoal(TrainingEditorWrapper& trainin
 
 	for (auto eventReceiver : eventReceivers)
 	{
-		eventReceiver->onGoalScored(trainingWrapper);
+		eventReceiver->onGoalScored(trainingWrapper, ball);
 	}
 }
 
