@@ -135,6 +135,39 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef 
 	"0.0f"
 };
 
+const SettingsDefinition GoalPercentageCounterSettings::DisplayAirDribbleTouchesDef = {
+	"customtrainingstatistics_display_air_dribble_touches",
+	"Max. Air Dribble Touches",
+	"Toggle display of the maximum number of air dribble touches in the stat display",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayAirDribbleTimeDef = {
+	"customtrainingstatistics_display_air_dribble_time",
+	"Max. Air Dribble Time",
+	"Toggle display of the maximum air dribble time. The time between the first and last ball touch is counted.",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayGroundDribbleDef = {
+	"customtrainingstatistics_display_ground_dribble_time",
+	"Max. Ground Dribble Time",
+	"Toggle display of the maximum ground dribble time. The time between the first and last ball touch is counted. Switching to an air dribble does not interrupt the ground dribble.",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayDoubleTapGoalsDef = {
+	"customtrainingstatistics_display_double_tap_goals",
+	"Double tap Goals",
+	"Toggle display of double tap goals. The double tap goal percentage will be in relation to the number of goals rather than the number of attempts.",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+
 
 const SettingsDefinition GoalPercentageCounterSettings::AllShotXPositionDef = {
 	"customtrainingstatistics_all_shot_overlay_x_position",
@@ -231,4 +264,23 @@ const SettingsDefinition GoalPercentageCounterSettings::ToggleLastAttemptKeybind
 	"0.0f"
 };
 
+const SettingsDefinition GoalPercentageCounterSettings::ToggleHeatmapKeybindingDef = {
+	"customtrainingstatistics_toggleheatmap_keybinding",
+	"Toggle Goal/Backboard Heatmap Display",
+	"Keybinding to toggle display of a heatmap of Goals and Backboard bounces. Might affect performance when visible.",
+	0.0f,
+	static_cast<float>(GoalPercentageCounterSettings::KeybindingsArraySize - 1),
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::ToggleShotLocationKeybindingDef = {
+	"customtrainingstatistics_toggleshotlocation_keybinding",
+	"Toggle Goal/Backboard Impact Display",
+	"Keybinding to toggle display of a the impact locations of Goals and Backboard bounces. Might affect performance when visible.",
+	0.0f,
+	static_cast<float>(GoalPercentageCounterSettings::KeybindingsArraySize - 1),
+	"0.0f"
+};
+
 const char* GoalPercentageCounterSettings::KeybindingsArray[] = { "None","F1","F3","F4","F5","F7","F8","F9","F10","F11","F12","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","Escape","Tab","Tilde","ScrollLock","Pause","one","two","three","four","five","six","seven","eight","nine","zero","Underscore","Equals","Backslash","LeftBracket","RightBracket","Enter","CapsLock","Semicolon","Quote","LeftShift","Comma","Period","Slash","RightShift","LeftControl","LeftAlt","SpaceBar","RightAlt","RightControl","Left","Up","Down","Right","Home","End","Insert","PageUp","Delete","PageDown","NumLock","Divide","Multiply","Subtract","Add","NumPadOne","NumPadTwo","NumPadThree","NumPadFour","NumPadFive","NumPadSix","NumPadSeven","NumPadEight","NumPadNine","NumPadZero","Decimal","LeftMouseButton","RightMouseButton","ThumbMouseButton","ThumbMouseButton2","MouseScrollUp","MouseScrollDown","MouseX","MouseY","XboxTypeS_LeftThumbStick","XboxTypeS_RightThumbStick","XboxTypeS_DPad_Up","XboxTypeS_DPad_Left","XboxTypeS_DPad_Right","XboxTypeS_DPad_Down","XboxTypeS_Back","XboxTypeS_Start","XboxTypeS_Y","XboxTypeS_X","XboxTypeS_B","XboxTypeS_A","XboxTypeS_LeftShoulder","XboxTypeS_RightShoulder","XboxTypeS_LeftTrigger","XboxTypeS_RightTrigger","XboxTypeS_LeftTriggerAxis","XboxTypeS_RightTriggerAxis","XboxTypeS_LeftX","XboxTypeS_LeftY","XboxTypeS_RightX","XboxTypeS_RightY" };
+
+

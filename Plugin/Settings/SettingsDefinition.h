@@ -36,6 +36,10 @@ public:
 	static const SettingsDefinition DisplayMinGoalSpeedDef;			///< Definitions for the flag which toggles display of the minimum goal speed
 	static const SettingsDefinition DisplayMedianGoalSpeedDef;		///< Definitions for the flag which toggles display of the median goal speed
 	static const SettingsDefinition DisplayMeanGoalSpeedDef;		///< Definitions for the flag which toggles display of the mean goal speed
+	static const SettingsDefinition DisplayAirDribbleTouchesDef;		///< Definitions for the flag which toggles display of air dribble touches
+	static const SettingsDefinition DisplayAirDribbleTimeDef;			///< Definitions for the flag which toggles display of air dribble time
+	static const SettingsDefinition DisplayGroundDribbleDef;			///< Definitions for the flag which toggles display of ground dribble time
+	static const SettingsDefinition DisplayDoubleTapGoalsDef;			///< Definitions for the flag which toggles display of double tap goals
 
 	static const SettingsDefinition AllShotXPositionDef;	///< Definitions for the X position of the all shot overlay
 	static const SettingsDefinition AllShotYPositionDef;	///< Definitions for the Y position of the all shot overlay
@@ -52,6 +56,8 @@ public:
 	static const SettingsDefinition SummaryKeybindingDef;				///< Definitions for the summary window keybinding
 	static const SettingsDefinition RestoreLastSessionKeybindingDef;	///< Definitions for the "Restore last session" keybinding
 	static const SettingsDefinition ToggleLastAttemptKeybindingDef;		///< Definitions for the "Toggle last attempt" keybinding
+	static const SettingsDefinition ToggleHeatmapKeybindingDef;			///< Definitions for the "Toggle Heatmap Display" keybinding
+	static const SettingsDefinition ToggleShotLocationKeybindingDef;	///< Definitions for the "Toggle Shot Location" keybinding
 	static constexpr int KeybindingsArraySize{ 127 };					///< Size of array of possible keybindings
 	static const char* KeybindingsArray[];								///< List of possible keybindings
 };
