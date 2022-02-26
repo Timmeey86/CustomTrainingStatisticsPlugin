@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "../Core/AbstractEventReceiver.h"
 #include "../Core/IStatDisplay.h"
 
@@ -8,6 +10,7 @@
 */
 class ShotDistributionTracker : public AbstractEventReceiver, public IStatDisplay
 {
+
 public:
 	explicit ShotDistributionTracker();
 
@@ -20,7 +23,14 @@ public:
 
 	void renderOneFrame(CanvasWrapper& canvas) override;
 
+	static const int XBrackets = 40;
+	static const int ZBrackets = 20;
+
+
 private:
+	void incrementHeatmapEntry(Vector ballLocation);
+	std::array<std::array<int, ZBrackets>, XBrackets> _heatmapData; ///< Stores the number of hits in each cell
+	int _maximumValue = 0;
+
 	bool _furtherWallHitsShallBeIgnored = false; ///< True while wall hits shall be ignored. This is necessary since rolling the ball up the wall would produce a myriad of hits.
-	std::vector<Vector> _shotLocations; ///< Stores the hits against the backboard, or into the goal
 };
