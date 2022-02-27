@@ -36,10 +36,14 @@ public:
 	static const SettingsDefinition DisplayMinGoalSpeedDef;			///< Definitions for the flag which toggles display of the minimum goal speed
 	static const SettingsDefinition DisplayMedianGoalSpeedDef;		///< Definitions for the flag which toggles display of the median goal speed
 	static const SettingsDefinition DisplayMeanGoalSpeedDef;		///< Definitions for the flag which toggles display of the mean goal speed
-	static const SettingsDefinition DisplayAirDribbleTouchesDef;		///< Definitions for the flag which toggles display of air dribble touches
-	static const SettingsDefinition DisplayAirDribbleTimeDef;			///< Definitions for the flag which toggles display of air dribble time
-	static const SettingsDefinition DisplayGroundDribbleDef;			///< Definitions for the flag which toggles display of ground dribble time
-	static const SettingsDefinition DisplayDoubleTapGoalsDef;			///< Definitions for the flag which toggles display of double tap goals
+	static const SettingsDefinition DisplayAirDribbleTouchesDef;	///< Definitions for the flag which toggles display of air dribble touches
+	static const SettingsDefinition DisplayAirDribbleTimeDef;		///< Definitions for the flag which toggles display of air dribble time
+	static const SettingsDefinition DisplayGroundDribbleDef;		///< Definitions for the flag which toggles display of ground dribble time
+	static const SettingsDefinition DisplayDoubleTapGoalsDef;		///< Definitions for the flag which toggles display of double tap goals
+	static const SettingsDefinition DisplayDoubleTapPercentageDef;	///< Definitions for the flag which toggles display of double tap goal percentage
+	static const SettingsDefinition DisplayMaxFlipResetsDef;		///< Definitions for the flag which toggles display of maximum flip resets in one attempt.
+	static const SettingsDefinition DisplayFlipResetsPerAttemptDef;	///< Definitions for the flag which toggles display of average flip resets per attempt.
+	static const SettingsDefinition DisplayFlipResetPercentageDef;	///< Definitions for the flag which toggles display of flip reset goal percentage.
 
 	static const SettingsDefinition AllShotXPositionDef;	///< Definitions for the X position of the all shot overlay
 	static const SettingsDefinition AllShotYPositionDef;	///< Definitions for the Y position of the all shot overlay

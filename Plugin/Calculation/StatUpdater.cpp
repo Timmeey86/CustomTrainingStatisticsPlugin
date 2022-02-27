@@ -331,3 +331,23 @@ void StatUpdater::toggleLastAttempt()
 	}
 	updateData();
 }
+
+void StatUpdater::processAirDribbleTime(float time)
+{
+}
+
+void StatUpdater::processAirDribbleTouches(int touches)
+{
+}
+
+void StatUpdater::processGroundDribbleTime(float time)
+{
+}
+
+void StatUpdater::processDoubleTapGoal()
+{
+}
+
+void StatUpdater::processFlipReset(int amount)
+{
+}

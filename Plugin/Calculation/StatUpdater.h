@@ -32,6 +32,12 @@ public:
 	void publishTrainingPackCode(const std::string& trainingPackCode) override;
 	void toggleLastAttempt() override;
 
+	void processAirDribbleTime(float time) override;
+	void processAirDribbleTouches(int touches) override;
+	void processGroundDribbleTime(float time) override;
+	void processDoubleTapGoal() override; 
+	void processFlipReset(int amount) override;
+
 private:
 	/** Increases the goal counter and updates streaks. */
 	void handleGoal(StatsData& statsData);

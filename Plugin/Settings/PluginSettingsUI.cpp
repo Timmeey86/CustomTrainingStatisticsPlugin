@@ -194,7 +194,20 @@ void PluginSettingsUI::RenderSettings()
 		ImGui::Text("If the player's car touches the ground after the double tap, the ball must fly into the goal directly, otherwise it won't count.");
 		ImGui::Text("Landing anywhere before getting the double tap will fail the attempt.");
 		ImGui::Text("You may attempt several double taps during one shot, if time allows.");
+		ImGui::Text("Note that the double tap goal percentage is shown in relation to the number of goals rather than the number of attempts made.");
 
 		createCheckbox(GoalPercentageCounterSettings::DisplayDoubleTapGoalsDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayDoubleTapPercentageDef);
+
+		ImGui::Separator();
+
+		ImGui::Text("Flip Resets");
+		ImGui::Text("Flip Resets are counted during one uninterrupted aerial. Landing on the ground, a wall or the ceiling will finish the attempt.");
+		ImGui::Text("You may attempt several flip reset chains during one shot, if time allows.");
+		ImGui::Text("Note that the flip reset goal percentage is shown in relation to the number of goals rather than the number of attempts made.");
+
+		createCheckbox(GoalPercentageCounterSettings::DisplayMaxFlipResetsDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayFlipResetPercentageDef);
 	}
 }

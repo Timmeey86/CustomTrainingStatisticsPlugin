@@ -162,7 +162,39 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayGroundDribbleDef 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayDoubleTapGoalsDef = {
 	"customtrainingstatistics_display_double_tap_goals",
 	"Double tap Goals",
-	"Toggle display of double tap goals. The double tap goal percentage will be in relation to the number of goals rather than the number of attempts.",
+	"Toggle display of the number of double tap goals.",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayDoubleTapPercentageDef = {
+	"customtrainingstatistics_display_double_tap_goal_percentage",
+	"Double tap Goal Percentage",
+	"Toggle display of double tap goal percentage. The double tap goal percentage will be in relation to the number of goals rather than the number of attempts.",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayMaxFlipResetsDef = {
+	"customtrainingstatistics_display_max_flip_resets",
+	"Maximum number of flip resets",
+	"Toggle display of maximum flip resets achieved during any attempt (whether scored or not).",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef = {
+	"customtrainingstatistics_display_flip_resets_per_attempt",
+	"Average number of flip resets per attempt",
+	"Toggle display of the average amount of flip resets per attempt (whether scored or not).",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayFlipResetPercentageDef = {
+	"customtrainingstatistics_display_flip_reset_goal_percentage",
+	"Percentage of flip reset goals",
+	"Toggle display of percentage of attempts which included a flip reset and resulted in a goal.",
 	.0f,
 	1.0f,
 	"0.0f"
