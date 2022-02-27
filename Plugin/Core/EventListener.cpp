@@ -84,7 +84,7 @@ void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdat
 		{
 			eventReceiver->onCarFlipped();
 		}
-	}
+	});
 
 	// Happens whenever a menu is opened (also when opening a nested menu)
 	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", [this](const std::string&) {
