@@ -5,7 +5,7 @@
 #include "bakkesmod/plugin/pluginwindow.h"
 #include "bakkesmod/plugin/bakkesmodplugin.h"
 
-#include "../IMGUI/imgui.h"
+#include <IMGUI/imgui.h>
 
 void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager)
 {
