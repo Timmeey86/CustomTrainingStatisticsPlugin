@@ -7,6 +7,7 @@
 #include "../Core/IStatDisplay.h"
 
 #include <bakkesmod/wrappers/wrapperstructs.h>
+#include <bakkesmod/wrappers/GameWrapper.h>
 
 /** This class tracks where the ball touched the backboard.
  * Unlike the other classes, this one uses a single boolean flag instead of a state machine, since only two states are relevant.
@@ -16,7 +17,7 @@ class ShotDistributionTracker : public AbstractEventReceiver, public IStatDispla
 
 public:
 	/** Creates a new object which keeps track of locations on the backboard or goal surface which were hit by the ball. */
-	ShotDistributionTracker() = default;
+	explicit ShotDistributionTracker(std::shared_ptr<GameWrapper> gameWrapper);
 
 	/** Registers hotkeys for toggling display of overlays. */
 	void registerNotifiers(std::shared_ptr<CVarManagerWrapper> cvarManager);
@@ -55,6 +56,8 @@ private:
 	void renderShotLocations(CanvasWrapper& canvas);
 	/** Renders the heat map. */
 	void renderHeatMap(CanvasWrapper& canvas);
+
+	std::shared_ptr<GameWrapper> _gameWrapper; ///< Used for retrieving the camera.
 
 	std::array<std::array<float, ZBrackets>, XBrackets> _heatmapData; ///< Stores the number of hits in each cell
 	float _maximumValue = 0; ///< The maximum value of all brackets

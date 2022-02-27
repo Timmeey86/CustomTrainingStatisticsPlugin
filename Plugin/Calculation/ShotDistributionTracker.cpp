@@ -1,4 +1,7 @@
 #include <pch.h>
+
+#include <RenderingTools/Objects/Frustum.h>
+
 #include "ShotDistributionTracker.h"
 #include "../Data/TriggerNames.h"
 
@@ -7,8 +10,11 @@ const auto YDrawLocation = 5100.0f;
 const auto XBracketWidth = 8000 / ShotDistributionTracker::XBrackets;
 const auto ZBracketHeight = 4000 / ShotDistributionTracker::ZBrackets;
 
-// TODO: Use https://github.com/CinderBlocc/RenderingTools in order to get rid of glitches when turning the camera
 
+ShotDistributionTracker::ShotDistributionTracker(std::shared_ptr<GameWrapper> gameWrapper)
+	: _gameWrapper(gameWrapper)
+{
+}
 
 void ShotDistributionTracker::registerNotifiers(std::shared_ptr<CVarManagerWrapper> cvarManager)
 {
@@ -158,6 +164,13 @@ void ShotDistributionTracker::drawRectangle(int x, int z, CanvasWrapper& canvas)
 
 	auto bottomLeft = Vector{ leftBorder, YDrawLocation, bottomBorder };
 	auto topRight = Vector{ rightBorder, YDrawLocation, topBorder };
+
+	// Skip drawing if either of the points is not in the currently visible area
+	auto currentCameraFrustum = RT::Frustum(canvas, _gameWrapper->GetCamera());
+	if (!currentCameraFrustum.IsInFrustum(bottomLeft) || !currentCameraFrustum.IsInFrustum(topRight))
+	{
+		return;
+	}
 
 	auto bottomLeftProj = canvas.Project(bottomLeft);
 	auto topRightProj = canvas.Project(topRight);
