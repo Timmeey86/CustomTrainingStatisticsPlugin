@@ -267,6 +267,18 @@ void StatUpdater::recalculatePercentages(StatsData& statsData, StatsData& intern
 		internalStatsData.Data.PeakShotNumber = internalStatsData.Stats.Attempts;
 	}
 
+	// Update advanced stats
+	if (internalStatsData.Stats.Goals > 0)
+	{
+		internalStatsData.Data.DoubleTapGoalPercentage = getPercentageValue(internalStatsData.Stats.Goals, internalStatsData.Stats.DoubleTapGoals);
+		internalStatsData.Data.FlipResetGoalPercentage = getPercentageValue(internalStatsData.Stats.Goals, internalStatsData.Stats.FlipResetAttemptsScored);
+	}
+	if (internalStatsData.Stats.Attempts > 0)
+	{
+		internalStatsData.Data.AverageFlipResetsPerAttempt = getPercentageValue(internalStatsData.Stats.Attempts, internalStatsData.Stats.TotalFlipResets);
+		internalStatsData.Data.CloseMissPercentage = getPercentageValue(internalStatsData.Stats.Attempts, internalStatsData.Stats.CloseMisses);
+	}
+
 	// Update external stats
 	statsData = internalStatsData;
 }
