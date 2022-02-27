@@ -27,6 +27,7 @@ public:
 	int TotalFlipResets = 0;			///< Stores the total number of flip resets made.
 	int MaxFlipResets = 0;				///< Stores the maximum number of flip resets made during any attempt.
 	int FlipResetAttemptsScored = 0;	///< Stores the number of attempts which included at least one flip reset and resulted in a goal
+	int CloseMisses = 0;				///< Stores the number of attempts which almost resulted in a goal.
 
 	/** Compares this object to other and returns the result as a new PlayerStats instance.
 	 *  The resulting percentages will be positive if "this" is better than "other".
@@ -41,6 +42,14 @@ public:
 		diff.LongestGoalStreak = LongestGoalStreak - other.LongestGoalStreak;
 		diff.LongestMissStreak = other.LongestMissStreak - LongestMissStreak; // We turn this value around so a positive value is something good, like with the other stats
 		diff.InitialHits = InitialHits - other.InitialHits;
+		diff.MaxAirDribbleTouches = MaxAirDribbleTouches - other.MaxAirDribbleTouches;
+		diff.MaxAirDribbleTime = MaxAirDribbleTime - other.MaxAirDribbleTime;
+		diff.MaxGroundDribbleTime = MaxGroundDribbleTime - other.MaxGroundDribbleTime;
+		diff.DoubleTapGoals = DoubleTapGoals - other.DoubleTapGoals;
+		diff.TotalFlipResets = TotalFlipResets - other.TotalFlipResets;
+		diff.MaxFlipResets = MaxFlipResets - other.MaxFlipResets;
+		diff.FlipResetAttemptsScored = FlipResetAttemptsScored - other.FlipResetAttemptsScored;
+		// we don't compare close misses since a lower number could be better (more goals scored) or worse (missed the goal completely more often)
 		return diff;
 	}
 };

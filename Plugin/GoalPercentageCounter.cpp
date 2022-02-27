@@ -63,12 +63,12 @@ void GoalPercentageCounter::onLoad()
 	_eventListener->addEventReceiver(airDribbleCounter);
 
 	auto groundDribbleCounter = std::make_shared<GroundDribbleTimeCounter>(
-		[this, statUpdater](float time) { cvarManager->log(fmt::format("Max ground dribble time: {}", time)); }
+		[this, statUpdater](float time) { statUpdater->processGroundDribbleTime(time); }
 	);
 	_eventListener->addEventReceiver(groundDribbleCounter);
 
 	auto doubleTapGoalCounter = std::make_shared<DoubleTapGoalCounter>(
-		[this, statUpdater]() { cvarManager->log("Double tap goal scored!"); },
+		[this, statUpdater]() { statUpdater->processDoubleTapGoal(); },
 		cvarManager
 	);
 	_eventListener->addEventReceiver(doubleTapGoalCounter);

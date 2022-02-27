@@ -199,6 +199,22 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayFlipResetPercenta
 	1.0f,
 	"0.0f"
 };
+const SettingsDefinition GoalPercentageCounterSettings::DisplayCloseMissesDef = {
+	"customtrainingstatistics_display_close_misses",
+	"Close Misses",
+	"Toggle display of the number of times you almost scored a goal.",
+	.0f,
+	1.0f,
+	"0.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::DisplayCloseMissPercentageDef = {
+	"customtrainingstatistics_display_close_miss_percentage",
+	"Close Miss percentage",
+	"Toggle display of the percentage of attempts which almost resulted in a goal.",
+	.0f,
+	1.0f,
+	"0.0f"
+};
 
 
 const SettingsDefinition GoalPercentageCounterSettings::AllShotXPositionDef = {

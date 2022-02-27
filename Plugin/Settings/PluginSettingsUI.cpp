@@ -209,5 +209,16 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::DisplayMaxFlipResetsDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayFlipResetPercentageDef);
+
+		ImGui::Separator();
+
+		ImGui::Text("Close Misses");
+		ImGui::Text("Sometimes you just want to see how often you almost scored a goal.");
+
+		createCheckbox(GoalPercentageCounterSettings::DisplayCloseMissesDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayCloseMissPercentageDef);
+
+		ImGui::Separator();
+
 	}
 }

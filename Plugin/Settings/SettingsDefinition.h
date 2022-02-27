@@ -44,6 +44,8 @@ public:
 	static const SettingsDefinition DisplayMaxFlipResetsDef;		///< Definitions for the flag which toggles display of maximum flip resets in one attempt.
 	static const SettingsDefinition DisplayFlipResetsPerAttemptDef;	///< Definitions for the flag which toggles display of average flip resets per attempt.
 	static const SettingsDefinition DisplayFlipResetPercentageDef;	///< Definitions for the flag which toggles display of flip reset goal percentage.
+	static const SettingsDefinition DisplayCloseMissesDef;			///< Definitions for the flag which toggles display of close misses.
+	static const SettingsDefinition DisplayCloseMissPercentageDef;	///< Definitions for the flag which toggles display of close miss percentage.
 
 	static const SettingsDefinition AllShotXPositionDef;	///< Definitions for the X position of the all shot overlay
 	static const SettingsDefinition AllShotYPositionDef;	///< Definitions for the Y position of the all shot overlay

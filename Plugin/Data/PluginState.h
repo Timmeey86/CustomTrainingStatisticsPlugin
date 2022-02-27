@@ -40,11 +40,13 @@ public:
 	bool AirDribbleTimeShallBeDisplayed = false;		///< True while max. air dribble time shall appear in the stat display.
 	bool GroundDribbleTimeShallBeDisplayed = false;		///< True while max. ground dribble time shall appear in the stat display.
 	bool DoubleTapGoalsShallBeDisplayed = false;		///< True while double tap goals shall be displayed in the stat display.
-	bool DoubleTapPercentageShallBeDisplayed = false;	///< True while double tap goals shall be displayed in the stat display.
-	bool MaxFlipResetsShallBeDisplayed = false;			///< True while double tap goals shall be displayed in the stat display.
-	bool FlipResetsPerAttemptShallBeDisplayed = false;	///< True while double tap goals shall be displayed in the stat display.
-	bool FlipResetPercentagShallBeDisplayed = false;	///< True while double tap goals shall be displayed in the stat display.
+	bool DoubleTapPercentageShallBeDisplayed = false;	///< True while double tap goal percentage shall be displayed in the stat display.
+	bool MaxFlipResetsShallBeDisplayed = false;			///< True while maximum number of flip resets shall be displayed in the stat display.
+	bool FlipResetsPerAttemptShallBeDisplayed = false;	///< True while average flip resets per attempt shall be displayed in the stat display.
+	bool FlipResetPercentageShallBeDisplayed = false;	///< True while flip reset percentage shall be displayed in the stat display.
 	bool FlipResetsShallBeDisplayed = false;			///< True while flip resets shall be displayed in the stat display.
+	bool CloseMissesShallBeDisplayed = false;			///< True while close misses shall be displayed in the stat display.
+	bool CloseMissPercentageShallBeDisplayed = false;	///< True while the percentage of close misses shall be displayed in the stat display.
 	bool PreviousSessionDiffShallBeDisplayed = true;	///< True while the percentage differences to the previous session shall be displayed.
 
 	/** True while initial ball hits and ball hit percentage shall appear in the stat display. 
