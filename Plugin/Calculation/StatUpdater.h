@@ -73,5 +73,6 @@ private:
 	std::string _trainingPackCode; ///< The code of the currently active training pack
 
 	bool _statsHaveJustBeenRestored = false; ///< This prevents the "toggle last attempt" feature from being used after restoring the last session
+	bool _flipResetOccurredInCurrentAttempt = false; ///< This is required for detection of flip reset goals.
 };
 

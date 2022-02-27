@@ -45,6 +45,8 @@ void StatUpdater::processMiss()
 
 void StatUpdater::processAttempt()
 {
+	_flipResetOccurredInCurrentAttempt = false;
+
 	_internalShotStats.AllShotStats.Stats.Attempts++;
 
 	// Update per shot
@@ -76,6 +78,7 @@ void StatUpdater::processReset(int numberOfShots)
 	// Reset total stats
 	_internalShotStats.AllShotStats.Stats = PlayerStats();
 	_internalShotStats.AllShotStats.Data = CalculatedData();
+	_flipResetOccurredInCurrentAttempt = false;
 
 	// Reset per shot stats
 	_internalShotStats.PerShotStats.clear();
@@ -281,6 +284,11 @@ void StatUpdater::handleGoal(StatsData& statsData)
 	}
 
 	statsData.Stats.GoalSpeedStats.insert(_pluginState->getBallSpeed());
+
+	if (_flipResetOccurredInCurrentAttempt)
+	{
+		statsData.Stats.FlipResetAttemptsScored++;
+	}
 }
 
 void StatUpdater::handleMiss(StatsData& statsData)
@@ -409,7 +417,6 @@ void StatUpdater::processFlipReset(int amount)
 
 void StatUpdater::processCloseMiss()
 {
-	// TODO: THIS MIGHT BE CALLED TOO LATE
 	handleCloseMiss(_internalShotStats.AllShotStats);
 
 	// Update per shot
@@ -425,24 +432,44 @@ void StatUpdater::processCloseMiss()
 
 void StatUpdater::handleAirDribbleTimeUpdate(StatsData& statsData, float time)
 {
+	if (time > statsData.Stats.MaxAirDribbleTime)
+	{
+		statsData.Stats.MaxAirDribbleTime = time;
+	}
 }
 
 void StatUpdater::handleAirDribbleTouchesUpdate(StatsData& statsData, int touches)
 {
+	if (touches > statsData.Stats.MaxAirDribbleTouches)
+	{
+		statsData.Stats.MaxAirDribbleTouches = touches;
+	}
 }
 
 void StatUpdater::handleGroundDribbleTimeUpdate(StatsData& statsData, float time)
 {
+	if (time > statsData.Stats.MaxGroundDribbleTime)
+	{
+		statsData.Stats.MaxGroundDribbleTime = time;
+	}
 }
 
 void StatUpdater::handleDoubleTapGoalUpdate(StatsData& statsData)
 {
+	statsData.Stats.DoubleTapGoals++;
 }
 
 void StatUpdater::handleFlipResetUpdate(StatsData& statsData, int amount)
 {
+	if (amount > statsData.Stats.MaxFlipResets)
+	{
+		statsData.Stats.MaxFlipResets = amount;
+	}
+	statsData.Stats.TotalFlipResets++;
+	_flipResetOccurredInCurrentAttempt = true;
 }
 
 void StatUpdater::handleCloseMiss(StatsData& statsData)
 {
+	statsData.Stats.CloseMisses++;
 }

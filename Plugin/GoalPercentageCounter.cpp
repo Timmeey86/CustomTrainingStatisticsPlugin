@@ -74,7 +74,7 @@ void GoalPercentageCounter::onLoad()
 	_eventListener->addEventReceiver(doubleTapGoalCounter);
 
 	auto closeMissCounter = std::make_shared<CloseMissCounter>(
-		[this]() { cvarManager->log("Close miss during previous attempt!"); }
+		[this, statUpdater]() { statUpdater->processCloseMiss(); }
 	);
 	_eventListener->addEventReceiver(closeMissCounter);
 

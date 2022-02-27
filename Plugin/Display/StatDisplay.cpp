@@ -43,6 +43,12 @@ std::string to_diff_value_string(int value)
 	stream << (value >= 0 ? "+" : "") << value;
 	return stream.str();
 }
+std::string to_diff_value_string(float value)
+{
+	std::ostringstream stream;
+	stream << (value >= 0 ? "+" : "") << to_float_string(value);
+	return stream.str();
+}
 void StatDisplay::drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const
 {
 	int numCharsLeft = (int)floor((double)label.length() * 0.5);
@@ -120,6 +126,57 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.LongestMissStreak);
 		}
 	}
+	if (pluginState->AirDribbleTouchesShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Air Dribbles:", std::to_string(statsData.Stats.MaxAirDribbleTouches), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTouches);
+		}
+	}
+	if (pluginState->AirDribbleTimeShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. ADribble Time:", to_float_string(statsData.Stats.MaxAirDribbleTime), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTime);
+		}
+	}
+	if (pluginState->GroundDribbleTimeShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. GDribble Time:", to_float_string(statsData.Stats.MaxGroundDribbleTime), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
+		}
+	}
+	if (pluginState->MaxFlipResetsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Flip Resets:", std::to_string(statsData.Stats.MaxFlipResets), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxFlipResets);
+		}
+	}
+	if (pluginState->DoubleTapGoalsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Double Tap Goals:", std::to_string(statsData.Stats.DoubleTapGoals), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.DoubleTapGoals);
+		}
+	}
+	if (pluginState->CloseMissesShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Close Misses:", std::to_string(statsData.Stats.CloseMisses), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.CloseMisses);
+		}
+	}
+
+
+	// Calculated percentages and averages
 	if (pluginState->TotalSuccessRateShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "%" });
@@ -171,6 +228,38 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	if (pluginState->MeanGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMean(pluginState->IsMetric)), speed_units });
+	}
+	if (pluginState->FlipResetsPerAttemptShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "FResets/Attempt:", to_percentage_string(statsData.Data.AverageFlipResetsPerAttempt), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.AverageFlipResetsPerAttempt);
+		}
+	}
+	if (pluginState->FlipResetPercentageShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "FReset Goal Rate:", to_percentage_string(statsData.Data.FlipResetGoalPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.FlipResetGoalPercentage);
+		}
+	}
+	if (pluginState->DoubleTapPercentageShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Dbl Tap Goal Rate:", to_percentage_string(statsData.Data.DoubleTapGoalPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.DoubleTapGoalPercentage);
+		}
+	}
+	if (pluginState->CloseMissPercentageShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Close Miss Rate:", to_percentage_string(statsData.Data.CloseMissPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.CloseMissPercentage);
+		}
 	}
 
 	if (statNamesAndValues.empty())
