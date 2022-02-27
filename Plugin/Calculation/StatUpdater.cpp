@@ -334,20 +334,115 @@ void StatUpdater::toggleLastAttempt()
 
 void StatUpdater::processAirDribbleTime(float time)
 {
+	handleAirDribbleTimeUpdate(_internalShotStats.AllShotStats, time);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleAirDribbleTimeUpdate(currStatsData, time);
+	}
+
+	_statsHaveJustBeenRestored = false;
 }
 
 void StatUpdater::processAirDribbleTouches(int touches)
 {
+	handleAirDribbleTouchesUpdate(_internalShotStats.AllShotStats, touches);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleAirDribbleTouchesUpdate(currStatsData, touches);
+	}
+
+	_statsHaveJustBeenRestored = false;
 }
 
 void StatUpdater::processGroundDribbleTime(float time)
 {
+	handleGroundDribbleTimeUpdate(_internalShotStats.AllShotStats, time);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleGroundDribbleTimeUpdate(currStatsData, time);
+	}
+
+	_statsHaveJustBeenRestored = false;
 }
 
 void StatUpdater::processDoubleTapGoal()
 {
+	handleDoubleTapGoalUpdate(_internalShotStats.AllShotStats);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleDoubleTapGoalUpdate(currStatsData);
+	}
+
+	_statsHaveJustBeenRestored = false;
 }
 
 void StatUpdater::processFlipReset(int amount)
+{
+	handleFlipResetUpdate(_internalShotStats.AllShotStats, amount);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleFlipResetUpdate(currStatsData, amount);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::processCloseMiss()
+{
+	// TODO: THIS MIGHT BE CALLED TOO LATE
+	handleCloseMiss(_internalShotStats.AllShotStats);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleCloseMiss(currStatsData);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::handleAirDribbleTimeUpdate(StatsData& statsData, float time)
+{
+}
+
+void StatUpdater::handleAirDribbleTouchesUpdate(StatsData& statsData, int touches)
+{
+}
+
+void StatUpdater::handleGroundDribbleTimeUpdate(StatsData& statsData, float time)
+{
+}
+
+void StatUpdater::handleDoubleTapGoalUpdate(StatsData& statsData)
+{
+}
+
+void StatUpdater::handleFlipResetUpdate(StatsData& statsData, int amount)
+{
+}
+
+void StatUpdater::handleCloseMiss(StatsData& statsData)
 {
 }

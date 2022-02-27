@@ -37,12 +37,21 @@ public:
 	void processGroundDribbleTime(float time) override;
 	void processDoubleTapGoal() override; 
 	void processFlipReset(int amount) override;
+	void processCloseMiss() override;
 
 private:
 	/** Increases the goal counter and updates streaks. */
 	void handleGoal(StatsData& statsData);
 	/** Increases the miss counter and updates streaks. */
 	void handleMiss(StatsData& statsData);
+
+	void handleAirDribbleTimeUpdate(StatsData& statsData, float time);
+	void handleAirDribbleTouchesUpdate(StatsData& statsData, int touches);
+	void handleGroundDribbleTimeUpdate(StatsData& statsData, float time);
+	void handleDoubleTapGoalUpdate(StatsData& statsData);
+	void handleFlipResetUpdate(StatsData& statsData, int amount);
+	void handleCloseMiss(StatsData& statsData);
+
 	/** Updates percentage values. */
 	void recalculatePercentages(StatsData& statsData, StatsData& internalStatsData);
 	/** Updates the internal backup of stats. This is used for the "toggle last attempt" feature. */

@@ -57,4 +57,7 @@ public:
 
 	/** Processes a flip reset. Note that this may get called multiple times per attempt (whenever a new maximum has been reached). */
 	virtual void processFlipReset(int amount) = 0;
+
+	/** Processes a close miss. */
+	virtual void processCloseMiss() = 0;
 };
