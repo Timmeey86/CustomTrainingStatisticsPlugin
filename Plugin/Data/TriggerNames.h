@@ -9,4 +9,6 @@ public:
 	static const char* ResetStatistics;
 	static const char* RestoreStatistics;
 	static const char* ToggleLastAttempt;
+	static const char* ToggleHeatmapDisplay;
+	static const char* ToggleImpactLocationDisplay;
 };

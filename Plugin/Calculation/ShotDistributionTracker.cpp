@@ -1,5 +1,6 @@
 #include <pch.h>
 #include "ShotDistributionTracker.h"
+#include "../Data/TriggerNames.h"
 
 const auto YThreshold = 4900.0f;
 const auto YDrawLocation = 5100.0f;
@@ -7,13 +8,19 @@ const auto XBracketWidth = 8000 / ShotDistributionTracker::XBrackets;
 const auto ZBracketHeight = 4000 / ShotDistributionTracker::ZBrackets;
 
 // TODO: Use https://github.com/CinderBlocc/RenderingTools in order to get rid of glitches when turning the camera
-// TODO: Allow shot locations as an alternative to heatmap
-// TODO: Draw heatmap and locations only when requested (both at the same time should be possible
 
-ShotDistributionTracker::ShotDistributionTracker()
+
+void ShotDistributionTracker::registerNotifiers(std::shared_ptr<CVarManagerWrapper> cvarManager)
 {
-}
+	// Toggle display of the heatmap of goals / backboard bounces
+	cvarManager->registerNotifier(TriggerNames::ToggleHeatmapDisplay, [this](const std::vector<std::string>&) {
+		_heatMapIsVisible = !_heatMapIsVisible;
+	}, "Toggle display of a heatmap of goal / backboard bounce locations", PERMISSION_ALL);
 
+	cvarManager->registerNotifier(TriggerNames::ToggleImpactLocationDisplay, [this](const std::vector<std::string>&) {
+		_shotLocationsAreVisible = !_shotLocationsAreVisible;
+	}, "Toggle display of a impact locations of goals / backboard bounces", PERMISSION_ALL);
+}
 void ShotDistributionTracker::onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode)
 {
 	_furtherWallHitsShallBeIgnored = false;
@@ -31,6 +38,8 @@ void ShotDistributionTracker::onTrainingModeLoaded(TrainingEditorWrapper& traini
 
 void ShotDistributionTracker::incrementHeatmapEntry(Vector ballLocation)
 {
+	_shotLocations.emplace_back(Vector(ballLocation.X, YDrawLocation - 10.0f, ballLocation.Z));
+
 	// Get the array bracket for the X dimension
 	auto xBracket = (int)(ballLocation.X + 4000) / XBracketWidth;
 	// Get the array bracket for the Z dimension
@@ -112,7 +121,7 @@ void ShotDistributionTracker::renderOneFrame(CanvasWrapper& canvas)
 
 void ShotDistributionTracker::renderShotLocations(CanvasWrapper& canvas)
 {
-	canvas.SetColor(LinearColor{ 255.0f, 255.0f, 0.0f, 200.0f });
+	canvas.SetColor(LinearColor{ 255.0f, 0.0f, 255.0f, 200.0f });
 
 	for (auto closeMissLocation : _shotLocations)
 	{

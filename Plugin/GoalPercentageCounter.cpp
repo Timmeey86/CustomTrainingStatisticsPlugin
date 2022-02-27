@@ -79,6 +79,7 @@ void GoalPercentageCounter::onLoad()
 	_eventListener->addEventReceiver(closeMissCounter);
 
 	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>();
+	shotDistributionTracker->registerNotifiers(cvarManager);
 	_eventListener->addEventReceiver(shotDistributionTracker);
 
 	// Hook into events now 

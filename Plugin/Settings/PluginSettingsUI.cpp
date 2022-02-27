@@ -109,6 +109,8 @@ void PluginSettingsUI::RenderSettings()
 		createDropdownMenu(GoalPercentageCounterSettings::SummaryKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
 		createDropdownMenu(GoalPercentageCounterSettings::RestoreLastSessionKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
 		createDropdownMenu(GoalPercentageCounterSettings::ToggleLastAttemptKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
+		createDropdownMenu(GoalPercentageCounterSettings::ToggleHeatmapKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
+		createDropdownMenu(GoalPercentageCounterSettings::ToggleShotLocationKeybindingDef, GoalPercentageCounterSettings::KeybindingsArray, keybindingAmount);
 
 		ImGui::Separator();
 
@@ -160,5 +162,39 @@ void PluginSettingsUI::RenderSettings()
 		ImGui::Separator();
 
 		createCheckbox(GoalPercentageCounterSettings::DisplayStatDifference);
+	}
+	if (ImGui::CollapsingHeader("Advanced Stats"))
+	{
+		ImGui::Text("Air Dribble Stats");
+		ImGui::Text("An air dribble will be considered such once the car is in the air and has touched the ball at least twice.");
+		ImGui::Text("Landing with all four wheels on either the ground, a wall or the ceilling will finish the air dribble.");
+		ImGui::Text("The ball may bounce off the ground, a wall or the ceiling once and the air dribble may start/continue from there.");
+		ImGui::Text("If the ball touches the ground twice without being hit by the car, you need to land and take off again for a new attempt.");
+		ImGui::Text("You may attempt several dribbles during one shot, if time allows.");
+
+		createCheckbox(GoalPercentageCounterSettings::DisplayAirDribbleTouchesDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayAirDribbleTimeDef);
+
+		ImGui::Separator();
+
+		ImGui::Text("Ground Dribble Stats");
+		ImGui::Text("A ground dribble will be considered such once the car has touched the ball at least twice, and the ball hasn't touched the ground since.");
+		ImGui::Text("The ball is allowed to touch the walls and ceiling indefinitely.");
+		ImGui::Text("Letting the ball touch the ground will finish the ground dribble.");
+		ImGui::Text("Note that the car's position will not influence the dribble time, so transitioning from a ground to an air dribble will count as both a ground and an air dribble.");
+		ImGui::Text("You may attempt several dribbles during one shot, if time allows.");
+
+		createCheckbox(GoalPercentageCounterSettings::DisplayGroundDribbleDef);
+
+		ImGui::Separator();
+
+		ImGui::Text("Double Tap Goals");
+		ImGui::Text("A double tap will be considered such if the player touches the ball while in the air, bounces the ball off the ground, a wall or the ceiling, ");
+		ImGui::Text("and then scores a goal while still in the air.");
+		ImGui::Text("If the player's car touches the ground after the double tap, the ball must fly into the goal directly, otherwise it won't count.");
+		ImGui::Text("Landing anywhere before getting the double tap will fail the attempt.");
+		ImGui::Text("You may attempt several double taps during one shot, if time allows.");
+
+		createCheckbox(GoalPercentageCounterSettings::DisplayDoubleTapGoalsDef);
 	}
 }

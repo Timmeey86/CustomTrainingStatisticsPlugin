@@ -40,8 +40,6 @@ public:
 	bool AirDribbleTimeShallBeDisplayed = false;		///< True while max. air dribble time shall appear in the stat display.
 	bool GroundDribbleTimeShallBeDisplayed = false;		///< True while max. ground dribble time shall appear in the stat display.
 	bool DoubleTapGoalsShallBeDisplayed = false;		///< True while double tap goals shall be displayed in the stat display.
-	bool HeatmapShallBeDisplayed = false;				///< True while the heatmap of goals/backboard bounces shall be drawn.
-	bool ShotLocationsShallBeDisplayed = false;			///< True while the shot locations of goals/backboard bounces shall be drawn.
 	bool PreviousSessionDiffShallBeDisplayed = true;	///< True while the percentage differences to the previous session shall be displayed.
 
 	/** True while initial ball hits and ball hit percentage shall appear in the stat display. 

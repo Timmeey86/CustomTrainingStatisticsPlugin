@@ -16,7 +16,10 @@ class ShotDistributionTracker : public AbstractEventReceiver, public IStatDispla
 
 public:
 	/** Creates a new object which keeps track of locations on the backboard or goal surface which were hit by the ball. */
-	explicit ShotDistributionTracker();
+	ShotDistributionTracker() = default;
+
+	/** Registers hotkeys for toggling display of overlays. */
+	void registerNotifiers(std::shared_ptr<CVarManagerWrapper> cvarManager);
 
 	// Resets the tracked shot when a new pack gets loaded
 	void onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode) override;
