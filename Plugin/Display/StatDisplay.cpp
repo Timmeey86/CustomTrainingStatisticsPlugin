@@ -131,7 +131,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Air Dribbles:", std::to_string(statsData.Stats.MaxAirDribbleTouches), "" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTouches);
+			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTouches);
 		}
 	}
 	if (pluginState->AirDribbleTimeShallBeDisplayed)
@@ -139,7 +139,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. ADribble Time:", to_float_string(statsData.Stats.MaxAirDribbleTime), "" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTime);
+			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTime);
 		}
 	}
 	if (pluginState->GroundDribbleTimeShallBeDisplayed)
@@ -147,7 +147,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. GDribble Time:", to_float_string(statsData.Stats.MaxGroundDribbleTime), "" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
+			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
 		}
 	}
 	if (pluginState->MaxFlipResetsShallBeDisplayed)
@@ -155,7 +155,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Flip Resets:", std::to_string(statsData.Stats.MaxFlipResets), "" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxFlipResets);
+			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxFlipResets);
 		}
 	}
 	if (pluginState->DoubleTapGoalsShallBeDisplayed)
@@ -163,7 +163,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Double Tap Goals:", std::to_string(statsData.Stats.DoubleTapGoals), "" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.DoubleTapGoals);
+			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.DoubleTapGoals);
 		}
 	}
 	if (pluginState->CloseMissesShallBeDisplayed)
@@ -230,7 +230,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "FResets/Attempt:", to_percentage_string(statsData.Data.AverageFlipResetsPerAttempt), "%" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.AverageFlipResetsPerAttempt);
+			//statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.AverageFlipResetsPerAttempt);
 		}
 	}
 	if (pluginState->FlipResetPercentageShallBeDisplayed)
@@ -238,7 +238,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "FReset Goal Rate:", to_percentage_string(statsData.Data.FlipResetGoalPercentage), "%" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.FlipResetGoalPercentage);
+			//statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.FlipResetGoalPercentage);
 		}
 	}
 	if (pluginState->DoubleTapPercentageShallBeDisplayed)
@@ -246,7 +246,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Dbl Tap Goal Rate:", to_percentage_string(statsData.Data.DoubleTapGoalPercentage), "%" });
 		if (diffData)
 		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.DoubleTapGoalPercentage);
+			//statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.DoubleTapGoalPercentage);
 		}
 	}
 	if (pluginState->CloseMissPercentageShallBeDisplayed)
