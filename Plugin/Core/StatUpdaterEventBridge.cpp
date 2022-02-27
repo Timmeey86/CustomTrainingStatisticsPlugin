@@ -51,12 +51,6 @@ void StatUpdaterEventBridge::onAttemptFinishedWithoutGoal(TrainingEditorWrapper&
 	_statUpdater->processMiss();
 }
 
-void StatUpdaterEventBridge::onAttemptFinished(TrainingEditorWrapper& trainingWrapper)
-{
-	(void)trainingWrapper;
-	_statUpdater->updateData();
-}
-
 void StatUpdaterEventBridge::onBallHit(TrainingEditorWrapper& trainingWrapper, bool isInitialHit)
 {
 	(void)trainingWrapper;
@@ -66,4 +60,9 @@ void StatUpdaterEventBridge::onBallHit(TrainingEditorWrapper& trainingWrapper, b
 		_statUpdater->processInitialBallHit();
 	}
 	// else: ignore anything beyond the first touch of the current attempt
+}
+
+void StatUpdaterEventBridge::attemptAboutToBeReset()
+{
+	_statUpdater->updateData();
 }

@@ -169,10 +169,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	if (pluginState->CloseMissesShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Close Misses:", std::to_string(statsData.Stats.CloseMisses), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.CloseMisses);
-		}
+		// No diff for close misses (a lower rate could mean more goals, or more far misses. We can't tell if the player improved).
 	}
 
 

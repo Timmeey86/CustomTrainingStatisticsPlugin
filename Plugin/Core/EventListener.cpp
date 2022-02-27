@@ -76,6 +76,16 @@ void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdat
 		_pluginState->IsMetric = _gameWrapper->GetbMetric();
 	});
 
+	_gameWrapper->HookEvent("Function TAGame.CarComponent_Dodge_TA.EventActivateDodge",
+		[this](const std::string&) {
+		if (!statUpdatesShallBeSent()) { return; }
+
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onCarFlipped();
+		}
+	}
+
 	// Happens whenever a menu is opened (also when opening a nested menu)
 	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", [this](const std::string&) {
 		_pluginState->MenuStackSize++;

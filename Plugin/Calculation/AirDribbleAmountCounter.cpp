@@ -17,6 +17,7 @@ void AirDribbleAmountCounter::onAttemptStarted()
 	_maximumAmountOfTouches = 0;
 	_maxAirDribbleTime = .0f;
 	_maximumAmountOfFlipResets = 0;
+	_waitingForFlip = false;
 	finishShot();
 }
 
@@ -67,7 +68,8 @@ void AirDribbleAmountCounter::onBallSurfaceHit(TrainingEditorWrapper& trainingWr
 		// This is the second ball touch => The player needs to land and lift off again
 		_currentState = AirDribbleState::BallOnGround;
 	}
-	// any other state: ignore this
+	// any other state: if the player got a flip reset but didn't flip yet, it is too late
+	_waitingForFlip = false;
 }
 
 void AirDribbleAmountCounter::onCarLiftOff(TrainingEditorWrapper& trainingWrapper, CarWrapper& car)
@@ -90,12 +92,21 @@ void AirDribbleAmountCounter::onCarLandingOnBall(TrainingEditorWrapper& training
 	// only handle flip resets while both the car and the ball are in the air
 	if (_currentState == AirDribbleState::CarInAir && _currentAmountOfTouches > 0)
 	{
+		_waitingForFlip = true;
+	}
+}
+
+void AirDribbleAmountCounter::onCarFlipped()
+{
+	if (_currentState == AirDribbleState::CarInAir && _waitingForFlip)
+	{
 		_currentAmountOfFlipResets++;
 		if (_currentAmountOfFlipResets > _maximumAmountOfFlipResets)
 		{
 			_maximumAmountOfFlipResets = _currentAmountOfFlipResets;
 			_setMaxFlipResetsFunc(_maximumAmountOfFlipResets);
 		}
+		_waitingForFlip = false;
 	}
 }
 

@@ -313,6 +313,10 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 		{
 			eventReceiver->onAttemptFinished(trainingWrapper);
 		}
+		for (auto eventReceiver : eventReceivers)
+		{
+			eventReceiver->attemptAboutToBeReset();
+		}
 		setCurrentState(CustomTrainingState::PreparingNewShot);
 	}
 	// Else: Ignore the event. This e.g. happens before OnTrainingModeLoaded

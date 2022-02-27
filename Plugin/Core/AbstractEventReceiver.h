@@ -148,4 +148,9 @@ public:
 	*/
 	virtual void onCarLandingOnSurface(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) { (void)trainingWrapper; (void)car; /* ignore event unless overridden. */ }
 
+	/** This gets called as a last actoin before an attempt is actually reset internally. This gives you a chance to do any calculations after any kind of stats have already been gathered. */
+	virtual void attemptAboutToBeReset() { /* ignore event unless overridden. */ }
+	/** This gets called whenever the player activates a flip, and that flip is currently allowed by the game. */
+	virtual void onCarFlipped() { /* ignore event unless overridden.*/ }
+
 };

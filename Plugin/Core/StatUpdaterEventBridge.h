@@ -22,9 +22,8 @@ public:
 	void onAttemptStarted() override;
 	void onAttemptFinishedWithGoal(TrainingEditorWrapper& trainingWrapper) override;
 	void onAttemptFinishedWithoutGoal(TrainingEditorWrapper& trainingWrapper) override;
-	void onAttemptFinished(TrainingEditorWrapper& trainingWrapper) override;
 	void onBallHit(TrainingEditorWrapper& trainingWrapper, bool isInitialHit) override;
-	
+	void attemptAboutToBeReset() override;
 
 private:
 	std::shared_ptr<IStatUpdater> _statUpdater;

@@ -41,8 +41,10 @@ public:
 	void onCarLiftOff(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) override;
 	// Resets the counters and stops counting ball hits until the car has lifted off again.
 	void onCarLandingOnSurface(TrainingEditorWrapper& trainingWrapper, CarWrapper& car) override;
-	// Counts flip resets
+	// Remembers flip resets
 	void onCarLandingOnBall(TrainingEditorWrapper& trainingWrapper, CarWrapper& car, BallWrapper& ball) override;
+	// Actually increments the flip reset counter: Only count the flip reset if a flip comes later
+	void onCarFlipped() override;
 
 private:
 	/** Resets the current touch amount and transitions back to WaitingForTakeoff state. */
@@ -61,5 +63,6 @@ private:
 	int _maximumAmountOfFlipResets = 0; ///< The maximum amount of flip resets during the current attempt.
 	std::function<void(int)> _setMaxFlipResetsFunc; ///< The function to be called when a new maximum flip reset amount has been reached.
 
+	bool _waitingForFlip = false; ///< This is used in order to count a flip only if you get the reset, and then flip after that (before the ball touches ground/ceiling/walls)
 	AirDribbleState _currentState = AirDribbleState::WaitingForTakeoff;
 };
