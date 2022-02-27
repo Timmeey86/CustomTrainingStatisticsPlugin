@@ -13,6 +13,14 @@ enum class AirDribbleState
 	ResetLocalMaximum, ///< The player reset/changed the shot and started a new attempt.
 };
 
+/** Helps with detecting actual flip reset ball hits. */
+enum class FlipResetState
+{
+	None,
+	FlipResetTriggered,
+	FlipActivated
+};
+
 /** This class keeps track of the highest amount of air dribble touches during an attempt.
  *
  *	Counting starts when the car lifts off the ground, and stops when the car touches lands with all four wheels on the ground, a wall or the ceiling,
@@ -63,6 +71,6 @@ private:
 	int _maximumAmountOfFlipResets = 0; ///< The maximum amount of flip resets during the current attempt.
 	std::function<void(int)> _setMaxFlipResetsFunc; ///< The function to be called when a new maximum flip reset amount has been reached.
 
-	bool _waitingForFlip = false; ///< This is used in order to count a flip only if you get the reset, and then flip after that (before the ball touches ground/ceiling/walls)
+	FlipResetState _flipResetState = FlipResetState::None;
 	AirDribbleState _currentState = AirDribbleState::WaitingForTakeoff;
 };

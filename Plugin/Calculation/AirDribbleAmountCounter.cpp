@@ -17,7 +17,7 @@ void AirDribbleAmountCounter::onAttemptStarted()
 	_maximumAmountOfTouches = 0;
 	_maxAirDribbleTime = .0f;
 	_maximumAmountOfFlipResets = 0;
-	_waitingForFlip = false;
+	_flipResetState = FlipResetState::None;
 	finishShot();
 }
 
@@ -52,6 +52,18 @@ void AirDribbleAmountCounter::onBallHit(TrainingEditorWrapper& trainingWrapper, 
 				_setMaxAirDribbleTimeFunc(_maxAirDribbleTime);
 			}
 		}
+
+		if (_flipResetState == FlipResetState::FlipActivated)
+		{
+			// The player got a flip reset, activated their flip and now touched the ball. This is the point where we consider it an actual flip reset
+			_currentAmountOfFlipResets++;
+			if (_currentAmountOfFlipResets > _maximumAmountOfFlipResets)
+			{
+				_maximumAmountOfFlipResets = _currentAmountOfFlipResets;
+				_setMaxFlipResetsFunc(_maximumAmountOfFlipResets);
+			}
+			_flipResetState = FlipResetState::None;
+		}
 	}
 	// else: Ignore the ball hit in any other state
 }
@@ -69,7 +81,7 @@ void AirDribbleAmountCounter::onBallSurfaceHit(TrainingEditorWrapper& trainingWr
 		_currentState = AirDribbleState::BallOnGround;
 	}
 	// any other state: if the player got a flip reset but didn't flip yet, it is too late
-	_waitingForFlip = false;
+	_flipResetState = FlipResetState::None;
 }
 
 void AirDribbleAmountCounter::onCarLiftOff(TrainingEditorWrapper& trainingWrapper, CarWrapper& car)
@@ -92,21 +104,15 @@ void AirDribbleAmountCounter::onCarLandingOnBall(TrainingEditorWrapper& training
 	// only handle flip resets while both the car and the ball are in the air
 	if (_currentState == AirDribbleState::CarInAir && _currentAmountOfTouches > 0)
 	{
-		_waitingForFlip = true;
+		_flipResetState = FlipResetState::FlipResetTriggered;
 	}
 }
 
 void AirDribbleAmountCounter::onCarFlipped()
 {
-	if (_currentState == AirDribbleState::CarInAir && _waitingForFlip)
+	if (_currentState == AirDribbleState::CarInAir && _flipResetState == FlipResetState::FlipResetTriggered)
 	{
-		_currentAmountOfFlipResets++;
-		if (_currentAmountOfFlipResets > _maximumAmountOfFlipResets)
-		{
-			_maximumAmountOfFlipResets = _currentAmountOfFlipResets;
-			_setMaxFlipResetsFunc(_maximumAmountOfFlipResets);
-		}
-		_waitingForFlip = false;
+		_flipResetState = FlipResetState::FlipActivated;
 	}
 }
 
