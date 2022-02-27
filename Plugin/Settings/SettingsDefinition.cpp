@@ -183,6 +183,14 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMaxFlipResetsDef 
 	1.0f,
 	"0.0f"
 };
+const SettingsDefinition GoalPercentageCounterSettings::DisplayTotalFlipResetsDef = {
+	"customtrainingstatistics_display_total_flip_resets",
+	"Total number of flip resets",
+	"Toggle display of maximum flip resets achieved during any attempt (whether scored or not).",
+	.0f,
+	1.0f,
+	"0.0f"
+};
 const SettingsDefinition GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef = {
 	"customtrainingstatistics_display_flip_resets_per_attempt",
 	"Average number of flip resets per attempt",

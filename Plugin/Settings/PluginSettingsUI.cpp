@@ -206,6 +206,7 @@ void PluginSettingsUI::RenderSettings()
 		ImGui::Text("You may attempt several flip reset chains during one shot, if time allows.");
 		ImGui::Text("Note that the flip reset goal percentage is shown in relation to the number of goals rather than the number of attempts made.");
 
+		createCheckbox(GoalPercentageCounterSettings::DisplayTotalFlipResetsDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayMaxFlipResetsDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayFlipResetPercentageDef);

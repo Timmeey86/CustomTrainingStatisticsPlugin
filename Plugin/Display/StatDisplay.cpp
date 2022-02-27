@@ -150,6 +150,14 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
 		}
 	}
+	if (pluginState->TotalFlipResetsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Flip Resets:", std::to_string(statsData.Stats.TotalFlipResets), "" });
+		if (diffData)
+		{
+			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.TotalFlipResets);
+		}
+	}
 	if (pluginState->MaxFlipResetsShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Flip Resets:", std::to_string(statsData.Stats.MaxFlipResets), "" });

@@ -6,7 +6,7 @@
 class StatFileDefs
 {
 public:
-
+	static const std::vector<std::string> SupportedVersionNumbers;
 	static const std::string CurrentVersionNumber;
 
 	static const std::string Version;
@@ -30,5 +30,17 @@ public:
 	static const std::string MaxGoalSpeed;
 	static const std::string MinGoalSpeed;
 	static const std::string MedianGoalSpeed;
-	static const std::string MeanGoalSpeed;
+	static const std::string MeanGoalSpeed; 
+	
+	static const std::string AirDribbleTouches;
+	static const std::string AirDribbleTime;
+	static const std::string GroundDribbleTime;
+	static const std::string DoubleTapGoals;
+	static const std::string DoubleTapPercentage;
+	static const std::string MaxFlipResets;
+	static const std::string TotalFlipResets;
+	static const std::string FlipResetsPerAttempt;
+	static const std::string FlipResetPercentage;
+	static const std::string CloseMisses;
+	static const std::string CloseMissPercentage;
 };

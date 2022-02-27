@@ -42,6 +42,7 @@ public:
 	static const SettingsDefinition DisplayDoubleTapGoalsDef;		///< Definitions for the flag which toggles display of double tap goals
 	static const SettingsDefinition DisplayDoubleTapPercentageDef;	///< Definitions for the flag which toggles display of double tap goal percentage
 	static const SettingsDefinition DisplayMaxFlipResetsDef;		///< Definitions for the flag which toggles display of maximum flip resets in one attempt.
+	static const SettingsDefinition DisplayTotalFlipResetsDef;		///< Definitions for the flag which toggles display of total flip resets in one attempt.
 	static const SettingsDefinition DisplayFlipResetsPerAttemptDef;	///< Definitions for the flag which toggles display of average flip resets per attempt.
 	static const SettingsDefinition DisplayFlipResetPercentageDef;	///< Definitions for the flag which toggles display of flip reset goal percentage.
 	static const SettingsDefinition DisplayCloseMissesDef;			///< Definitions for the flag which toggles display of close misses.

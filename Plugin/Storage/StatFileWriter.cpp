@@ -104,6 +104,19 @@ void writeStatsData(std::ofstream& stream, const StatsData& statsData)
 	writeLine(stream, StatFileDefs::TotalSuccessRate, std::to_string(statsData.Data.SuccessPercentage));
 	writeLine(stream, StatFileDefs::PeakSuccessRate, std::to_string(statsData.Data.PeakSuccessPercentage));
 	writeLine(stream, StatFileDefs::PeakAtShotNumber, std::to_string(statsData.Data.PeakShotNumber));
+
+	// v1.1 stats
+	writeLine(stream, StatFileDefs::AirDribbleTouches, std::to_string(statsData.Stats.MaxAirDribbleTouches));
+	writeLine(stream, StatFileDefs::AirDribbleTime, std::to_string(statsData.Stats.MaxAirDribbleTime));
+	writeLine(stream, StatFileDefs::GroundDribbleTime, std::to_string(statsData.Stats.MaxGroundDribbleTime));
+	writeLine(stream, StatFileDefs::DoubleTapGoals, std::to_string(statsData.Stats.DoubleTapGoals));
+	writeLine(stream, StatFileDefs::DoubleTapPercentage, std::to_string(statsData.Data.DoubleTapGoalPercentage));
+	writeLine(stream, StatFileDefs::MaxFlipResets, std::to_string(statsData.Stats.MaxFlipResets));
+	writeLine(stream, StatFileDefs::TotalFlipResets, std::to_string(statsData.Stats.TotalFlipResets));
+	writeLine(stream, StatFileDefs::FlipResetsPerAttempt, std::to_string(statsData.Data.AverageFlipResetsPerAttempt));
+	writeLine(stream, StatFileDefs::FlipResetPercentage, std::to_string(statsData.Data.FlipResetGoalPercentage));
+	writeLine(stream, StatFileDefs::CloseMisses, std::to_string(statsData.Stats.CloseMisses));
+	writeLine(stream, StatFileDefs::CloseMissPercentage, std::to_string(statsData.Data.CloseMissPercentage));
 }
 
 void StatFileWriter::writeData()

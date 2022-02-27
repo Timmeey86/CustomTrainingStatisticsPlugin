@@ -23,8 +23,8 @@ public:
 
 	bool PluginIsEnabled = true;						///< True while the user has not disabled the plugin in the settings UI.
 	bool IsMetric = true;								///< Whether or not the ball speed is in metric or imperial
-	bool AllShotStatsShallBeDisplayed = true;			///< The overlay for all shot stats will be displayed while true
-	bool PerShotStatsShallBeDisplayed = true;			///< The overlay for per shot stats will be displayed while true
+	bool AllShotStatsShallBeDisplayed = true;			///< The overlay for all shot stats will appear while true
+	bool PerShotStatsShallBeDisplayed = true;			///< The overlay for per shot stats will appear while true
 	bool AttemptsAndGoalsShallBeDisplayed = true;		///< True while attempts and goals shall appear in the stat display.
 	bool TotalSuccessRateShallBeDisplayed = true;		///< True while the total success rate shall appear in the stat display.
 	bool CurrentStreaksShallBeDisplayed = true;			///< True while the current miss/goal streaks shall appear in the stat display.
@@ -39,14 +39,15 @@ public:
 	bool AirDribbleTouchesShallBeDisplayed = false;		///< True while max. number of air dribbles shall appear in the stat display.
 	bool AirDribbleTimeShallBeDisplayed = false;		///< True while max. air dribble time shall appear in the stat display.
 	bool GroundDribbleTimeShallBeDisplayed = false;		///< True while max. ground dribble time shall appear in the stat display.
-	bool DoubleTapGoalsShallBeDisplayed = false;		///< True while double tap goals shall be displayed in the stat display.
-	bool DoubleTapPercentageShallBeDisplayed = false;	///< True while double tap goal percentage shall be displayed in the stat display.
-	bool MaxFlipResetsShallBeDisplayed = false;			///< True while maximum number of flip resets shall be displayed in the stat display.
-	bool FlipResetsPerAttemptShallBeDisplayed = false;	///< True while average flip resets per attempt shall be displayed in the stat display.
-	bool FlipResetPercentageShallBeDisplayed = false;	///< True while flip reset percentage shall be displayed in the stat display.
-	bool CloseMissesShallBeDisplayed = false;			///< True while close misses shall be displayed in the stat display.
-	bool CloseMissPercentageShallBeDisplayed = false;	///< True while the percentage of close misses shall be displayed in the stat display.
-	bool PreviousSessionDiffShallBeDisplayed = true;	///< True while the percentage differences to the previous session shall be displayed.
+	bool DoubleTapGoalsShallBeDisplayed = false;		///< True while double tap goals shall appear in the stat display.
+	bool DoubleTapPercentageShallBeDisplayed = false;	///< True while double tap goal percentage shall appear in the stat display.
+	bool MaxFlipResetsShallBeDisplayed = false;			///< True while maximum number of flip resets shall appear in the stat display.
+	bool TotalFlipResetsShallBeDisplayed = false;		///< True while the total amount of flip resets shall appear in the stat display.
+	bool FlipResetsPerAttemptShallBeDisplayed = false;	///< True while average flip resets per attempt shall appear in the stat display.
+	bool FlipResetPercentageShallBeDisplayed = false;	///< True while flip reset percentage shall appear in the stat display.
+	bool CloseMissesShallBeDisplayed = false;			///< True while close misses shall appear in the stat display.
+	bool CloseMissPercentageShallBeDisplayed = false;	///< True while the percentage of close misses shall appear in the stat display.
+	bool PreviousSessionDiffShallBeDisplayed = true;	///< True while the percentage differences to the previous session shall appear.
 
 	/** True while initial ball hits and ball hit percentage shall appear in the stat display. 
 	 */
