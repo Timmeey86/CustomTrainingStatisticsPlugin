@@ -15,9 +15,10 @@ using sysclock_t = std::chrono::system_clock;
 
 static const char* const CurrentVersion = "1.0";
 
-StatFileWriter::StatFileWriter(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<ShotStats> shotStats)
+StatFileWriter::StatFileWriter(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<ShotStats> shotStats, std::shared_ptr<ShotDistributionTracker> tracker)
 	: _gameWrapper(gameWrapper)
 	, _currentStats(shotStats)
+	, _shotDistributionTracker(tracker)
 {
 }
 
@@ -80,7 +81,19 @@ std::string bool_vector_to_string(std::vector<bool> values)
 	return stream.str();
 }
 
-void writeStatsData(std::ofstream& stream, const StatsData& statsData)
+std::string shot_location_vector_to_string(const std::vector<Vector>& values)
+{
+	std::string vectorResult;
+	const char vectorSeparator = '|';
+	vectorResult += std::to_string(values.size()) + vectorSeparator;
+	for (auto vector : values)
+	{
+		vectorResult += fmt::format("{},{},{}{}", vector.X, vector.Y, vector.Z, vectorSeparator);
+	}
+	return vectorResult;
+}
+
+void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& statsData)
 {
 	stream << StatFileDefs::ShotSeparator << std::endl;
 
@@ -117,6 +130,9 @@ void writeStatsData(std::ofstream& stream, const StatsData& statsData)
 	writeLine(stream, StatFileDefs::FlipResetPercentage, std::to_string(statsData.Data.FlipResetGoalPercentage));
 	writeLine(stream, StatFileDefs::CloseMisses, std::to_string(statsData.Stats.CloseMisses));
 	writeLine(stream, StatFileDefs::CloseMissPercentage, std::to_string(statsData.Data.CloseMissPercentage));
+
+	// v1.2 stats
+	writeLine(stream, StatFileDefs::ImpactLocations, shot_location_vector_to_string(_shotDistributionTracker->getImpactLocations()));
 }
 
 void StatFileWriter::writeData()

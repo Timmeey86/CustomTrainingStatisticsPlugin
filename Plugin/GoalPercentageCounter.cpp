@@ -42,11 +42,12 @@ void GoalPercentageCounter::onLoad()
 	initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
 
 	// Create handler classes
-	auto statReader = std::make_shared<StatFileReader>(gameWrapper);
+	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>(gameWrapper);
+	auto statReader = std::make_shared<StatFileReader>(gameWrapper, shotDistributionTracker);
 	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader);
 
 	// Enable storage of stats on the file system (crash recovery / maybe training trend in future)
-	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats);
+	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats, shotDistributionTracker);
 
 
 	// Set up event registration
@@ -78,7 +79,6 @@ void GoalPercentageCounter::onLoad()
 	);
 	_eventListener->addEventReceiver(closeMissCounter);
 
-	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>(gameWrapper);
 	shotDistributionTracker->registerNotifiers(cvarManager);
 	_eventListener->addEventReceiver(shotDistributionTracker);
 

@@ -6,8 +6,9 @@
 #include <filesystem>
 #include <fstream>
 
-StatFileReader::StatFileReader(std::shared_ptr<GameWrapper> gameWrapper)
+StatFileReader::StatFileReader(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<ShotDistributionTracker> shotDistributionTracker)
 	: _gameWrapper(gameWrapper)
+	, _shotDistributionTracker(shotDistributionTracker)
 {
 }
 
@@ -204,12 +205,9 @@ ShotStats StatFileReader::readStats(const std::string& resourcePath)
 		if (!std::getline(fileStream, currentLine)) { return {}; }
 
 		// Read stats
-		readVersion_1_0(fileStream, statsDataPointer);
-		if (versionIndex > 0)
-		{
-			readVersion_1_1_additions(fileStream, statsDataPointer);
-		}
-
+		if (!readVersion_1_0(fileStream, statsDataPointer)) { return {}; }
+		if (versionIndex > 0 && !readVersion_1_1_additions(fileStream, statsDataPointer)) { return {}; }
+		if (versionIndex > 1 && !readVersion_1_2_additions(fileStream)) { return {}; }
 	}
 	return stats;
 }
@@ -263,6 +261,58 @@ bool StatFileReader::readVersion_1_1_additions(std::ifstream& fileStream, StatsD
 	if (!readValueIntoField(fileStream, &statsDataPointer->Data.FlipResetGoalPercentage)) { return false; }
 	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.CloseMisses)) { return false; }
 	if (!readValueIntoField(fileStream, &statsDataPointer->Data.CloseMissPercentage)) { return false; }
+
+	return true;
+}
+
+bool StatFileReader::readVersion_1_2_additions(std::ifstream& fileStream)
+{
+	std::string currentLine;
+	if (!std::getline(fileStream, currentLine)) { return false; } // This line will contain the whole vector
+	if (currentLine.empty()) { return false; }
+
+	auto [key, allShotLocations] = getLineValues(currentLine);
+	if (key.empty() || allShotLocations.empty()) { return false; }
+
+	if (key != StatFileDefs::ImpactLocations) { return false; }
+
+	const char separator = '|';
+	// read until the first separator
+
+	auto separatorPos = allShotLocations.find(separator);
+	if (separatorPos == std::string::npos) { return false; }
+
+	// Try to read the size of the vector	
+	if (auto size = std::stoi(allShotLocations.substr(0, separatorPos)); size > 0)
+	{
+		size_t offset = separatorPos + 1;
+		for (int index = 0; index < size; index++)
+		{
+			// Parse a vector string like "3.456,2.3154,9.223"
+			auto valueSeparatorPos = allShotLocations.find(",", offset);
+			if (valueSeparatorPos == std::string::npos) { return false; }
+
+			Vector vector;
+			vector.X = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			offset = valueSeparatorPos + 1;
+
+			valueSeparatorPos = allShotLocations.find(",", offset);
+			if (valueSeparatorPos == std::string::npos) { return false; }
+
+			vector.Y = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			offset = valueSeparatorPos + 1;
+
+			valueSeparatorPos = allShotLocations.find(separator, offset);
+			if (valueSeparatorPos == std::string::npos) { return false; }
+
+			vector.Z = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			offset = valueSeparatorPos + 1;
+
+			// restore both impact locations and heatmap by simulating the impacts in the same order
+			_shotDistributionTracker->registerImpactLocation(vector);
+		}
+	}
+	// Else: Size 0 is valid, this just means none of the attempts hit the wall or the goal (will be rare)
 
 	return true;
 }

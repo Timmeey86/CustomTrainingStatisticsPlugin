@@ -36,6 +36,8 @@ public:
 	// Renders the heat map and/or shot location overlays
 	void renderOneFrame(CanvasWrapper& canvas) override;
 
+	/** Increments the heat map entry at the shot location by 1 and slightly increments brackets around that location. */
+	void registerImpactLocation(Vector ballLocation);
 	
 	static const int XBrackets = 160; ///< Defines the number of brackets in X dimension. The number 8000 should be dividable by this number.
 	static const int ZBrackets = 80; ///< Defines the number of brackets in Z dimension. The number 4000 should be dividable by this number.
@@ -45,9 +47,12 @@ public:
 	/** Shows or hides the shot locations. */
 	inline void setShotLocationsVisible(bool visible) { _shotLocationsAreVisible = visible; }
 
+	/** Retrieves the impact locations. */
+	inline std::vector<Vector> getImpactLocations() const { return _shotLocations; }
+	/** Retrieves the heatmap data. */
+	inline std::array<std::array<float, ZBrackets>, XBrackets> getHeatmapData() const { return _heatmapData; }
+
 private:
-	/** Increments the heat map entry at the shot location by 1 and slightly increments brackets around that location. */
-	void incrementHeatmapEntry(Vector ballLocation);
 	/** Draws the rectangle for the given cell. */
 	void drawRectangle(int x, int z, CanvasWrapper& canvas);
 	/** Retrieves the heatmap color for the given number of hits, in relation to the maximum value of all brackets. */

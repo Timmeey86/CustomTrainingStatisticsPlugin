@@ -42,7 +42,7 @@ void ShotDistributionTracker::onTrainingModeLoaded(TrainingEditorWrapper& traini
 	_shotLocations.clear();
 }
 
-void ShotDistributionTracker::incrementHeatmapEntry(Vector ballLocation)
+void ShotDistributionTracker::registerImpactLocation(Vector ballLocation)
 {
 	_shotLocations.emplace_back(Vector(ballLocation.X, YDrawLocation - 10.0f, ballLocation.Z));
 
@@ -77,7 +77,7 @@ void ShotDistributionTracker::incrementHeatmapEntry(Vector ballLocation)
 void ShotDistributionTracker::onGoalScored(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball)
 {
 	auto location = ball.GetLocation();
-	incrementHeatmapEntry(location);
+	registerImpactLocation(location);
 	_furtherWallHitsShallBeIgnored = false;
 }
 
@@ -88,7 +88,7 @@ void ShotDistributionTracker::onBallWallHit(TrainingEditorWrapper& trainingWrapp
 	auto location = ball.GetLocation();
 	if (location.Y > YThreshold)
 	{
-		incrementHeatmapEntry(location);
+		registerImpactLocation(location);
 		// We get four events for each wall bounce, and we get a multitude when the ball rolls up the wall
 		// we are only interested in the first hit in these cases.
 		_furtherWallHitsShallBeIgnored = true;

@@ -59,6 +59,7 @@ public:
 	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, .8f, 1.6f, 1.2f }; ///< Stores the user-defined value for the overlay and text for all shots stats
 	DisplayOptions PerShotOpts{"Per Shot Statistics", 5, 520, .8f, 1.6f, 1.2f};  ///< Stores the user-defined value for the overlay and text for per round stats
 
+	// TODO Apply defaults here
 	LinearColor PanelColor = LinearColor();
 	LinearColor FontColor = LinearColor();
 

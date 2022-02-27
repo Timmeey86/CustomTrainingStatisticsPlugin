@@ -43,4 +43,6 @@ public:
 	static const std::string FlipResetPercentage;
 	static const std::string CloseMisses;
 	static const std::string CloseMissPercentage;
+
+	static const std::string ImpactLocations;
 };

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "../Core/IStatReader.h"
+#include "../Calculation/ShotDistributionTracker.h"
 
 class GOALPERCENTAGECOUNTER_IMPORT_EXPORT StatFileReader : public IStatReader
 {
 public:
-	StatFileReader(std::shared_ptr<GameWrapper> gameWrapper);
+	StatFileReader(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<ShotDistributionTracker> shotDistributionTracker);
 
 	// Inherited via IStatReader
 	std::vector<std::string> getAvailableResourcePaths(const std::string& trainingPackCode) override;
@@ -19,6 +20,9 @@ private:
 	bool readVersion_1_0(std::ifstream& fileStream, StatsData* const statsDataPointer);
 	/** Reads attributes which were added in version 1.1. */
 	bool readVersion_1_1_additions(std::ifstream& fileStream, StatsData* const statsDataPointer);
+	/** Reads attributes which were added in verison 1.2. */
+	bool readVersion_1_2_additions(std::ifstream& fileStream);
 
 	std::shared_ptr<GameWrapper> _gameWrapper;
+	std::shared_ptr<ShotDistributionTracker> _shotDistributionTracker;
 };
