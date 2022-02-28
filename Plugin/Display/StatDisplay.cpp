@@ -220,18 +220,34 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	if (pluginState->MaxGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMax(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MaxValue);
+		}
 	}
 	if (pluginState->MinGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMin(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MinValue);
+		}
 	}
 	if (pluginState->MedianGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Median Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMedian(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MedianValue);
+		}
 	}
 	if (pluginState->MeanGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMean(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MeanValue);
+		}
 	}
 	if (pluginState->FlipResetsPerAttemptShallBeDisplayed)
 	{

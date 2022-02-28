@@ -4,6 +4,18 @@
 #include "GoalSpeed.h"
 
 /**
+ * Stores differences of goal speed values.
+ */
+struct GoalSpeedDiff
+{
+public:
+	float MinValue;
+	float MaxValue;
+	float MedianValue;
+	float MeanValue;
+};
+
+/**
 * Stores raw gathered data which does not involve calculation
 */
 class PlayerStats
@@ -29,6 +41,19 @@ public:
 	int FlipResetAttemptsScored = 0;	///< Stores the number of attempts which included at least one flip reset and resulted in a goal
 	int CloseMisses = 0;				///< Stores the number of attempts which almost resulted in a goal.
 
+	GoalSpeedDiff GoalSpeedDifference;	///< This is not the best place for these kind of statistics, but it avoids heavy refactoring
+
+	/** Compares the goal speed values of this object to other and returns the result as a GoalSpeedDiff instance. */
+	GoalSpeedDiff getGoalSpeedDifferences(const PlayerStats& other) const
+	{
+		GoalSpeedDiff diff;
+		diff.MinValue = GoalSpeedStats.getMin() - other.GoalSpeedStats.getMin();
+		diff.MaxValue = GoalSpeedStats.getMax() - other.GoalSpeedStats.getMax();
+		diff.MedianValue = GoalSpeedStats.getMedian() - other.GoalSpeedStats.getMedian();
+		diff.MeanValue = GoalSpeedStats.getMean() - other.GoalSpeedStats.getMean();
+		return diff;
+	}
+
 	/** Compares this object to other and returns the result as a new PlayerStats instance.
 	 *  The resulting percentages will be positive if "this" is better than "other".
 	 * 
@@ -49,6 +74,7 @@ public:
 		diff.TotalFlipResets = TotalFlipResets - other.TotalFlipResets;
 		diff.MaxFlipResets = MaxFlipResets - other.MaxFlipResets;
 		diff.FlipResetAttemptsScored = FlipResetAttemptsScored - other.FlipResetAttemptsScored;
+		diff.GoalSpeedDifference = getGoalSpeedDifferences(other);
 		// we don't compare close misses since a lower number could be better (more goals scored) or worse (missed the goal completely more often)
 		return diff;
 	}
