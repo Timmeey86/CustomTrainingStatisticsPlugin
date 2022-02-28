@@ -71,7 +71,7 @@ void writeLine(std::ofstream& stream, const std::string& label, const std::strin
 	stream << label << "\t" << value << std::endl;
 }
 
-std::string bool_vector_to_string(std::vector<bool> values)
+std::string bool_vector_to_string(const std::vector<bool>& values)
 {
 	std::ostringstream stream;
 	for (auto value : values)
@@ -81,16 +81,28 @@ std::string bool_vector_to_string(std::vector<bool> values)
 	return stream.str();
 }
 
+std::string float_vector_to_string(const std::vector<float>& values)
+{
+	std::ostringstream stream;
+	const char vectorSeparator = '|';
+	stream << std::to_string(values.size()) + vectorSeparator;
+	for (auto value : values)
+	{
+		stream << value << vectorSeparator;
+	}
+	return stream.str();
+}
+
 std::string shot_location_vector_to_string(const std::vector<Vector>& values)
 {
-	std::string vectorResult;
+	std::ostringstream stream;
 	const char vectorSeparator = '|';
-	vectorResult += std::to_string(values.size()) + vectorSeparator;
+	stream << std::to_string(values.size()) + vectorSeparator;
 	for (auto vector : values)
 	{
-		vectorResult += fmt::format("{},{},{}{}", vector.X, vector.Y, vector.Z, vectorSeparator);
+		stream << fmt::format("{},{},{}{}", vector.X, vector.Y, vector.Z, vectorSeparator);
 	}
-	return vectorResult;
+	return stream.str();
 }
 
 void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& statsData)
@@ -133,6 +145,9 @@ void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& stat
 
 	// v1.2 stats
 	writeLine(stream, StatFileDefs::ImpactLocations, shot_location_vector_to_string(_shotDistributionTracker->getImpactLocations()));
+
+	// v1.3 stats
+	writeLine(stream, StatFileDefs::GoalSpeedValues, float_vector_to_string(statsData.Stats.GoalSpeedStats.getAllShotValues()));
 }
 
 void StatFileWriter::writeData()
@@ -156,7 +171,7 @@ void StatFileWriter::writeData()
 
 	writeStatsData(outputFileStream, _currentStats->AllShotStats);
 
-	for (auto shotStats : _currentStats->PerShotStats)
+	for (const auto& shotStats : _currentStats->PerShotStats)
 	{
 		writeStatsData(outputFileStream, shotStats);
 	}

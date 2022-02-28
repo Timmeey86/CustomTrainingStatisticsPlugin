@@ -5,9 +5,10 @@
 const std::vector<std::string> StatFileDefs::SupportedVersionNumbers = {
 	"1.0",
 	"1.1",
-	"1.2"
+	"1.2",
+	"1.3"
 };
-const std::string StatFileDefs::CurrentVersionNumber = "1.2";
+const std::string StatFileDefs::CurrentVersionNumber = "1.3";
 const std::string StatFileDefs::Version = "Version";
 const std::string StatFileDefs::NumberOfShots = "NumberOfShots";
 const std::string StatFileDefs::ShotSeparator = "----------------------------------------------------------";
@@ -42,3 +43,5 @@ const std::string StatFileDefs::CloseMisses = "CloseMisses";
 const std::string StatFileDefs::CloseMissPercentage = "CloseMissPercentage";
 // V1.2 and beyond
 const std::string StatFileDefs::ImpactLocations = "ImpactLocations";
+// V1.3 and beyond
+const std::string StatFileDefs::GoalSpeedValues = "ShotSpeedValues";

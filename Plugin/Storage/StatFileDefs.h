@@ -45,4 +45,6 @@ public:
 	static const std::string CloseMissPercentage;
 
 	static const std::string ImpactLocations;
+
+	static const std::string GoalSpeedValues;
 };

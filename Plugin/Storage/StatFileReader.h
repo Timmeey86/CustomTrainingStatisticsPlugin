@@ -20,8 +20,10 @@ private:
 	bool readVersion_1_0(std::ifstream& fileStream, StatsData* const statsDataPointer);
 	/** Reads attributes which were added in version 1.1. */
 	bool readVersion_1_1_additions(std::ifstream& fileStream, StatsData* const statsDataPointer);
-	/** Reads attributes which were added in verison 1.2. */
+	/** Reads attributes which were added in verison 1.2 (heat map). */
 	bool readVersion_1_2_additions(std::ifstream& fileStream);
+	/** Reads attributes which were added in version 1.3 (goal speed). */
+	bool readVersion_1_3_additions(std::ifstream& fileStream, StatsData* const statsDataPointer);
 
 	std::shared_ptr<GameWrapper> _gameWrapper;
 	std::shared_ptr<ShotDistributionTracker> _shotDistributionTracker;

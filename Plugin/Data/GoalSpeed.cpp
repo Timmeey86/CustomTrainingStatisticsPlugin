@@ -10,10 +10,12 @@ void GoalSpeed::reset()
 	_minSpeed = _DEFAULT_VALUE;
 	_medianSpeed.reset();
 	_meanSpeed.reset();
+	_allSpeedValues.clear();
 }
 
 void GoalSpeed::insert(float speed, bool isMetric)
 {
+	_allSpeedValues.emplace_back(speed);
 	float metricSpeed = convertSpeed(speed, isMetric);
 	_mostRecentSpeed = metricSpeed;
 	_medianSpeed.insert(metricSpeed);

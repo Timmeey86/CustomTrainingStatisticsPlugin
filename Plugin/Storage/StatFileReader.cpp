@@ -208,6 +208,7 @@ ShotStats StatFileReader::readStats(const std::string& resourcePath)
 		if (!readVersion_1_0(fileStream, statsDataPointer)) { return {}; }
 		if (versionIndex > 0 && !readVersion_1_1_additions(fileStream, statsDataPointer)) { return {}; }
 		if (versionIndex > 1 && !readVersion_1_2_additions(fileStream)) { return {}; }
+		if (versionIndex > 2 && !readVersion_1_3_additions(fileStream, statsDataPointer)) { return {}; }
 	}
 	return stats;
 }
@@ -233,7 +234,7 @@ bool StatFileReader::readVersion_1_0(std::ifstream& fileStream, StatsData* const
 		statsDataPointer->Stats.Last50Shots.emplace_back((boolArrayString.at(index) == '1' ? true : false));
 	}
 
-	// We can't restore goal speeds (we would have to export all the single goal values in order to properly restore mean/median)
+	// We restore goal speed through an additional stat, but these lines were not removed for backwards compatibility
 	if (!std::getline(fileStream, currentLine)) { return false; } // latest speed
 	if (!std::getline(fileStream, currentLine)) { return false; } // max speed
 	if (!std::getline(fileStream, currentLine)) { return false; } // min speed
@@ -315,4 +316,38 @@ bool StatFileReader::readVersion_1_2_additions(std::ifstream& fileStream)
 	// Else: Size 0 is valid, this just means none of the attempts hit the wall or the goal (will be rare)
 
 	return true;
+}
+
+bool StatFileReader::readVersion_1_3_additions(std::ifstream& fileStream, StatsData* const statsDataPointer)
+{
+	std::string currentLine;
+	if (!std::getline(fileStream, currentLine)) { return false; } // This line will contain the whole vector
+	if (currentLine.empty()) { return false; }
+
+	auto [key, allGoalSpeeds] = getLineValues(currentLine);
+	if (key.empty() || allGoalSpeeds.empty()) { return false; }
+
+	if (key != StatFileDefs::GoalSpeedValues) { return false; }
+
+	const char separator = '|';
+	// read until the first separator
+
+	auto separatorPos = allGoalSpeeds.find(separator);
+	if (separatorPos == std::string::npos) { return false; }
+
+	// Try to read the size of the vector	
+	if (auto size = std::stoi(allGoalSpeeds.substr(0, separatorPos)); size > 0)
+	{
+		size_t offset = separatorPos + 1;
+		for (int index = 0; index < size; index++)
+		{
+			// Get the next float value
+			separatorPos = allGoalSpeeds.find(separator, offset);
+			if (separatorPos == std::string::npos) { return false; }
+
+			// Register the goal speed value as if the player had taken the shot
+			statsDataPointer->Stats.GoalSpeedStats.insert(std::stof(allGoalSpeeds.substr(offset, separatorPos)));
+			offset = separatorPos + 1;
+		}
+	}
 }
