@@ -14,10 +14,11 @@ public:
 
 	// Inherited via IStatWriter
 	void initializeStorage(const std::string& trainingPackCode) override;
-	void writeStatsData(std::ofstream& stream, const StatsData& statsData);
 	void writeData() override;
-
+	
 private:
+	void writeStatsData(std::ofstream& stream, const StatsData& statsData, bool isSummaryData);
+
 	std::shared_ptr<GameWrapper> _gameWrapper;
 	std::shared_ptr<ShotStats> _currentStats;
 	std::filesystem::path _outputFilePath; 

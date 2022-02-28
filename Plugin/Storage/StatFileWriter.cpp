@@ -105,7 +105,7 @@ std::string shot_location_vector_to_string(const std::vector<Vector>& values)
 	return stream.str();
 }
 
-void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& statsData)
+void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& statsData, bool isSummaryData)
 {
 	stream << StatFileDefs::ShotSeparator << std::endl;
 
@@ -143,8 +143,9 @@ void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& stat
 	writeLine(stream, StatFileDefs::CloseMisses, std::to_string(statsData.Stats.CloseMisses));
 	writeLine(stream, StatFileDefs::CloseMissPercentage, std::to_string(statsData.Data.CloseMissPercentage));
 
-	// v1.2 stats
-	writeLine(stream, StatFileDefs::ImpactLocations, shot_location_vector_to_string(_shotDistributionTracker->getImpactLocations()));
+	// v1.2 stats - Shot locations are only available once for the training pack rather than for every shot
+	auto shotLocations = isSummaryData ? _shotDistributionTracker->getImpactLocations() : std::vector<Vector>();
+	writeLine(stream, StatFileDefs::ImpactLocations, shot_location_vector_to_string(shotLocations));
 
 	// v1.3 stats
 	writeLine(stream, StatFileDefs::GoalSpeedValues, float_vector_to_string(statsData.Stats.GoalSpeedStats.getAllShotValues()));
@@ -169,10 +170,10 @@ void StatFileWriter::writeData()
 	writeLine(outputFileStream, StatFileDefs::Version, StatFileDefs::CurrentVersionNumber);
 	writeLine(outputFileStream, StatFileDefs::NumberOfShots, std::to_string(_currentStats->PerShotStats.size()));
 
-	writeStatsData(outputFileStream, _currentStats->AllShotStats);
+	writeStatsData(outputFileStream, _currentStats->AllShotStats, true);
 
 	for (const auto& shotStats : _currentStats->PerShotStats)
 	{
-		writeStatsData(outputFileStream, shotStats);
+		writeStatsData(outputFileStream, shotStats, false);
 	}
 }
