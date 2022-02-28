@@ -106,7 +106,9 @@ void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDispla
 	if (statDisplays.empty()) { return; }
 
 	_gameWrapper->RegisterDrawable([this, statDisplays](CanvasWrapper canvas) {
-		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining())
+		// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
+		// That way we don't clutter the settings, or the match/mode selection screen
+		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining() && _pluginState->MenuStackSize < 2)
 		{
 			for (auto statDisplay : statDisplays)
 			{

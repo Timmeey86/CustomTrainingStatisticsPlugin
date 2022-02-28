@@ -9,9 +9,9 @@ StatDisplay::StatDisplay(
 	const std::shared_ptr<const ShotStats> shotStats,
 	const std::shared_ptr<const ShotStats> diffStats,
 	const std::shared_ptr<const PluginState> pluginState)
-		: _shotStats(shotStats)
-		, _diffStats(diffStats)
-		, _pluginState(pluginState)
+	: _shotStats(shotStats)
+	, _diffStats(diffStats)
+	, _pluginState(pluginState)
 {
 }
 
@@ -294,7 +294,7 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 		_pluginState->MinGoalSpeedShallBeDisplayed ||
 		_pluginState->MedianGoalSpeedShallBeDisplayed ||
 		_pluginState->MeanGoalSpeedShallBeDisplayed;
-	
+
 	_displayWidth = 215.0f;
 	auto diffDataBorder = _displayWidth + 5.0f;
 	if (isDisplayingSpeed)
@@ -354,11 +354,6 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas)
 
 void StatDisplay::renderOneFrame(CanvasWrapper& canvas)
 {
-	// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
-	// That way we don't clutter the settings, or the match/mode selection screen
-	if (_pluginState->MenuStackSize < 2)
-	{
-		renderAllShotStats(canvas);
-		renderPerShotStats(canvas);
-	}
+	renderAllShotStats(canvas);
+	renderPerShotStats(canvas);
 }
