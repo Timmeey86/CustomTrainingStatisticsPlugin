@@ -59,9 +59,8 @@ public:
 	DisplayOptions AllShotsOpts{"All Shots Statistics", 5, 205, .8f, 1.6f, 1.2f }; ///< Stores the user-defined value for the overlay and text for all shots stats
 	DisplayOptions PerShotOpts{"Per Shot Statistics", 5, 520, .8f, 1.6f, 1.2f};  ///< Stores the user-defined value for the overlay and text for per round stats
 
-	// TODO Apply defaults here
-	LinearColor PanelColor = LinearColor();
-	LinearColor FontColor = LinearColor();
+	LinearColor PanelColor = LinearColor{ 41.0f, 41.0f, 41.0f, 204.0f };
+	LinearColor FontColor = LinearColor{ 255.0f, 255.0f, 255.0f, 255.0f };
 
 	// Using setter and getter for ball speed because of conversion
 	static constexpr float UE_UNITS_TO_KPH{ 0.036f };	///< Ball speed is originally in a different unit specific to the game engine
