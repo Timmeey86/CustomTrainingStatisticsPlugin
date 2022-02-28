@@ -303,10 +303,10 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 	}
 	if (diffData && _pluginState->PreviousSessionDiffShallBeDisplayed)
 	{
-		_displayWidth += 40.0f;
-		if (!isDisplayingSpeed)
+		_displayWidth += 60.0f;
+		if (isDisplayingSpeed)
 		{
-			_displayWidth += 20.0f;
+			diffDataBorder += 20.0f;
 		}
 	}
 
