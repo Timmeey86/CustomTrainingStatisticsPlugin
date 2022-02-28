@@ -42,4 +42,22 @@ public:
 	 * Also we all know kids will want to use this so they can pretend to be better at the pack than they actually are ;)
 	 */
 	virtual void toggleLastAttempt() = 0;
+
+	/** Processes a new air dribble attempt time. */
+	virtual void processAirDribbleTime(float time) = 0;
+
+	/** Processes the number of air dribble touches. Note that this may get called multiple times per attempt (whenever a new maximum has been reached). */
+	virtual void processAirDribbleTouches(int touches) = 0;
+
+	/** Processes a new ground dribble attempt time. */
+	virtual void processGroundDribbleTime(float time) = 0;
+
+	/** Processes a double tap goal. */
+	virtual void processDoubleTapGoal() = 0;
+
+	/** Processes a flip reset. Note that this may get called multiple times per attempt (whenever a new maximum has been reached). */
+	virtual void processFlipReset(int amount) = 0;
+
+	/** Processes a close miss. */
+	virtual void processCloseMiss() = 0;
 };

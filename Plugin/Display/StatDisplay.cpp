@@ -9,9 +9,9 @@ StatDisplay::StatDisplay(
 	const std::shared_ptr<const ShotStats> shotStats,
 	const std::shared_ptr<const ShotStats> diffStats,
 	const std::shared_ptr<const PluginState> pluginState)
-		: _shotStats(shotStats)
-		, _diffStats(diffStats)
-		, _pluginState(pluginState)
+	: _shotStats(shotStats)
+	, _diffStats(diffStats)
+	, _pluginState(pluginState)
 {
 }
 
@@ -41,6 +41,12 @@ std::string to_diff_value_string(int value)
 {
 	std::ostringstream stream;
 	stream << (value >= 0 ? "+" : "") << value;
+	return stream.str();
+}
+std::string to_diff_value_string(float value)
+{
+	std::ostringstream stream;
+	stream << (value >= 0 ? "+" : "") << to_float_string(value);
 	return stream.str();
 }
 void StatDisplay::drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const
@@ -120,6 +126,61 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.LongestMissStreak);
 		}
 	}
+	if (pluginState->AirDribbleTouchesShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Air Dribbles:", std::to_string(statsData.Stats.MaxAirDribbleTouches), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTouches);
+		}
+	}
+	if (pluginState->AirDribbleTimeShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. ADribble Time:", to_float_string(statsData.Stats.MaxAirDribbleTime), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTime);
+		}
+	}
+	if (pluginState->GroundDribbleTimeShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. GDribble Time:", to_float_string(statsData.Stats.MaxGroundDribbleTime), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
+		}
+	}
+	if (pluginState->TotalFlipResetsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Flip Resets:", std::to_string(statsData.Stats.TotalFlipResets), "" });
+		if (diffData)
+		{
+			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.TotalFlipResets);
+		}
+	}
+	if (pluginState->MaxFlipResetsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Flip Resets:", std::to_string(statsData.Stats.MaxFlipResets), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxFlipResets);
+		}
+	}
+	if (pluginState->DoubleTapGoalsShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Double Tap Goals:", std::to_string(statsData.Stats.DoubleTapGoals), "" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.DoubleTapGoals);
+		}
+	}
+	if (pluginState->CloseMissesShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Close Misses:", std::to_string(statsData.Stats.CloseMisses), "" });
+	}
+
+
+	// Calculated percentages and averages
 	if (pluginState->TotalSuccessRateShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "%" });
@@ -159,18 +220,62 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	if (pluginState->MaxGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMax(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MaxValue);
+		}
 	}
 	if (pluginState->MinGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMin(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MinValue);
+		}
 	}
 	if (pluginState->MedianGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Median Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMedian(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MedianValue);
+		}
 	}
 	if (pluginState->MeanGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMean(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MeanValue);
+		}
+	}
+	if (pluginState->FlipResetsPerAttemptShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "FResets/Attempt:", to_percentage_string(statsData.Data.AverageFlipResetsPerAttempt), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.AverageFlipResetsPerAttempt);
+		}
+	}
+	if (pluginState->FlipResetPercentageShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "FReset Goal Rate:", to_percentage_string(statsData.Data.FlipResetGoalPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.FlipResetGoalPercentage);
+		}
+	}
+	if (pluginState->DoubleTapPercentageShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Dbl Tap Goal Rate:", to_percentage_string(statsData.Data.DoubleTapGoalPercentage), "%" });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.DoubleTapGoalPercentage);
+		}
+	}
+	if (pluginState->CloseMissPercentageShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Close Miss Rate:", to_percentage_string(statsData.Data.CloseMissPercentage), "%" });
 	}
 
 	if (statNamesAndValues.empty())
@@ -189,7 +294,7 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 		_pluginState->MinGoalSpeedShallBeDisplayed ||
 		_pluginState->MedianGoalSpeedShallBeDisplayed ||
 		_pluginState->MeanGoalSpeedShallBeDisplayed;
-	
+
 	_displayWidth = 215.0f;
 	auto diffDataBorder = _displayWidth + 5.0f;
 	if (isDisplayingSpeed)
@@ -198,10 +303,10 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 	}
 	if (diffData && _pluginState->PreviousSessionDiffShallBeDisplayed)
 	{
-		_displayWidth += 40.0f;
-		if (!isDisplayingSpeed)
+		_displayWidth += 60.0f;
+		if (isDisplayingSpeed)
 		{
-			_displayWidth += 20.0f;
+			diffDataBorder += 20.0f;
 		}
 	}
 
@@ -249,11 +354,6 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas)
 
 void StatDisplay::renderOneFrame(CanvasWrapper& canvas)
 {
-	// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
-	// That way we don't clutter the settings, or the match/mode selection screen
-	if (_pluginState->MenuStackSize < 2)
-	{
-		renderAllShotStats(canvas);
-		renderPerShotStats(canvas);
-	}
+	renderAllShotStats(canvas);
+	renderPerShotStats(canvas);
 }

@@ -3,24 +3,28 @@
 #include "../Data/TriggerNames.h"
 
 EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<CVarManagerWrapper> cvarManager, std::shared_ptr<PluginState> pluginState)
-	: _gameWrapper( gameWrapper )
-	, _cvarManager( cvarManager )
-	, _pluginState( pluginState )
+	: _gameWrapper(gameWrapper)
+	, _cvarManager(cvarManager)
+	, _pluginState(pluginState)
 {
 }
 
-void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter)
+void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter)
 {
 	if (!statUpdater) { return; }
 
-	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statUpdater, statWriter, _pluginState);
-	_stateMachine->hookToEvents(_gameWrapper);
+	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statWriter, _pluginState);
+	_stateMachine->hookToEvents(_gameWrapper, _eventReceivers);
 
 	// Allow resetting statistics to zero attempts/goals manually
-	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statUpdater, statWriter](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::ResetStatistics, [this, statWriter](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
-		
-		statUpdater->processReset(_pluginState->TotalRounds);
+
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onResetStatisticsTriggered();
+		}
+
 		// After manually resetting we have to overwrite the current file with zero attempts since otherwise
 		// a stat restore after the reset would restore the session which was reset, rather than the one before.
 		// We want to support the use case where the player started an attempt, then remembered they intended to restore the previous session
@@ -30,35 +34,57 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	}, "Reset the statistics.", PERMISSION_ALL);
 
 	// Allow resetting statistics to zero attempts/goals manually
-	_cvarManager->registerNotifier(TriggerNames::RestoreStatistics, [this, statUpdater](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::RestoreStatistics, [this](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 
-		statUpdater->restoreLastSession();
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onRestorePreviousSessionTriggered();
+		}
 	}, "Restore the statistics.", PERMISSION_ALL);
 
 	// Allow toggling the last attempt between miss and goal
-	_cvarManager->registerNotifier(TriggerNames::ToggleLastAttempt, [this, statUpdater](const std::vector<std::string>&) {
+	_cvarManager->registerNotifier(TriggerNames::ToggleLastAttempt, [this](const std::vector<std::string>&) {
 		if (!_gameWrapper->IsInCustomTraining()) { return; }
 
-		statUpdater->toggleLastAttempt();
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onTogglePreviousAttemptTriggered();
+		}
 	}, "Toggle the last attempt to be a goal or a miss", PERMISSION_ALL);
 
 	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
-			if (!_pluginState->PluginIsEnabled) { return; }
-						
-			// Update the state machine with this event
-			if (TrainingEditorWrapper trainingWrapper(caller.memory_address); 
-				!trainingWrapper.IsNull())
+		if (!_pluginState->PluginIsEnabled) { return; }
+
+		// Update the state machine with this event
+		if (TrainingEditorWrapper trainingWrapper(caller.memory_address);
+			!trainingWrapper.IsNull())
+		{
+			auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+			for (auto eventReceiver : _eventReceivers)
 			{
-				_stateMachine->processOnTrainingModeLoaded(trainingWrapper);
+				eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingPackCode);
 			}
 
-			// Reset other state variables
-			_pluginState->MenuStackSize = 0;
-			_pluginState->IsMetric = _gameWrapper->GetbMetric();
-		});
+			_stateMachine->processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, _eventReceivers);
+		}
+
+		// Reset other state variables
+		_pluginState->MenuStackSize = 0;
+		_pluginState->IsMetric = _gameWrapper->GetbMetric();
+	});
+
+	_gameWrapper->HookEvent("Function TAGame.CarComponent_Dodge_TA.EventActivateDodge",
+		[this](const std::string&) {
+		if (!statUpdatesShallBeSent()) { return; }
+
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onCarFlipped();
+		}
+	});
 
 	// Happens whenever a menu is opened (also when opening a nested menu)
 	_gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", [this](const std::string&) {
@@ -75,14 +101,19 @@ void EventListener::registerUpdateEvents( std::shared_ptr<IStatUpdater> statUpda
 	});
 }
 
-void EventListener::registerRenderEvents( std::shared_ptr<IStatDisplay> statDisplay )
+void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDisplay>> statDisplays)
 {
-	if (!statDisplay) { return; }
+	if (statDisplays.empty()) { return; }
 
-	_gameWrapper->RegisterDrawable([this, statDisplay](CanvasWrapper canvas) {
-		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining())
+	_gameWrapper->RegisterDrawable([this, statDisplays](CanvasWrapper canvas) {
+		// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
+		// That way we don't clutter the settings, or the match/mode selection screen
+		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining() && _pluginState->MenuStackSize < 2)
 		{
-			statDisplay->renderOneFrame(canvas);
+			for (auto statDisplay : statDisplays)
+			{
+				statDisplay->renderOneFrame(canvas);
+			}
 		}
 	});
 }
@@ -94,4 +125,9 @@ void EventListener::registerGameStateEvents()
 bool EventListener::statUpdatesShallBeSent()
 {
 	return _gameWrapper->IsInCustomTraining() && _pluginState->PluginIsEnabled;
+}
+
+void EventListener::addEventReceiver(std::shared_ptr<AbstractEventReceiver> eventReceiver)
+{
+	_eventReceivers.emplace_back(eventReceiver);
 }

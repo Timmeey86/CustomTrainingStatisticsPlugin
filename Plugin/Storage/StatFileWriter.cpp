@@ -15,9 +15,10 @@ using sysclock_t = std::chrono::system_clock;
 
 static const char* const CurrentVersion = "1.0";
 
-StatFileWriter::StatFileWriter(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<ShotStats> shotStats)
+StatFileWriter::StatFileWriter(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<ShotStats> shotStats, std::shared_ptr<ShotDistributionTracker> tracker)
 	: _gameWrapper(gameWrapper)
 	, _currentStats(shotStats)
+	, _shotDistributionTracker(tracker)
 {
 }
 
@@ -70,7 +71,7 @@ void writeLine(std::ofstream& stream, const std::string& label, const std::strin
 	stream << label << "\t" << value << std::endl;
 }
 
-std::string bool_vector_to_string(std::vector<bool> values)
+std::string bool_vector_to_string(const std::vector<bool>& values)
 {
 	std::ostringstream stream;
 	for (auto value : values)
@@ -80,7 +81,31 @@ std::string bool_vector_to_string(std::vector<bool> values)
 	return stream.str();
 }
 
-void writeStatsData(std::ofstream& stream, const StatsData& statsData)
+std::string float_vector_to_string(const std::vector<float>& values)
+{
+	std::ostringstream stream;
+	const char vectorSeparator = '|';
+	stream << std::to_string(values.size()) + vectorSeparator;
+	for (auto value : values)
+	{
+		stream << value << vectorSeparator;
+	}
+	return stream.str();
+}
+
+std::string shot_location_vector_to_string(const std::vector<Vector>& values)
+{
+	std::ostringstream stream;
+	const char vectorSeparator = '|';
+	stream << std::to_string(values.size()) + vectorSeparator;
+	for (auto vector : values)
+	{
+		stream << fmt::format("{},{},{}{}", vector.X, vector.Y, vector.Z, vectorSeparator);
+	}
+	return stream.str();
+}
+
+void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& statsData, bool isSummaryData)
 {
 	stream << StatFileDefs::ShotSeparator << std::endl;
 
@@ -104,6 +129,26 @@ void writeStatsData(std::ofstream& stream, const StatsData& statsData)
 	writeLine(stream, StatFileDefs::TotalSuccessRate, std::to_string(statsData.Data.SuccessPercentage));
 	writeLine(stream, StatFileDefs::PeakSuccessRate, std::to_string(statsData.Data.PeakSuccessPercentage));
 	writeLine(stream, StatFileDefs::PeakAtShotNumber, std::to_string(statsData.Data.PeakShotNumber));
+
+	// v1.1 stats
+	writeLine(stream, StatFileDefs::AirDribbleTouches, std::to_string(statsData.Stats.MaxAirDribbleTouches));
+	writeLine(stream, StatFileDefs::AirDribbleTime, std::to_string(statsData.Stats.MaxAirDribbleTime));
+	writeLine(stream, StatFileDefs::GroundDribbleTime, std::to_string(statsData.Stats.MaxGroundDribbleTime));
+	writeLine(stream, StatFileDefs::DoubleTapGoals, std::to_string(statsData.Stats.DoubleTapGoals));
+	writeLine(stream, StatFileDefs::DoubleTapPercentage, std::to_string(statsData.Data.DoubleTapGoalPercentage));
+	writeLine(stream, StatFileDefs::MaxFlipResets, std::to_string(statsData.Stats.MaxFlipResets));
+	writeLine(stream, StatFileDefs::TotalFlipResets, std::to_string(statsData.Stats.TotalFlipResets));
+	writeLine(stream, StatFileDefs::FlipResetsPerAttempt, std::to_string(statsData.Data.AverageFlipResetsPerAttempt));
+	writeLine(stream, StatFileDefs::FlipResetPercentage, std::to_string(statsData.Data.FlipResetGoalPercentage));
+	writeLine(stream, StatFileDefs::CloseMisses, std::to_string(statsData.Stats.CloseMisses));
+	writeLine(stream, StatFileDefs::CloseMissPercentage, std::to_string(statsData.Data.CloseMissPercentage));
+
+	// v1.2 stats - Shot locations are only available once for the training pack rather than for every shot
+	auto shotLocations = isSummaryData ? _shotDistributionTracker->getImpactLocations() : std::vector<Vector>();
+	writeLine(stream, StatFileDefs::ImpactLocations, shot_location_vector_to_string(shotLocations));
+
+	// v1.3 stats
+	writeLine(stream, StatFileDefs::GoalSpeedValues, float_vector_to_string(statsData.Stats.GoalSpeedStats.getAllShotValues()));
 }
 
 void StatFileWriter::writeData()
@@ -125,10 +170,10 @@ void StatFileWriter::writeData()
 	writeLine(outputFileStream, StatFileDefs::Version, StatFileDefs::CurrentVersionNumber);
 	writeLine(outputFileStream, StatFileDefs::NumberOfShots, std::to_string(_currentStats->PerShotStats.size()));
 
-	writeStatsData(outputFileStream, _currentStats->AllShotStats);
+	writeStatsData(outputFileStream, _currentStats->AllShotStats, true);
 
-	for (auto shotStats : _currentStats->PerShotStats)
+	for (const auto& shotStats : _currentStats->PerShotStats)
 	{
-		writeStatsData(outputFileStream, shotStats);
+		writeStatsData(outputFileStream, shotStats, false);
 	}
 }

@@ -1,8 +1,14 @@
 #include "pch.h"
 #include "GoalPercentageCounter.h"
 #include "Calculation/StatUpdater.h"
+#include "Calculation/AirDribbleAmountCounter.h"
+#include "Calculation/GroundDribbleTimeCounter.h"
+#include "Calculation/DoubleTapGoalCounter.h"
+#include "Calculation/CloseMissCounter.h"
+#include "Calculation/ShotDistributionTracker.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
+#include "Core/StatUpdaterEventBridge.h"
 #include "Settings/SettingsRegistration.h"
 #include "Settings/PersistentStorage.h"
 #include "Storage/StatFileWriter.h"
@@ -36,20 +42,54 @@ void GoalPercentageCounter::onLoad()
 	initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
 
 	// Create handler classes
-	auto statReader = std::make_shared<StatFileReader>(gameWrapper);
+	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>(gameWrapper);
+	auto statReader = std::make_shared<StatFileReader>(gameWrapper, shotDistributionTracker);
 	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader);
 
-	// Enable rendering of output
-	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, differenceData, _pluginState);
-
 	// Enable storage of stats on the file system (crash recovery / maybe training trend in future)
-	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats);
+	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats, shotDistributionTracker);
+
 
 	// Set up event registration
 	_eventListener = std::make_shared<EventListener>(gameWrapper, cvarManager, _pluginState);
+
+	// Register any event receivers before hooking into the events (otherwise they won't receive the events)
+	_eventListener->addEventReceiver(std::make_shared<StatUpdaterEventBridge>(statUpdater, _pluginState));
+
+	auto airDribbleCounter = std::make_shared<AirDribbleAmountCounter>(
+		[this, statUpdater](int amount) { statUpdater->processAirDribbleTouches(amount); },
+		[this, statUpdater](float time) { statUpdater->processAirDribbleTime(time); },
+		[this, statUpdater](int amount) { statUpdater->processFlipReset(amount); }
+	);
+	_eventListener->addEventReceiver(airDribbleCounter);
+
+	auto groundDribbleCounter = std::make_shared<GroundDribbleTimeCounter>(
+		[this, statUpdater](float time) { statUpdater->processGroundDribbleTime(time); }
+	);
+	_eventListener->addEventReceiver(groundDribbleCounter);
+
+	auto doubleTapGoalCounter = std::make_shared<DoubleTapGoalCounter>(
+		[this, statUpdater]() { statUpdater->processDoubleTapGoal(); },
+		cvarManager
+	);
+	_eventListener->addEventReceiver(doubleTapGoalCounter);
+
+	auto closeMissCounter = std::make_shared<CloseMissCounter>(
+		[this, statUpdater]() { statUpdater->processCloseMiss(); }
+	);
+	_eventListener->addEventReceiver(closeMissCounter);
+
+	shotDistributionTracker->registerNotifiers(cvarManager);
+	_eventListener->addEventReceiver(shotDistributionTracker);
+
+	// Hook into events now 
 	_eventListener->registerGameStateEvents();
 	_eventListener->registerUpdateEvents(statUpdater, statWriter);
-	_eventListener->registerRenderEvents(statDisplay);
+
+
+	// Enable rendering of output
+	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, differenceData, _pluginState);
+	_eventListener->registerRenderEvents({ statDisplay, shotDistributionTracker });
 
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 }

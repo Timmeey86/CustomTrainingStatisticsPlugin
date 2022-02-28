@@ -80,6 +80,17 @@ void SettingsRegistration::registerCVars(
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMinGoalSpeedDef, SET_BOOL_VALUE_FUNC(MinGoalSpeedShallBeDisplayed));
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef, SET_BOOL_VALUE_FUNC(MedianGoalSpeedShallBeDisplayed));
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef, SET_BOOL_VALUE_FUNC(MeanGoalSpeedShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayAirDribbleTouchesDef, SET_BOOL_VALUE_FUNC(AirDribbleTouchesShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayAirDribbleTimeDef, SET_BOOL_VALUE_FUNC(AirDribbleTimeShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayGroundDribbleDef, SET_BOOL_VALUE_FUNC(GroundDribbleTimeShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayDoubleTapGoalsDef, SET_BOOL_VALUE_FUNC(DoubleTapGoalsShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayDoubleTapPercentageDef, SET_BOOL_VALUE_FUNC(DoubleTapPercentageShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayTotalFlipResetsDef, SET_BOOL_VALUE_FUNC(TotalFlipResetsShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayMaxFlipResetsDef, SET_BOOL_VALUE_FUNC(MaxFlipResetsShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef, SET_BOOL_VALUE_FUNC(FlipResetsPerAttemptShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayFlipResetPercentageDef, SET_BOOL_VALUE_FUNC(FlipResetPercentageShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayCloseMissesDef, SET_BOOL_VALUE_FUNC(CloseMissesShallBeDisplayed));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayCloseMissPercentageDef, SET_BOOL_VALUE_FUNC(CloseMissPercentageShallBeDisplayed));
 
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayAllShotStats, SET_BOOL_VALUE_FUNC(AllShotStatsShallBeDisplayed));
 	registerIntSliderSetting(persistentStorage, GoalPercentageCounterSettings::AllShotXPositionDef, SET_INT_VALUE_FUNC(AllShotsOpts.OverlayXPosition));
@@ -114,6 +125,14 @@ void SettingsRegistration::registerCVars(
 
 	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::ToggleLastAttemptKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
 		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::ToggleLastAttempt } + ";");
+	});
+
+	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::ToggleHeatmapKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::ToggleHeatmapDisplay } + ";");
+	});
+
+	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::ToggleShotLocationKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
+		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::ToggleImpactLocationDisplay } + ";");
 	});
 }
 

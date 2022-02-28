@@ -32,11 +32,26 @@ public:
 	void publishTrainingPackCode(const std::string& trainingPackCode) override;
 	void toggleLastAttempt() override;
 
+	void processAirDribbleTime(float time) override;
+	void processAirDribbleTouches(int touches) override;
+	void processGroundDribbleTime(float time) override;
+	void processDoubleTapGoal() override; 
+	void processFlipReset(int amount) override;
+	void processCloseMiss() override;
+
 private:
 	/** Increases the goal counter and updates streaks. */
 	void handleGoal(StatsData& statsData);
 	/** Increases the miss counter and updates streaks. */
 	void handleMiss(StatsData& statsData);
+
+	void handleAirDribbleTimeUpdate(StatsData& statsData, float time);
+	void handleAirDribbleTouchesUpdate(StatsData& statsData, int touches);
+	void handleGroundDribbleTimeUpdate(StatsData& statsData, float time);
+	void handleDoubleTapGoalUpdate(StatsData& statsData);
+	void handleFlipResetUpdate(StatsData& statsData, int amount);
+	void handleCloseMiss(StatsData& statsData);
+
 	/** Updates percentage values. */
 	void recalculatePercentages(StatsData& statsData, StatsData& internalStatsData);
 	/** Updates the internal backup of stats. This is used for the "toggle last attempt" feature. */
@@ -58,5 +73,6 @@ private:
 	std::string _trainingPackCode; ///< The code of the currently active training pack
 
 	bool _statsHaveJustBeenRestored = false; ///< This prevents the "toggle last attempt" feature from being used after restoring the last session
+	bool _flipResetOccurredInCurrentAttempt = false; ///< This is required for detection of flip reset goals.
 };
 

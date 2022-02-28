@@ -6,9 +6,24 @@
 #include <filesystem>
 #include <fstream>
 
-StatFileReader::StatFileReader(std::shared_ptr<GameWrapper> gameWrapper)
+StatFileReader::StatFileReader(std::shared_ptr<GameWrapper> gameWrapper, std::shared_ptr<ShotDistributionTracker> shotDistributionTracker)
 	: _gameWrapper(gameWrapper)
+	, _shotDistributionTracker(shotDistributionTracker)
 {
+}
+
+template<typename T>
+int indexInVector(const std::vector<T>& vector, T searchValue)
+{
+	auto iterator = std::find(vector.begin(), vector.end(), searchValue);
+	if (iterator == std::end(vector))
+	{
+		return -1;
+	}
+	else
+	{
+		return (int)std::distance(vector.begin(), iterator);
+	}
 }
 
 std::vector<std::string> StatFileReader::getAvailableResourcePaths(const std::string& trainingPackCode)
@@ -55,6 +70,7 @@ std::pair<std::string, std::string> getLineValues(const std::string& line)
 	return { line.substr(0, end), line.substr(end + 1, line.size() - end + 1) };
 }
 
+
 int StatFileReader::peekAttemptAmount(const std::string& resourcePath)
 {
 	// Try opening the file
@@ -66,9 +82,10 @@ int StatFileReader::peekAttemptAmount(const std::string& resourcePath)
 	if (!std::getline(fileStream, currentLine)) { return 0; }
 
 	auto [versionTag, versionNumber] = getLineValues(currentLine);
-	if (versionTag != StatFileDefs::Version || versionNumber != StatFileDefs::CurrentVersionNumber)
+	auto versionIndex = indexInVector(StatFileDefs::SupportedVersionNumbers, versionNumber);
+	if (versionTag != StatFileDefs::Version || versionIndex < 0)
 	{
-		return 0; // When there is a new file format version, we'll have to implement a data patcher
+		return 0; // Version number is unknown or file is invalid
 	}
 
 	// This looks like an actually supported file => Currently, the version will be followed by the amount of shots, a separator line and then the attempts
@@ -124,6 +141,17 @@ bool readValueIntoField(std::ifstream& stream, double* valuePointer)
 	*valuePointer = valueAsFloat;
 	return true;
 }
+bool readValueIntoField(std::ifstream& stream, float* valuePointer)
+{
+	double tmp;
+	auto readSucceeded = readValueIntoField(stream, &tmp);
+	if (readSucceeded)
+	{
+		*valuePointer = (float)tmp;
+		return true;
+	}
+	return false;
+}
 
 
 ShotStats StatFileReader::readStats(const std::string& resourcePath)
@@ -134,8 +162,15 @@ ShotStats StatFileReader::readStats(const std::string& resourcePath)
 
 	std::string currentLine;
 
-	// Skip the version, we checked that in peekAmount() already
+	// Check for the version number
 	if (!std::getline(fileStream, currentLine)) { return {}; }
+	auto [versionTag, versionNumber] = getLineValues(currentLine);
+	auto versionIndex = indexInVector(StatFileDefs::SupportedVersionNumbers, versionNumber);
+	if (versionIndex < 0)
+	{
+		return {}; // Version number is unknown or file is invalid
+	}
+
 	// Actually read the number of shots
 	if (!std::getline(fileStream, currentLine)) { return {}; }
 
@@ -170,35 +205,149 @@ ShotStats StatFileReader::readStats(const std::string& resourcePath)
 		if (!std::getline(fileStream, currentLine)) { return {}; }
 
 		// Read stats
-		if (!readValueIntoField(fileStream, &statsDataPointer->Stats.Attempts)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Stats.Goals)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Stats.InitialHits)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Stats.GoalStreakCounter)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MissStreakCounter)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Stats.LongestGoalStreak)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Stats.LongestMissStreak)) { return {}; }
-
-		// last N shot: we need to add true/false values for each 1/0 in the string
-		if (!std::getline(fileStream, currentLine)) { return {}; }
-		auto [key, boolArrayString] = getLineValues(currentLine);
-		// Note: boolArrayString might be empty if the last session didn't include at least one of the shots
-
-		for (int index = 0; index < boolArrayString.size(); index++)
-		{
-			statsDataPointer->Stats.Last50Shots.emplace_back((boolArrayString.at(index) == '1' ? true : false));
-		}
-
-		// We can't restore goal speeds (we would have to export all the single goal values in order to properly restore mean/median)
-		if (!std::getline(fileStream, currentLine)) { return {}; } // latest speed
-		if (!std::getline(fileStream, currentLine)) { return {}; } // max speed
-		if (!std::getline(fileStream, currentLine)) { return {}; } // min speed
-		if (!std::getline(fileStream, currentLine)) { return {}; } // median speed
-		if (!std::getline(fileStream, currentLine)) { return {}; } // mean speed
-
-		if (!readValueIntoField(fileStream, &statsDataPointer->Data.InitialHitPercentage)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Data.SuccessPercentage)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Data.PeakSuccessPercentage)) { return {}; }
-		if (!readValueIntoField(fileStream, &statsDataPointer->Data.PeakShotNumber)) { return {}; }
+		if (!readVersion_1_0(fileStream, statsDataPointer)) { return {}; }
+		if (versionIndex > 0 && !readVersion_1_1_additions(fileStream, statsDataPointer)) { return {}; }
+		if (versionIndex > 1 && !readVersion_1_2_additions(fileStream)) { return {}; }
+		if (versionIndex > 2 && !readVersion_1_3_additions(fileStream, statsDataPointer)) { return {}; }
 	}
 	return stats;
+}
+
+bool StatFileReader::readVersion_1_0(std::ifstream& fileStream, StatsData* const statsDataPointer)
+{
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.Attempts)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.Goals)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.InitialHits)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.GoalStreakCounter)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MissStreakCounter)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.LongestGoalStreak)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.LongestMissStreak)) { return false; }
+
+	// last N shot: we need to add true/false values for each 1/0 in the string
+	std::string currentLine;
+	if (!std::getline(fileStream, currentLine)) { return false; }
+	auto [key, boolArrayString] = getLineValues(currentLine);
+	// Note: boolArrayString might be empty if the last session didn't include at least one of the shots
+
+	for (int index = 0; index < boolArrayString.size(); index++)
+	{
+		statsDataPointer->Stats.Last50Shots.emplace_back((boolArrayString.at(index) == '1' ? true : false));
+	}
+
+	// We restore goal speed through an additional stat, but these lines were not removed for backwards compatibility
+	if (!std::getline(fileStream, currentLine)) { return false; } // latest speed
+	if (!std::getline(fileStream, currentLine)) { return false; } // max speed
+	if (!std::getline(fileStream, currentLine)) { return false; } // min speed
+	if (!std::getline(fileStream, currentLine)) { return false; } // median speed
+	if (!std::getline(fileStream, currentLine)) { return false; } // mean speed
+
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.InitialHitPercentage)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.SuccessPercentage)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.PeakSuccessPercentage)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.PeakShotNumber)) { return false; }
+
+	return true;
+}
+
+bool StatFileReader::readVersion_1_1_additions(std::ifstream& fileStream, StatsData* const statsDataPointer)
+{
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MaxAirDribbleTouches)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MaxAirDribbleTime)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MaxGroundDribbleTime)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.DoubleTapGoals)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.DoubleTapGoalPercentage)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MaxFlipResets)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.TotalFlipResets)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.AverageFlipResetsPerAttempt)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.FlipResetGoalPercentage)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.CloseMisses)) { return false; }
+	if (!readValueIntoField(fileStream, &statsDataPointer->Data.CloseMissPercentage)) { return false; }
+
+	return true;
+}
+
+bool StatFileReader::readVersion_1_2_additions(std::ifstream& fileStream)
+{
+	std::string currentLine;
+	if (!std::getline(fileStream, currentLine)) { return false; } // This line will contain the whole vector
+	if (currentLine.empty()) { return false; }
+
+	auto [key, allShotLocations] = getLineValues(currentLine);
+	if (key.empty() || allShotLocations.empty()) { return false; }
+
+	if (key != StatFileDefs::ImpactLocations) { return false; }
+
+	const char separator = '|';
+	// read until the first separator
+
+	auto separatorPos = allShotLocations.find(separator);
+	if (separatorPos == std::string::npos) { return false; }
+
+	// Try to read the size of the vector	
+	if (auto size = std::stoi(allShotLocations.substr(0, separatorPos)); size > 0)
+	{
+		size_t offset = separatorPos + 1;
+		for (int index = 0; index < size; index++)
+		{
+			// Parse a vector string like "3.456,2.3154,9.223"
+			auto valueSeparatorPos = allShotLocations.find(",", offset);
+			if (valueSeparatorPos == std::string::npos) { return false; }
+
+			Vector vector;
+			vector.X = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			offset = valueSeparatorPos + 1;
+
+			valueSeparatorPos = allShotLocations.find(",", offset);
+			if (valueSeparatorPos == std::string::npos) { return false; }
+
+			vector.Y = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			offset = valueSeparatorPos + 1;
+
+			valueSeparatorPos = allShotLocations.find(separator, offset);
+			if (valueSeparatorPos == std::string::npos) { return false; }
+
+			vector.Z = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			offset = valueSeparatorPos + 1;
+
+			// restore both impact locations and heatmap by simulating the impacts in the same order
+			_shotDistributionTracker->registerImpactLocation(vector);
+		}
+	}
+	// Else: Size 0 is valid, this just means none of the attempts hit the wall or the goal (will be rare)
+
+	return true;
+}
+
+bool StatFileReader::readVersion_1_3_additions(std::ifstream& fileStream, StatsData* const statsDataPointer)
+{
+	std::string currentLine;
+	if (!std::getline(fileStream, currentLine)) { return false; } // This line will contain the whole vector
+	if (currentLine.empty()) { return false; }
+
+	auto [key, allGoalSpeeds] = getLineValues(currentLine);
+	if (key.empty() || allGoalSpeeds.empty()) { return false; }
+
+	if (key != StatFileDefs::GoalSpeedValues) { return false; }
+
+	const char separator = '|';
+	// read until the first separator
+
+	auto separatorPos = allGoalSpeeds.find(separator);
+	if (separatorPos == std::string::npos) { return false; }
+
+	// Try to read the size of the vector	
+	if (auto size = std::stoi(allGoalSpeeds.substr(0, separatorPos)); size > 0)
+	{
+		size_t offset = separatorPos + 1;
+		for (int index = 0; index < size; index++)
+		{
+			// Get the next float value
+			separatorPos = allGoalSpeeds.find(separator, offset);
+			if (separatorPos == std::string::npos) { return false; }
+
+			// Register the goal speed value as if the player had taken the shot
+			statsDataPointer->Stats.GoalSpeedStats.insert(std::stof(allGoalSpeeds.substr(offset, separatorPos)));
+			offset = separatorPos + 1;
+		}
+	}
 }

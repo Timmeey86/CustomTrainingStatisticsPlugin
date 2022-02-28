@@ -29,6 +29,8 @@ public:
 	float getMean(bool isMetric = true) const;
 	/** Returns the total number of goals */
 	size_t getCount(bool isMetric = true) const;
+	/** Returns the recorded shot values as supplied to insert(). */
+	inline std::vector<float> getAllShotValues() const { return _allSpeedValues; }
 	
 private:
 	float convertSpeed(float metricSpeed, bool isMetric) const;
@@ -41,4 +43,5 @@ private:
 	float _minSpeed{ _DEFAULT_VALUE };			///< Minimum goal speed
 	RunningMedian _medianSpeed;					///< Median goal speed
 	RunningMean _meanSpeed;						///< Mean goal speed
+	std::vector<float> _allSpeedValues;			///< Stores all goal speeds which have been recorded
 };

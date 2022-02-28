@@ -45,6 +45,8 @@ void StatUpdater::processMiss()
 
 void StatUpdater::processAttempt()
 {
+	_flipResetOccurredInCurrentAttempt = false;
+
 	_internalShotStats.AllShotStats.Stats.Attempts++;
 
 	// Update per shot
@@ -76,6 +78,7 @@ void StatUpdater::processReset(int numberOfShots)
 	// Reset total stats
 	_internalShotStats.AllShotStats.Stats = PlayerStats();
 	_internalShotStats.AllShotStats.Data = CalculatedData();
+	_flipResetOccurredInCurrentAttempt = false;
 
 	// Reset per shot stats
 	_internalShotStats.PerShotStats.clear();
@@ -264,6 +267,18 @@ void StatUpdater::recalculatePercentages(StatsData& statsData, StatsData& intern
 		internalStatsData.Data.PeakShotNumber = internalStatsData.Stats.Attempts;
 	}
 
+	// Update advanced stats
+	if (internalStatsData.Stats.Goals > 0)
+	{
+		internalStatsData.Data.DoubleTapGoalPercentage = getPercentageValue(internalStatsData.Stats.Goals, internalStatsData.Stats.DoubleTapGoals);
+		internalStatsData.Data.FlipResetGoalPercentage = getPercentageValue(internalStatsData.Stats.Goals, internalStatsData.Stats.FlipResetAttemptsScored);
+	}
+	if (internalStatsData.Stats.Attempts > 0)
+	{
+		internalStatsData.Data.AverageFlipResetsPerAttempt = getPercentageValue(internalStatsData.Stats.Attempts, internalStatsData.Stats.TotalFlipResets);
+		internalStatsData.Data.CloseMissPercentage = getPercentageValue(internalStatsData.Stats.Attempts, internalStatsData.Stats.CloseMisses);
+	}
+
 	// Update external stats
 	statsData = internalStatsData;
 }
@@ -281,6 +296,11 @@ void StatUpdater::handleGoal(StatsData& statsData)
 	}
 
 	statsData.Stats.GoalSpeedStats.insert(_pluginState->getBallSpeed());
+
+	if (_flipResetOccurredInCurrentAttempt)
+	{
+		statsData.Stats.FlipResetAttemptsScored++;
+	}
 }
 
 void StatUpdater::handleMiss(StatsData& statsData)
@@ -330,4 +350,138 @@ void StatUpdater::toggleLastAttempt()
 		processGoal();
 	}
 	updateData();
+}
+
+void StatUpdater::processAirDribbleTime(float time)
+{
+	handleAirDribbleTimeUpdate(_internalShotStats.AllShotStats, time);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleAirDribbleTimeUpdate(currStatsData, time);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::processAirDribbleTouches(int touches)
+{
+	handleAirDribbleTouchesUpdate(_internalShotStats.AllShotStats, touches);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleAirDribbleTouchesUpdate(currStatsData, touches);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::processGroundDribbleTime(float time)
+{
+	handleGroundDribbleTimeUpdate(_internalShotStats.AllShotStats, time);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleGroundDribbleTimeUpdate(currStatsData, time);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::processDoubleTapGoal()
+{
+	handleDoubleTapGoalUpdate(_internalShotStats.AllShotStats);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleDoubleTapGoalUpdate(currStatsData);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::processFlipReset(int amount)
+{
+	handleFlipResetUpdate(_internalShotStats.AllShotStats, amount);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleFlipResetUpdate(currStatsData, amount);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::processCloseMiss()
+{
+	handleCloseMiss(_internalShotStats.AllShotStats);
+
+	// Update per shot
+	// Check if CurrentRoundIndex has been set and if _statsDataPerShot has been initialized
+	if (0 <= _pluginState->CurrentRoundIndex && _pluginState->CurrentRoundIndex < _internalShotStats.PerShotStats.size())
+	{
+		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
+		handleCloseMiss(currStatsData);
+	}
+
+	_statsHaveJustBeenRestored = false;
+}
+
+void StatUpdater::handleAirDribbleTimeUpdate(StatsData& statsData, float time)
+{
+	if (time > statsData.Stats.MaxAirDribbleTime)
+	{
+		statsData.Stats.MaxAirDribbleTime = time;
+	}
+}
+
+void StatUpdater::handleAirDribbleTouchesUpdate(StatsData& statsData, int touches)
+{
+	if (touches > statsData.Stats.MaxAirDribbleTouches)
+	{
+		statsData.Stats.MaxAirDribbleTouches = touches;
+	}
+}
+
+void StatUpdater::handleGroundDribbleTimeUpdate(StatsData& statsData, float time)
+{
+	if (time > statsData.Stats.MaxGroundDribbleTime)
+	{
+		statsData.Stats.MaxGroundDribbleTime = time;
+	}
+}
+
+void StatUpdater::handleDoubleTapGoalUpdate(StatsData& statsData)
+{
+	statsData.Stats.DoubleTapGoals++;
+}
+
+void StatUpdater::handleFlipResetUpdate(StatsData& statsData, int amount)
+{
+	if (amount > statsData.Stats.MaxFlipResets)
+	{
+		statsData.Stats.MaxFlipResets = amount;
+	}
+	statsData.Stats.TotalFlipResets++;
+	_flipResetOccurredInCurrentAttempt = true;
+}
+
+void StatUpdater::handleCloseMiss(StatsData& statsData)
+{
+	statsData.Stats.CloseMisses++;
 }

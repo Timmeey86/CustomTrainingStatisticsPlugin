@@ -78,7 +78,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)fmt\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)external\fmt\include;$(ProjectDir);$(ProjectDir)\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4251</DisableSpecificWarnings>
       <Optimization>MaxSpeed</Optimization>
     </ClCompile>
@@ -93,27 +93,87 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Calculation\AirDribbleAmountCounter.cpp" />
+    <ClCompile Include="Calculation\CloseMissCounter.cpp" />
+    <ClCompile Include="Calculation\DoubleTapGoalCounter.cpp" />
+    <ClCompile Include="Calculation\GroundDribbleTimeCounter.cpp" />
+    <ClCompile Include="Calculation\ShotDistributionTracker.cpp" />
     <ClCompile Include="Calculation\StatUpdater.cpp" />
     <ClCompile Include="Core\CustomTrainingStateMachine.cpp" />
     <ClCompile Include="Core\EventListener.cpp" />
+    <ClCompile Include="Core\StatUpdaterEventBridge.cpp" />
     <ClCompile Include="Data\GoalSpeed.cpp" />
     <ClCompile Include="Data\RunningMean.cpp" />
     <ClCompile Include="Data\RunningMedian.cpp" />
     <ClCompile Include="Data\TriggerNames.cpp" />
     <ClCompile Include="Display\StatDisplay.cpp" />
-    <ClCompile Include="fmt\src\format.cc" />
-    <ClCompile Include="fmt\src\os.cc" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imguivariouscontrols.cpp" />
-    <ClCompile Include="imgui\imgui_additions.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="imgui\imgui_rangeslider.cpp" />
-    <ClCompile Include="imgui\imgui_searchablecombo.cpp" />
-    <ClCompile Include="imgui\imgui_timeline.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="external\fmt\src\format.cc" />
+    <ClCompile Include="external\fmt\src\os.cc" />
+    <ClCompile Include="external\IMGUI\imgui.cpp" />
+    <ClCompile Include="external\IMGUI\imguivariouscontrols.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_additions.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_demo.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_draw.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_impl_dx11.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_impl_win32.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_rangeslider.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_searchablecombo.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_timeline.cpp" />
+    <ClCompile Include="external\IMGUI\imgui_widgets.cpp" />
+    <ClCompile Include="external\RenderingTools\Extra\CanvasExtensions.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Extra\RenderingAssistant.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Extra\RenderingMath.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Extra\WrapperStructsExtensions.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Chevron.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Circle.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Circle2D.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Cone.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Cube.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Cylinder.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Frustum.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Grid.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Line.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Matrix3.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Plane.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Sphere.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\Triangle.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="external\RenderingTools\Objects\VisualCamera.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
+    </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -129,7 +189,13 @@
     <ClCompile Include="Summary\SummaryUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Calculation\AirDribbleAmountCounter.h" />
+    <ClInclude Include="Calculation\CloseMissCounter.h" />
+    <ClInclude Include="Calculation\DoubleTapGoalCounter.h" />
+    <ClInclude Include="Calculation\GroundDribbleTimeCounter.h" />
+    <ClInclude Include="Calculation\ShotDistributionTracker.h" />
     <ClInclude Include="Calculation\StatUpdater.h" />
+    <ClInclude Include="Core\AbstractEventReceiver.h" />
     <ClInclude Include="Core\CustomTrainingStateMachine.h" />
     <ClInclude Include="Core\CustomTrainingState.h" />
     <ClInclude Include="Core\EventListener.h" />
@@ -137,6 +203,7 @@
     <ClInclude Include="Core\IStatReader.h" />
     <ClInclude Include="Core\IStatUpdater.h" />
     <ClInclude Include="Core\IStatWriter.h" />
+    <ClInclude Include="Core\StatUpdaterEventBridge.h" />
     <ClInclude Include="Data\CalculatedData.h" />
     <ClInclude Include="Data\GoalSpeed.h" />
     <ClInclude Include="Data\PlayerStats.h" />
@@ -148,19 +215,49 @@
     <ClInclude Include="Data\TriggerNames.h" />
     <ClInclude Include="Display\StatDisplay.h" />
     <ClInclude Include="DLLImportExport.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imguivariouscontrols.h" />
-    <ClInclude Include="imgui\imgui_additions.h" />
-    <ClInclude Include="imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="imgui\imgui_impl_win32.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imgui_rangeslider.h" />
-    <ClInclude Include="imgui\imgui_searchablecombo.h" />
-    <ClInclude Include="imgui\imgui_timeline.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="external\fmt\include\fmt\chrono.h" />
+    <ClInclude Include="external\fmt\include\fmt\color.h" />
+    <ClInclude Include="external\fmt\include\fmt\compile.h" />
+    <ClInclude Include="external\fmt\include\fmt\core.h" />
+    <ClInclude Include="external\fmt\include\fmt\format-inl.h" />
+    <ClInclude Include="external\fmt\include\fmt\format.h" />
+    <ClInclude Include="external\fmt\include\fmt\locale.h" />
+    <ClInclude Include="external\fmt\include\fmt\os.h" />
+    <ClInclude Include="external\fmt\include\fmt\ostream.h" />
+    <ClInclude Include="external\fmt\include\fmt\posix.h" />
+    <ClInclude Include="external\fmt\include\fmt\printf.h" />
+    <ClInclude Include="external\fmt\include\fmt\ranges.h" />
+    <ClInclude Include="external\IMGUI\imconfig.h" />
+    <ClInclude Include="external\IMGUI\imgui.h" />
+    <ClInclude Include="external\IMGUI\imguivariouscontrols.h" />
+    <ClInclude Include="external\IMGUI\imgui_additions.h" />
+    <ClInclude Include="external\IMGUI\imgui_impl_dx11.h" />
+    <ClInclude Include="external\IMGUI\imgui_impl_win32.h" />
+    <ClInclude Include="external\IMGUI\imgui_internal.h" />
+    <ClInclude Include="external\IMGUI\imgui_rangeslider.h" />
+    <ClInclude Include="external\IMGUI\imgui_searchablecombo.h" />
+    <ClInclude Include="external\IMGUI\imgui_timeline.h" />
+    <ClInclude Include="external\IMGUI\imstb_rectpack.h" />
+    <ClInclude Include="external\IMGUI\imstb_textedit.h" />
+    <ClInclude Include="external\IMGUI\imstb_truetype.h" />
+    <ClInclude Include="external\RenderingTools\Extra\CanvasExtensions.h" />
+    <ClInclude Include="external\RenderingTools\Extra\RenderingAssistant.h" />
+    <ClInclude Include="external\RenderingTools\Extra\RenderingMath.h" />
+    <ClInclude Include="external\RenderingTools\Extra\WrapperStructsExtensions.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Chevron.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Circle.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Circle2D.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Cone.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Cube.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Cylinder.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Frustum.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Grid.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Line.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Matrix3.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Plane.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Sphere.h" />
+    <ClInclude Include="external\RenderingTools\Objects\Triangle.h" />
+    <ClInclude Include="external\RenderingTools\Objects\VisualCamera.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="GoalPercentageCounter.h" />
     <ClInclude Include="Settings\PersistentStorage.h" />
