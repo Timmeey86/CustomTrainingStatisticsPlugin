@@ -1,0 +1,3 @@
+[submodule "Plugin/external/CBRenderingTools"]
+	path = Plugin/external/CBRenderingTools
+	url = git@github.com:CinderBlocc/RenderingTools.git
