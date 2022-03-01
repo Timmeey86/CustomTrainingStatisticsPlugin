@@ -397,24 +397,60 @@
     <ClInclude Include="external\fmt\include\fmt\ranges.h">
       <Filter>External\fmt</Filter>
     </ClInclude>
-    <ClInclude Include="external\CBRenderingTools\Extra\CanvasExtensions.h" />
-    <ClInclude Include="external\CBRenderingTools\Extra\RenderingAssistant.h" />
-    <ClInclude Include="external\CBRenderingTools\Extra\RenderingMath.h" />
-    <ClInclude Include="external\CBRenderingTools\Extra\WrapperStructsExtensions.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Chevron.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Circle.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Circle2D.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Cone.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Cube.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Cylinder.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Frustum.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Grid.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Line.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Matrix3.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Plane.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Sphere.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\Triangle.h" />
-    <ClInclude Include="external\CBRenderingTools\Objects\VisualCamera.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\VisualCamera.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Extra\CanvasExtensions.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Chevron.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Circle.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Circle2D.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Cone.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Cube.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Cylinder.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Frustum.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Grid.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Line.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Matrix3.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Plane.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Extra\RenderingAssistant.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Extra\RenderingMath.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Sphere.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Objects\Triangle.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="external\CBRenderingTools\Extra\WrapperStructsExtensions.h">
+      <Filter>External\RenderingTools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GoalPercentageCounter.rc">
