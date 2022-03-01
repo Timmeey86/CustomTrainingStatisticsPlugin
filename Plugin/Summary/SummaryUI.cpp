@@ -24,6 +24,7 @@ void SummaryUI::initSummaryUi(
 
 void SummaryUI::renderSummary()
 {
+	ImGui::Text(fmt::format("Statistics Summary for '{}' by {} (Code: {})", _pluginState->TrainingPackName, _pluginState->TrainingPackCreator, _pluginState->TrainingPackCode).c_str());
 	if (ImGui::Button("Export Pack Info"))
 	{
 		copyTrainingPackCode();
