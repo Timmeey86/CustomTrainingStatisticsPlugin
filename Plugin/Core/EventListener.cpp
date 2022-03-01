@@ -56,7 +56,7 @@ void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdat
 	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {
-		if (!_pluginState->PluginIsEnabled) { return; }
+		// Note: we always need to process this event so the state machine is up to date
 
 		// Update the state machine with this event
 		if (TrainingEditorWrapper trainingWrapper(caller.memory_address);
@@ -78,7 +78,7 @@ void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdat
 
 	_gameWrapper->HookEvent("Function TAGame.CarComponent_Dodge_TA.EventActivateDodge",
 		[this](const std::string&) {
-		if (!statUpdatesShallBeSent()) { return; }
+		if (!_gameWrapper->IsInCustomTraining() || !_pluginState->StatsShallBeRecorded) { return; }
 
 		for (auto eventReceiver : _eventReceivers)
 		{
@@ -105,14 +105,28 @@ void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDispla
 {
 	if (statDisplays.empty()) { return; }
 
+	_recordingIcon = std::make_shared<ImageWrapper>(_gameWrapper->GetDataFolder() / "CustomTrainingStatistics" / "img" / "rec_symbol.png", true, false);
+
 	_gameWrapper->RegisterDrawable([this, statDisplays](CanvasWrapper canvas) {
 		// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
 		// That way we don't clutter the settings, or the match/mode selection screen
-		if (_pluginState->PluginIsEnabled && _gameWrapper->IsInCustomTraining() && _pluginState->MenuStackSize < 2)
+		if (_gameWrapper->IsInCustomTraining() && _pluginState->MenuStackSize < 2)
 		{
-			for (auto statDisplay : statDisplays)
+			if (_pluginState->StatsShallBeDisplayed)
 			{
-				statDisplay->renderOneFrame(canvas);
+				for (auto statDisplay : statDisplays)
+				{
+					statDisplay->renderOneFrame(canvas);
+				}
+			}
+			else if (_pluginState->RecordingIconShallBeDisplayed)
+			{
+				// Display a small icon which tells the user that stats are being recorded in background
+				auto xPosition = (int)((float)_gameWrapper->GetScreenSize().X * 10.0 / 1920.0);
+				auto yPosition = (int)((float)_gameWrapper->GetScreenSize().Y * 150.0 / 1080.0);
+				auto scale = ((float)_gameWrapper->GetScreenSize().X * .5 / 1920.0);
+				canvas.SetPosition(Vector2{ xPosition, yPosition });
+				canvas.DrawTexture(_recordingIcon.get(), scale);
 			}
 		}
 	});
@@ -120,11 +134,6 @@ void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDispla
 
 void EventListener::registerGameStateEvents()
 {
-}
-
-bool EventListener::statUpdatesShallBeSent()
-{
-	return _gameWrapper->IsInCustomTraining() && _pluginState->PluginIsEnabled;
 }
 
 void EventListener::addEventReceiver(std::shared_ptr<AbstractEventReceiver> eventReceiver)

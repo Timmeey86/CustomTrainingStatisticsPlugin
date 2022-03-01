@@ -120,58 +120,58 @@
     <ClCompile Include="external\IMGUI\imgui_searchablecombo.cpp" />
     <ClCompile Include="external\IMGUI\imgui_timeline.cpp" />
     <ClCompile Include="external\IMGUI\imgui_widgets.cpp" />
-    <ClCompile Include="external\RenderingTools\Extra\CanvasExtensions.cpp">
+    <ClCompile Include="external\CBRenderingTools\Extra\CanvasExtensions.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Extra\RenderingAssistant.cpp">
+    <ClCompile Include="external\CBRenderingTools\Extra\RenderingAssistant.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Extra\RenderingMath.cpp">
+    <ClCompile Include="external\CBRenderingTools\Extra\RenderingMath.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Extra\WrapperStructsExtensions.cpp">
+    <ClCompile Include="external\CBRenderingTools\Extra\WrapperStructsExtensions.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Chevron.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Chevron.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Circle.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Circle.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Circle2D.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Circle2D.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Cone.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Cone.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Cube.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Cube.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Cylinder.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Cylinder.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Frustum.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Frustum.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Grid.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Grid.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Line.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Line.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Matrix3.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Matrix3.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Plane.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Plane.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Sphere.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Sphere.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\Triangle.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\Triangle.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="external\RenderingTools\Objects\VisualCamera.cpp">
+    <ClCompile Include="external\CBRenderingTools\Objects\VisualCamera.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -240,24 +240,24 @@
     <ClInclude Include="external\IMGUI\imstb_rectpack.h" />
     <ClInclude Include="external\IMGUI\imstb_textedit.h" />
     <ClInclude Include="external\IMGUI\imstb_truetype.h" />
-    <ClInclude Include="external\RenderingTools\Extra\CanvasExtensions.h" />
-    <ClInclude Include="external\RenderingTools\Extra\RenderingAssistant.h" />
-    <ClInclude Include="external\RenderingTools\Extra\RenderingMath.h" />
-    <ClInclude Include="external\RenderingTools\Extra\WrapperStructsExtensions.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Chevron.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Circle.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Circle2D.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Cone.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Cube.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Cylinder.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Frustum.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Grid.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Line.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Matrix3.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Plane.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Sphere.h" />
-    <ClInclude Include="external\RenderingTools\Objects\Triangle.h" />
-    <ClInclude Include="external\RenderingTools\Objects\VisualCamera.h" />
+    <ClInclude Include="external\CBRenderingTools\Extra\CanvasExtensions.h" />
+    <ClInclude Include="external\CBRenderingTools\Extra\RenderingAssistant.h" />
+    <ClInclude Include="external\CBRenderingTools\Extra\RenderingMath.h" />
+    <ClInclude Include="external\CBRenderingTools\Extra\WrapperStructsExtensions.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Chevron.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Circle.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Circle2D.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Cone.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Cube.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Cylinder.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Frustum.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Grid.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Line.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Matrix3.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Plane.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Sphere.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\Triangle.h" />
+    <ClInclude Include="external\CBRenderingTools\Objects\VisualCamera.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="GoalPercentageCounter.h" />
     <ClInclude Include="Settings\PersistentStorage.h" />
