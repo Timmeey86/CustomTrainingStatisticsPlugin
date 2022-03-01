@@ -1,10 +1,18 @@
 #include <pch.h>
 #include "SettingsDefinition.h"
 
-const SettingsDefinition GoalPercentageCounterSettings::EnableFlagDef = {
-	"customtrainingstatistics_enable",
-	"Enable Plugin",
-	"Toggle Goal Percentage Counter Plugin",
+const SettingsDefinition GoalPercentageCounterSettings::StatsShallBeDisplayedDef = {
+	"customtrainingstatistics_enable_stat_display",
+	"Display Statistics Overlay",
+	"Toggle Custom Training Statistics Display",
+	.0f,
+	1.0f,
+	"1.0f"
+};
+const SettingsDefinition GoalPercentageCounterSettings::StatsShallBeRecordedDef = {
+	"customtrainingstatistics_enable_stat_recording",
+	"Record Statistics",
+	"Stop or start recording statistics. Can also be used to temporarily pause recording",
 	.0f,
 	1.0f,
 	"1.0f"

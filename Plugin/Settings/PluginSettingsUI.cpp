@@ -100,7 +100,8 @@ void PluginSettingsUI::RenderSettings()
 
 	if (ImGui::CollapsingHeader("General"))
 	{
-		createCheckbox(GoalPercentageCounterSettings::EnableFlagDef);
+		createCheckbox(GoalPercentageCounterSettings::StatsShallBeDisplayedDef);
+		createCheckbox(GoalPercentageCounterSettings::StatsShallBeRecordedDef);
 
 		ImGui::Separator();
 

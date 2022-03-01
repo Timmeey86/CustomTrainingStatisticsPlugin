@@ -34,6 +34,8 @@ public:
 	 **/
 	void hookToEvents(const std::shared_ptr<GameWrapper>& gameWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
 
+	void processBallSurfaceHit(BallWrapper& ball, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers, TrainingEditorWrapper& trainingWrapper);
+
 	/** Processes (or ignores) an OnTrainingModeLoaded event.
 	 *
 	 * This is public since the same hook needs to be used for more than this class, and registering to every hook is only possible once per plugin.
@@ -53,6 +55,7 @@ private:
 	 * \param	eventReceivers		objects which want to be notified about this event.
 	 **/
 	void processEventRoundChanged(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
+	void processGoalOrMiss(const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers, TrainingEditorWrapper& trainingWrapper);
 	/** Processes (or ignores) a TrainingShotAttempt event. */
 	void processTrainingShotAttempt(TrainingEditorWrapper& trainingWrapper, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
 	/** Processes (or ignores) an OnCarTouch event. */

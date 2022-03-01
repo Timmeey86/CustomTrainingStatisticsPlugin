@@ -34,9 +34,6 @@ public:
 	
 private:
 
-	/** Returns true if events shall currently be sent. */
-	bool statUpdatesShallBeSent();
-
 	std::shared_ptr<IStatReader> _statReader; ///< Allows reading statistics from previous sessions
 	std::shared_ptr<GameWrapper> _gameWrapper; ///< Provides access to anything related to Rocket League
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Provides access to custom variables
