@@ -200,7 +200,7 @@ TEST_F(StatUpdaterTestFixture, restoringStats_when_firstFileHasMoreThanZeroAttem
 		.WillOnce(Return(dummyStats.AllShotStats.Stats.Attempts));
 
 	// We expect a call which tries to read from the first file
-	EXPECT_CALL(*_statReader, readStats(firstFilePath))
+	EXPECT_CALL(*_statReader, readStats(firstFilePath, true))
 		.WillOnce(Return(dummyStats));
 
 	// Act
@@ -242,7 +242,7 @@ TEST_F(StatUpdaterTestFixture, restoringStats_when_secondFileHasMoreThanZeroAtte
 		.WillOnce(Return(dummyStats.AllShotStats.Stats.Attempts));
 
 	// We expect a call which tries to read from the first file
-	EXPECT_CALL(*_statReader, readStats(secondFilePath))
+	EXPECT_CALL(*_statReader, readStats(secondFilePath, true))
 		.WillOnce(Return(dummyStats));
 
 	// Act

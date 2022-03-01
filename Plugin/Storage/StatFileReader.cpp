@@ -154,7 +154,7 @@ bool readValueIntoField(std::ifstream& stream, float* valuePointer)
 }
 
 
-ShotStats StatFileReader::readStats(const std::string& resourcePath)
+ShotStats StatFileReader::readStats(const std::string& resourcePath, bool statsAboutToBeRestored)
 {
 	// Try opening the file
 	std::ifstream fileStream(resourcePath);
@@ -207,7 +207,7 @@ ShotStats StatFileReader::readStats(const std::string& resourcePath)
 		// Read stats
 		if (!readVersion_1_0(fileStream, statsDataPointer)) { return {}; }
 		if (versionIndex > 0 && !readVersion_1_1_additions(fileStream, statsDataPointer)) { return {}; }
-		if (versionIndex > 1 && !readVersion_1_2_additions(fileStream)) { return {}; }
+		if (versionIndex > 1 && !readVersion_1_2_additions(fileStream, statsAboutToBeRestored)) { return {}; }
 		if (versionIndex > 2 && !readVersion_1_3_additions(fileStream, statsDataPointer)) { return {}; }
 	}
 	return stats;
@@ -266,11 +266,15 @@ bool StatFileReader::readVersion_1_1_additions(std::ifstream& fileStream, StatsD
 	return true;
 }
 
-bool StatFileReader::readVersion_1_2_additions(std::ifstream& fileStream)
+bool StatFileReader::readVersion_1_2_additions(std::ifstream& fileStream, bool statsAboutToBeRestored)
 {
 	std::string currentLine;
 	if (!std::getline(fileStream, currentLine)) { return false; } // This line will contain the whole vector
 	if (currentLine.empty()) { return false; }
+
+	// if stats won't be restored in this run (and data area only gathered for comparison instead) we can skip this code.
+	// comparing heatmaps or shot locations isn't really supported (or even possible?)
+	if (!statsAboutToBeRestored) { return true; }
 
 	auto [key, allShotLocations] = getLineValues(currentLine);
 	if (key.empty() || allShotLocations.empty()) { return false; }

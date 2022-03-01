@@ -121,7 +121,7 @@ void StatUpdater::updateData()
 	}
 }
 
-ShotStats getPreviousShotStats(std::shared_ptr<IStatReader> statReader, const std::string& trainingPackCode, const int numberOfSkips = 0)
+ShotStats getPreviousShotStats(std::shared_ptr<IStatReader> statReader, const std::string& trainingPackCode, bool statsAboutToBeRestored, const int numberOfSkips = 0)
 {
 	if (trainingPackCode.empty()) { return {}; }
 
@@ -140,7 +140,7 @@ ShotStats getPreviousShotStats(std::shared_ptr<IStatReader> statReader, const st
 		}
 
 		// At this point, we have skipped enough files (if any) and have found a valid pack
-		return statReader->readStats(resourcePath);
+		return statReader->readStats(resourcePath, statsAboutToBeRestored);
 	}
 
 	// At this point, no valid pack has been found, or too many packs have been skipped
@@ -149,7 +149,7 @@ ShotStats getPreviousShotStats(std::shared_ptr<IStatReader> statReader, const st
 
 void StatUpdater::restoreLastSession()
 {
-	auto stats = getPreviousShotStats(_statReader, _trainingPackCode);
+	auto stats = getPreviousShotStats(_statReader, _trainingPackCode, true);
 	if (!stats.hasAttempts())
 	{
 		return; // We couldn't restore the last session
@@ -182,13 +182,13 @@ void StatUpdater::updateCompareBase(int numberOfSessionsToBeSkipped)
 {
 	// Retrieve the previous shot stats, unless the current session had been restored from that file already,
 	// in which case we try retrieving the stats before that.
-	_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, numberOfSessionsToBeSkipped);
+	_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, numberOfSessionsToBeSkipped);
 
 	if (numberOfSessionsToBeSkipped > 0 && !_compareBase.hasAttempts())
 	{
 		// There seems to be at most one attempt with valid stats, and we skipped it
 		// => Try to fallback to use the session we restored from as a diff (better than nothing)
-		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, 0);
+		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, 0);
 	}
 }
 

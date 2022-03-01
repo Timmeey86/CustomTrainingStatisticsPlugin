@@ -10,7 +10,7 @@ public:
 
 	// Inherited via IStatReader
 	std::vector<std::string> getAvailableResourcePaths(const std::string& trainingPackCode) override;
-	ShotStats readStats(const std::string& resourcePath) override;
+	ShotStats readStats(const std::string& resourcePath, bool statsAboutToBeRestored) override;
 
 	int peekAttemptAmount(const std::string& resourcePath) override;
 
@@ -21,7 +21,7 @@ private:
 	/** Reads attributes which were added in version 1.1. */
 	bool readVersion_1_1_additions(std::ifstream& fileStream, StatsData* const statsDataPointer);
 	/** Reads attributes which were added in verison 1.2 (heat map). */
-	bool readVersion_1_2_additions(std::ifstream& fileStream);
+	bool readVersion_1_2_additions(std::ifstream& fileStream, bool statsAboutToBeRestored);
 	/** Reads attributes which were added in version 1.3 (goal speed). */
 	bool readVersion_1_3_additions(std::ifstream& fileStream, StatsData* const statsDataPointer);
 

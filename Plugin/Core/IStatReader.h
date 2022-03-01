@@ -18,7 +18,7 @@ public:
 	virtual std::vector<std::string> getAvailableResourcePaths(const std::string& trainingPackCode) = 0;
 
 	/** Reads stats from the given resource path. */
-	virtual ShotStats readStats(const std::string& resourcePath) = 0;
+	virtual ShotStats readStats(const std::string& resourcePath, bool statsAboutToBeRestored) = 0;
 
 	/** Peeks into the number of attempts which are stored for the given resource path. */
 	virtual int peekAttemptAmount(const std::string& resourcePath) = 0;
