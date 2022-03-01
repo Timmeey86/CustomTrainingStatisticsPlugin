@@ -65,6 +65,10 @@ public:
 	LinearColor PanelColor = LinearColor{ 41.0f, 41.0f, 41.0f, 204.0f };
 	LinearColor FontColor = LinearColor{ 255.0f, 255.0f, 255.0f, 255.0f };
 
+	std::string TrainingPackCode = {}; ///< The code for the current training pack.
+	std::string TrainingPackCreator = {}; ///< The creator of the current training pack.
+	std::string TrainingPackName = {}; ///< The name of the current training pack.
+
 	// Using setter and getter for ball speed because of conversion
 	static constexpr float UE_UNITS_TO_KPH{ 0.036f };	///< Ball speed is originally in a different unit specific to the game engine
 	float getBallSpeed() const

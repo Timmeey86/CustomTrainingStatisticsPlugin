@@ -134,7 +134,7 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		if (gameServer.IsNull()) { return; }
 		TrainingEditorWrapper trainingWrapper(gameServer.memory_address);
 		if (trainingWrapper.IsNull()) { return; }
-		if (ball.IsNull()) { return; }		
+		if (ball.IsNull()) { return; }
 
 		processBallSurfaceHit(ball, eventReceivers, trainingWrapper);
 
@@ -163,8 +163,8 @@ void CustomTrainingStateMachine::hookToEvents(const std::shared_ptr<GameWrapper>
 		if (serverWrapper.IsNull()) { return; }
 
 		auto trainingWrapper = TrainingEditorWrapper(serverWrapper.memory_address);
-		auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
-		processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, eventReceivers);
+		auto trainingData = trainingWrapper.GetTrainingData().GetTrainingData();
+		processOnTrainingModeLoaded(trainingWrapper, &trainingData, eventReceivers);
 		processEventRoundChanged(trainingWrapper, eventReceivers);
 	}
 
@@ -215,8 +215,8 @@ void CustomTrainingStateMachine::processOnGroundChanged(CarWrapper& car, Trainin
 		}
 		return;
 	}
-	
-	if (auto ball = trainingWrapper.GetBall(); 
+
+	if (auto ball = trainingWrapper.GetBall();
 		!ball.IsNull() && distance(car.GetLocation(), ball.GetLocation()) < 108.0f)
 	{
 		for (auto eventReceiver : eventReceivers)
@@ -257,7 +257,10 @@ void CustomTrainingStateMachine::processOnGroundChanged(CarWrapper& car, Trainin
 	}
 }
 
-void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
+void CustomTrainingStateMachine::processOnTrainingModeLoaded(
+	TrainingEditorWrapper& trainingWrapper, 
+	TrainingEditorSaveDataWrapper* trainingData,
+	const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers)
 {
 	// Jump to the resetting state from whereever we were before - it doesn't matter since we reset everything anyway
 	setCurrentState(CustomTrainingState::Resetting);
@@ -269,13 +272,16 @@ void CustomTrainingStateMachine::processOnTrainingModeLoaded(TrainingEditorWrapp
 	// and hopefully nobody will be counting the amount of training packs loaded per day or anything.
 	for (auto eventReceiver : eventReceivers)
 	{
-		eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingPackCode);
+		eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingData);
 	}
 
-	// Initialize the data storage (most likely a file in the file system)
-	// We do this even if stat recording is turned off since the player could turn it on any time.
-	_statWriter->initializeStorage(trainingPackCode);
-	_statWriter->writeData();
+	if (trainingData != nullptr)
+	{
+		// Initialize the data storage (most likely a file in the file system)
+		// We do this even if stat recording is turned off since the player could turn it on any time.
+		_statWriter->initializeStorage(trainingData->GetCode().ToString());
+		_statWriter->writeData();
+	}
 
 }
 
@@ -326,7 +332,7 @@ void CustomTrainingStateMachine::processGoalOrMiss(const std::vector<std::shared
 		{
 			eventReceiver->onAttemptFinishedWithGoal(trainingWrapper);
 		}
-}
+	}
 	else
 	{
 		// Temporarily enter pseudo state "Processing Miss"

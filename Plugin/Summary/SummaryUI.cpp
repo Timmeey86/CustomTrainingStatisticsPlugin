@@ -4,6 +4,9 @@
 #include "Display/StatDisplay.h"
 
 #include <string>
+#include <sstream>
+#include <locale>
+#include <codecvt>
 
 const std::string SummaryUI::MenuName = "custom_training_statistics_summary";
 
@@ -21,6 +24,10 @@ void SummaryUI::initSummaryUi(
 
 void SummaryUI::renderSummary()
 {
+	if (ImGui::Button("Export Pack Info"))
+	{
+		copyTrainingPackCode();
+	}
 	ImGui::BeginChild(
 		"#CustomTrainingStatisticsSummaryStats",
 		ImVec2(0, 0),
@@ -187,4 +194,34 @@ void SummaryUI::CloseMenu()
 	{
 		ToggleMenu();
 	}
+}
+
+void SummaryUI::copyTrainingPackCode()
+{
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING 1
+	std::ostringstream stream;
+	stream << _pluginState->TrainingPackCode << "," << _pluginState->TrainingPackName << "," << _pluginState->TrainingPackCreator;
+	auto trainingPackInfo = stream.str();
+
+	if (!OpenClipboard(nullptr)) { return; }
+	EmptyClipboard();
+	auto handle = GlobalAlloc(GMEM_MOVEABLE, trainingPackInfo.size() + 1);
+	if (handle == nullptr)
+	{
+		CloseClipboard();
+		return;
+	}
+
+	auto stringBuffer = GlobalLock(handle);
+	if (stringBuffer == nullptr)
+	{
+		CloseClipboard();
+		return;
+	}
+	memcpy(stringBuffer, trainingPackInfo.c_str(), trainingPackInfo.size() + 1);
+
+	GlobalUnlock(handle);
+	SetClipboardData(CF_TEXT, handle);
+	CloseClipboard();
+	GlobalFree(handle);
 }

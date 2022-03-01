@@ -21,10 +21,23 @@ void StatUpdaterEventBridge::onTogglePreviousAttemptTriggered()
 {
 	_statUpdater->toggleLastAttempt();
 }
-void StatUpdaterEventBridge::onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode)
+void StatUpdaterEventBridge::onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, TrainingEditorSaveDataWrapper* trainingData)
 {
 	(void)trainingWrapper;
 
+	std::string trainingPackCode = {};
+	if (trainingData)
+	{
+		trainingPackCode = trainingData->GetCode().ToString();
+		_pluginState->TrainingPackCreator = trainingData->GetCreatorName().ToString();
+		_pluginState->TrainingPackName = trainingData->GetTM_Name().ToString();
+	}
+	else
+	{
+		_pluginState->TrainingPackCreator = {};
+		_pluginState->TrainingPackName = {};
+	}
+	_pluginState->TrainingPackCode = trainingPackCode;
 	_statUpdater->publishTrainingPackCode(trainingPackCode);
 	_statUpdater->processReset(_pluginState->TotalRounds);
 }
