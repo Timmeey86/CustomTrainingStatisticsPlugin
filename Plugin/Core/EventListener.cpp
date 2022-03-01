@@ -105,14 +105,28 @@ void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDispla
 {
 	if (statDisplays.empty()) { return; }
 
+	_recordingIcon = std::make_shared<ImageWrapper>(_gameWrapper->GetDataFolder() / "CustomTrainingStatistics" / "img" / "rec_symbol.png", true, false);
+
 	_gameWrapper->RegisterDrawable([this, statDisplays](CanvasWrapper canvas) {
 		// Draw the overlay when no menu is open, or at most one menu (the "pause" menu) is open
 		// That way we don't clutter the settings, or the match/mode selection screen
-		if (_pluginState->StatsShallBeDisplayed && _gameWrapper->IsInCustomTraining() && _pluginState->MenuStackSize < 2)
+		if (_gameWrapper->IsInCustomTraining() && _pluginState->MenuStackSize < 2)
 		{
-			for (auto statDisplay : statDisplays)
+			if (_pluginState->StatsShallBeDisplayed)
 			{
-				statDisplay->renderOneFrame(canvas);
+				for (auto statDisplay : statDisplays)
+				{
+					statDisplay->renderOneFrame(canvas);
+				}
+			}
+			else if (_pluginState->RecordingIconShallBeDisplayed)
+			{
+				// Display a small icon which tells the user that stats are being recorded in background
+				auto xPosition = (int)((float)_gameWrapper->GetScreenSize().X * 10.0 / 1920.0);
+				auto yPosition = (int)((float)_gameWrapper->GetScreenSize().Y * 150.0 / 1080.0);
+				auto scale = ((float)_gameWrapper->GetScreenSize().X * .5 / 1920.0);
+				canvas.SetPosition(Vector2{ xPosition, yPosition });
+				canvas.DrawTexture(_recordingIcon.get(), scale);
 			}
 		}
 	});

@@ -3,6 +3,7 @@
 #include <memory>
 #include <bakkesmod/wrappers/GameWrapper.h>
 #include <bakkesmod/wrappers/cvarmanagerwrapper.h>
+#include <bakkesmod/wrappers/ImageWrapper.h>
 
 #include "../Data/PluginState.h"
 
@@ -39,7 +40,7 @@ private:
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Provides access to custom variables
 	std::shared_ptr<PluginState> _pluginState; ///< Stores the state of the plugin
 	std::shared_ptr<CustomTrainingStateMachine> _stateMachine; ///< Keeps track of the current state of the custom training (attempt not started, attempt started etc)
-
+	std::shared_ptr<ImageWrapper> _recordingIcon;
 
 	std::vector<std::shared_ptr<AbstractEventReceiver>> _eventReceivers; ///< Stores pointers to objects which might want to process events
 };

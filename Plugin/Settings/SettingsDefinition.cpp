@@ -17,6 +17,14 @@ const SettingsDefinition GoalPercentageCounterSettings::StatsShallBeRecordedDef 
 	1.0f,
 	"1.0f"
 };
+const SettingsDefinition GoalPercentageCounterSettings::RecordingIconShallBeDisplayedDef = {
+	"customtrainingstatistics_enable_recording_icon",
+	"Display recording icon when tracking stats in background",
+	"Displays a \"REC\" icon if \"Display Statistics Overlay\" is turned off, and \"Record Statistics\" is turned on",
+	.0f,
+	1.0f,
+	"1.0f"
+};
 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayStatDifference = {
 	"customtrainingstatistics_display_stat_difference",

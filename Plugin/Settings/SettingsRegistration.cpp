@@ -68,6 +68,7 @@ void SettingsRegistration::registerCVars(
 {
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::StatsShallBeDisplayedDef, SET_BOOL_VALUE_FUNC(StatsShallBeDisplayed));
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::StatsShallBeRecordedDef, SET_BOOL_VALUE_FUNC(StatsShallBeRecorded));
+	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::RecordingIconShallBeDisplayedDef, SET_BOOL_VALUE_FUNC(RecordingIconShallBeDisplayed));
 
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef, SET_BOOL_VALUE_FUNC(AttemptsAndGoalsShallBeDisplayed));
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayInitialBallHitsDef, SET_BOOL_VALUE_FUNC(InitialBallHitsShallBeDisplayed));
