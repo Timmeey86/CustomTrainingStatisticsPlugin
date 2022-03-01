@@ -62,13 +62,13 @@ void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdat
 		if (TrainingEditorWrapper trainingWrapper(caller.memory_address);
 			!trainingWrapper.IsNull())
 		{
-			auto trainingPackCode = trainingWrapper.GetTrainingData().GetTrainingData().GetCode().ToString();
+			auto trainingPackData = trainingWrapper.GetTrainingData().GetTrainingData();
 			for (auto eventReceiver : _eventReceivers)
 			{
-				eventReceiver->onTrainingModeLoaded(trainingWrapper, trainingPackCode);
+				eventReceiver->onTrainingModeLoaded(trainingWrapper, &trainingPackData);
 			}
 
-			_stateMachine->processOnTrainingModeLoaded(trainingWrapper, trainingPackCode, _eventReceivers);
+			_stateMachine->processOnTrainingModeLoaded(trainingWrapper, &trainingPackData, _eventReceivers);
 		}
 
 		// Reset other state variables

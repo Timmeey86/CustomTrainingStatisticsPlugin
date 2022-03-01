@@ -23,7 +23,7 @@ public:
 	void registerNotifiers(std::shared_ptr<CVarManagerWrapper> cvarManager);
 
 	// Resets the tracked shot when a new pack gets loaded
-	void onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode) override;
+	void onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, TrainingEditorSaveDataWrapper* trainingData) override;
 	// Remembers the location of the goal which was hit and triggers a heatmap update
 	void onGoalScored(TrainingEditorWrapper& trainingWrapper, BallWrapper& ball) override;
 	// Remembers the location of the first wall hit (until the ball touches the ground or ceiling or car)

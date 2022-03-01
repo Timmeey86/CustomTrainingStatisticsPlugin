@@ -32,9 +32,9 @@ public:
 	 * Note that this also gets called when the user leaves training, with an empty training pack code in that case.
 	 *
 	 * \param	trainingWrapper		Provides access to information about the current training pack. Goes out of scope after this call.
-	 * \param	trainingPackCode	The code of the new training pack.
+	 * \param	trainingData		Provides information like the training pack code
 	 */
-	virtual void onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode) { (void)trainingWrapper; /* ignore event unless overridden. */ }
+	virtual void onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, TrainingEditorSaveDataWrapper* trainingData) { (void)trainingWrapper; /* ignore event unless overridden. */ }
 
 	/** This gets called whenever the user either changed the shot, or reset the shot (or the game itself loaded the next shot after a goal replay)
 	 *

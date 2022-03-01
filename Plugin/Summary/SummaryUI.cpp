@@ -4,6 +4,9 @@
 #include "Display/StatDisplay.h"
 
 #include <string>
+#include <sstream>
+#include <locale>
+#include <codecvt>
 
 const std::string SummaryUI::MenuName = "custom_training_statistics_summary";
 
@@ -21,6 +24,16 @@ void SummaryUI::initSummaryUi(
 
 void SummaryUI::renderSummary()
 {
+	ImGui::Text(fmt::format("Statistics Summary for '{}' by {} (Code: {})", _pluginState->TrainingPackName, _pluginState->TrainingPackCreator, _pluginState->TrainingPackCode).c_str());
+	if (ImGui::Button("Copy Training Pack Info To Clipboard"))
+	{
+		copyTrainingPackCode();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Copy Visible Stats To Clipboard"))
+	{
+		copyStatisticsSummary();
+	}
 	ImGui::BeginChild(
 		"#CustomTrainingStatisticsSummaryStats",
 		ImVec2(0, 0),
@@ -187,4 +200,83 @@ void SummaryUI::CloseMenu()
 	{
 		ToggleMenu();
 	}
+}
+
+void copyToClipboard(const std::string& str)
+{
+	if (!OpenClipboard(nullptr)) { return; }
+	EmptyClipboard();
+	auto handle = GlobalAlloc(GMEM_MOVEABLE, str.size() + 1);
+	if (handle == nullptr)
+	{
+		CloseClipboard();
+		return;
+	}
+
+	auto stringBuffer = GlobalLock(handle);
+	if (stringBuffer == nullptr)
+	{
+		CloseClipboard();
+		return;
+	}
+	memcpy(stringBuffer, str.c_str(), str.size() + 1);
+
+	GlobalUnlock(handle);
+	SetClipboardData(CF_TEXT, handle);
+	CloseClipboard();
+	GlobalFree(handle);
+}
+
+void SummaryUI::copyTrainingPackCode() const
+{
+	std::ostringstream stream;
+	stream << _pluginState->TrainingPackCode << '\t' << _pluginState->TrainingPackName << '\t' << _pluginState->TrainingPackCreator;
+
+	copyToClipboard(stream.str());
+}
+
+template<typename T>
+std::string toTsvString(const std::list<T>& list, std::function<std::string(const T&)> converter)
+{
+	auto count = list.size();
+	auto index = 0;
+	std::ostringstream stream;
+	for (auto elem : list)
+	{
+		stream << converter(elem);
+		if (index < count - 1)
+		{
+			stream << '\t';
+		}
+		index++;
+	}
+	return stream.str();
+}
+
+std::string getValueString(const SingleStatStrings& data)
+{
+	std::string result = data.Value;
+	//if (!data.Unit.empty())
+	//{
+	//	result += fmt::format(" {}", data.Unit);
+	//}
+	return result;
+}
+void SummaryUI::copyStatisticsSummary() const
+{
+	std::ostringstream stream;
+	auto globalStats = StatDisplay::GetStatsToBeRendered(_shotStats->AllShotStats, _pluginState);
+
+	// Store headers
+	stream << "Shot Number\t" << toTsvString<SingleStatStrings>(globalStats, [](const SingleStatStrings& elem) { return elem.Label; }) << std::endl;
+	// Store single shot values
+	for (auto shotNumber = 0; shotNumber < _shotStats->PerShotStats.size(); shotNumber++)
+	{
+		auto shotStats = StatDisplay::GetStatsToBeRendered(_shotStats->PerShotStats[shotNumber], _pluginState);
+		stream << std::to_string(shotNumber) << '\t' << toTsvString<SingleStatStrings>(shotStats, getValueString) << std::endl;
+	}
+	// Store global values
+	stream << "All Shots\t" << toTsvString<SingleStatStrings>(globalStats, getValueString) << std::endl;
+
+	copyToClipboard(stream.str());
 }

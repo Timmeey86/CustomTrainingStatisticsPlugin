@@ -17,7 +17,7 @@ public:
 	void onResetStatisticsTriggered() override;
 	void onRestorePreviousSessionTriggered() override;
 	void onTogglePreviousAttemptTriggered() override;
-	void onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode) override;
+	void onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, TrainingEditorSaveDataWrapper* trainingData) override;
 	void onRoundChanged(TrainingEditorWrapper& trainingWrapper) override;
 	void onAttemptStarted() override;
 	void onAttemptFinishedWithGoal(TrainingEditorWrapper& trainingWrapper) override;

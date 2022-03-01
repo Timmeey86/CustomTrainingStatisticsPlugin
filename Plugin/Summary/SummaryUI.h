@@ -48,10 +48,13 @@ public:
 
 	void CloseMenu();
 
+
 	static const std::string MenuName;
 
 private:
 	void renderSummary();
+	void copyTrainingPackCode() const;
+	void copyStatisticsSummary() const;
 
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows registering and retrieving custom variables.
 	std::shared_ptr<const ShotStats> _shotStats;

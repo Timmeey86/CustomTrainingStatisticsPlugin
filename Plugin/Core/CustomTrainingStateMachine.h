@@ -43,10 +43,13 @@ public:
 	 * We could work around this by making the state machine an abstract event receiver, or by moving such processing out of this class. There are currently no plans to do so, though.
 	 * 
 	 * \param	trainingWrapper		provides access to the amount of total rounds etc. Not const since getters are not const in the SDK.
-	 * \param	trainingPackCode	the code of the current training pack.
+	 * \param	trainingData		provides information like the code of the current training pack.
 	 * \param	eventReceivers		objects which want to be notified about this event.
 	 **/
-	void processOnTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode, const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
+	void processOnTrainingModeLoaded(
+		TrainingEditorWrapper& trainingWrapper, 
+		TrainingEditorSaveDataWrapper* trainingData, 
+		const std::vector<std::shared_ptr<AbstractEventReceiver>>& eventReceivers);
 
 private:
 	/** Processes (or ignores) an EventRoundChanged event.

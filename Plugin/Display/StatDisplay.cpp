@@ -99,6 +99,11 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 {
 	std::list<SingleStatStrings> statNamesAndValues;
 
+	// Apply the number format used by the OS (some regions, especially in europe write 3,47 instead of 3.47)
+	auto oldLocale = setlocale(LC_ALL, nullptr);
+	std::locale::global(std::locale(""));
+	setlocale(LC_ALL, ""); // uses the OS locale
+
 	if (pluginState->AttemptsAndGoalsShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Attempts:", std::to_string(statsData.Stats.Attempts), "" });
@@ -283,6 +288,8 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 		statNamesAndValues.emplace_back(SingleStatStrings{ "What did you expect?", "  ;-)", "" });
 	}
 
+	// Revert to the defaul locale
+	setlocale(LC_ALL, oldLocale);
 	return statNamesAndValues;
 }
 

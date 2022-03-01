@@ -27,7 +27,7 @@ void ShotDistributionTracker::registerNotifiers(std::shared_ptr<CVarManagerWrapp
 		_shotLocationsAreVisible = !_shotLocationsAreVisible;
 	}, "Toggle display of a impact locations of goals / backboard bounces", PERMISSION_ALL);
 }
-void ShotDistributionTracker::onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, const std::string& trainingPackCode)
+void ShotDistributionTracker::onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, TrainingEditorSaveDataWrapper* trainingData)
 {
 	_furtherWallHitsShallBeIgnored = false;
 
