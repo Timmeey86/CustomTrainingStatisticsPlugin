@@ -125,14 +125,31 @@ void ShotDistributionTracker::renderOneFrame(CanvasWrapper& canvas)
 	}
 }
 
+void drawRect(float left, float bottom, float width, float height, float y, const CameraWrapper& camera, CanvasWrapper& canvas)
+{
+	auto bottomLeft = Vector{ left, y, bottom };
+	auto topRight = Vector{ left + width, y, bottom + height };
+
+	// Skip drawing if either of the points is not in the currently visible area
+	auto currentCameraFrustum = RT::Frustum(canvas, camera);
+	if (!currentCameraFrustum.IsInFrustum(bottomLeft) || !currentCameraFrustum.IsInFrustum(topRight))
+	{
+		return;
+	}
+	auto bottomLeftProj = canvas.Project(bottomLeft);
+	auto topRightProj = canvas.Project(topRight);
+
+	// Unfortunately we can't use triangles since these will ignore the alpha channel
+	canvas.DrawRect(bottomLeftProj, topRightProj);
+}
+
 void ShotDistributionTracker::renderShotLocations(CanvasWrapper& canvas)
 {
 	canvas.SetColor(LinearColor{ 255.0f, 0.0f, 255.0f, 200.0f });
 
 	for (auto closeMissLocation : _shotLocations)
 	{
-		auto screenLocation = canvas.Project(closeMissLocation);
-		canvas.DrawRect(Vector2{ screenLocation.X - 5, screenLocation.Y - 5, }, Vector2{ screenLocation.X + 5, screenLocation.Y + 5 });
+		drawRect(closeMissLocation.X - 15.0f, closeMissLocation.Z - 15.0f, 30.0f, 30.0f, YDrawLocation - 5.0f, _gameWrapper->GetCamera(), canvas);
 	}
 }
 
@@ -157,26 +174,9 @@ void ShotDistributionTracker::renderHeatMap(CanvasWrapper& canvas)
 void ShotDistributionTracker::drawRectangle(int x, int z, CanvasWrapper& canvas)
 {
 	auto leftBorder = (float)(x * XBracketWidth - 4000);
-	auto rightBorder = leftBorder + XBracketWidth;
 	auto bottomBorder = (float)z * ZBracketHeight;
-	auto topBorder = bottomBorder + ZBracketHeight;
 
-
-	auto bottomLeft = Vector{ leftBorder, YDrawLocation, bottomBorder };
-	auto topRight = Vector{ rightBorder, YDrawLocation, topBorder };
-
-	// Skip drawing if either of the points is not in the currently visible area
-	auto currentCameraFrustum = RT::Frustum(canvas, _gameWrapper->GetCamera());
-	if (!currentCameraFrustum.IsInFrustum(bottomLeft) || !currentCameraFrustum.IsInFrustum(topRight))
-	{
-		return;
-	}
-
-	auto bottomLeftProj = canvas.Project(bottomLeft);
-	auto topRightProj = canvas.Project(topRight);
-
-	// Unfortunately we can't use triangles since these will ignore the alpha channel
-	canvas.DrawRect(bottomLeftProj, topRightProj);
+	drawRect(leftBorder, bottomBorder, XBracketWidth, ZBracketHeight, YDrawLocation, _gameWrapper->GetCamera(), canvas);
 }
 
 LinearColor ShotDistributionTracker::getHeatmapColor(float numberOfHitsInBracket)
