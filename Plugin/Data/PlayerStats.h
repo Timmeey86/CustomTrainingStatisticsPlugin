@@ -13,6 +13,7 @@ public:
 	float MaxValue;
 	float MedianValue;
 	float MeanValue;
+	float StdDevValue;
 };
 
 /**
@@ -51,6 +52,7 @@ public:
 		diff.MaxValue = GoalSpeedStats.getMax() - other.GoalSpeedStats.getMax();
 		diff.MedianValue = GoalSpeedStats.getMedian() - other.GoalSpeedStats.getMedian();
 		diff.MeanValue = GoalSpeedStats.getMean() - other.GoalSpeedStats.getMean();
+		diff.StdDevValue = GoalSpeedStats.getStdDev() - other.GoalSpeedStats.getStdDev();
 		return diff;
 	}
 
