@@ -38,6 +38,7 @@ public:
 	static const SettingsDefinition DisplayMinGoalSpeedDef;			///< Definitions for the flag which toggles display of the minimum goal speed
 	static const SettingsDefinition DisplayMedianGoalSpeedDef;		///< Definitions for the flag which toggles display of the median goal speed
 	static const SettingsDefinition DisplayMeanGoalSpeedDef;		///< Definitions for the flag which toggles display of the mean goal speed
+	static const SettingsDefinition DisplayStdDevGoalSpeedDef;		///< Definitions for the flag which toggles display of the standard deviation goal speed
 	static const SettingsDefinition DisplayAirDribbleTouchesDef;	///< Definitions for the flag which toggles display of air dribble touches
 	static const SettingsDefinition DisplayAirDribbleTimeDef;		///< Definitions for the flag which toggles display of air dribble time
 	static const SettingsDefinition DisplayGroundDribbleDef;		///< Definitions for the flag which toggles display of ground dribble time

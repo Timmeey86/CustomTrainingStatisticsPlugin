@@ -150,6 +150,14 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef 
 	1.0f,
 	"0.0f"
 };
+const SettingsDefinition GoalPercentageCounterSettings::DisplayStdDevGoalSpeedDef = {
+	"customtrainingstatistics_display_std_dev_goal_speed",
+	"Standard Deviation Goal Speed",
+	"Toggle display of the standard deviation goal speed in the stat display",
+	.0f,
+	1.0f,
+	"0.0f"
+};
 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayAirDribbleTouchesDef = {
 	"customtrainingstatistics_display_air_dribble_touches",

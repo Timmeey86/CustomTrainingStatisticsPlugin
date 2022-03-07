@@ -134,10 +134,11 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::DisplayPeakInfoDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayLastNShotPercentageDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef);
-		createCheckbox(GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayMinGoalSpeedDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef);
 		createCheckbox(GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef);
+		createCheckbox(GoalPercentageCounterSettings::DisplayStdDevGoalSpeedDef);
 
 	}
 	if (ImGui::CollapsingHeader("Appearance"))
