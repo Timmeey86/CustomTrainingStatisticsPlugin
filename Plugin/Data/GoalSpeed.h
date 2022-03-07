@@ -27,6 +27,8 @@ public:
 	float getMedian(bool isMetric = true) const;
 	/** Returns the mean goal speed in KPH if isMetric is true and MPH otherwise */
 	float getMean(bool isMetric = true) const;
+	/** Returns the mean goal speed in KPH if isMetric is true and MPH otherwise */
+	float getStdDev(bool isMetric = true) const;
 	/** Returns the total number of goals */
 	size_t getCount(bool isMetric = true) const;
 	/** Returns the recorded shot values as supplied to insert(). */

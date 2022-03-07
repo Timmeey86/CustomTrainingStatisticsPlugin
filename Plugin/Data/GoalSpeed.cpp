@@ -71,6 +71,11 @@ float GoalSpeed::getMean(bool isMetric) const
 	return convertSpeed(_meanSpeed.getMean(), isMetric);
 }
 
+float GoalSpeed::getStdDev(bool isMetric) const
+{
+	return convertSpeed(_meanSpeed.getStdDev(), isMetric);
+}
+
 size_t GoalSpeed::getCount(bool isMetric) const
 {
 	return convertSpeed(_meanSpeed.getCount(), isMetric);

@@ -221,14 +221,6 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Latest Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMostRecent(pluginState->IsMetric)), speed_units });
 	}
-	if (pluginState->MaxGoalSpeedShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMax(pluginState->IsMetric)), speed_units });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MaxValue);
-		}
-	}
 	if (pluginState->MinGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMin(pluginState->IsMetric)), speed_units });
@@ -245,12 +237,29 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MedianValue);
 		}
 	}
+	if (pluginState->MaxGoalSpeedShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMax(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MaxValue);
+		}
+	}
+	
 	if (pluginState->MeanGoalSpeedShallBeDisplayed)
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getMean(pluginState->IsMetric)), speed_units });
 		if (diffData)
 		{
 			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MeanValue);
+		}
+	}
+	if (pluginState->StdDevGoalSpeedShallBeDisplayed)
+	{
+		statNamesAndValues.emplace_back(SingleStatStrings{ "Std Dev Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats.getStdDev(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.StdDevValue);
 		}
 	}
 	if (pluginState->FlipResetsPerAttemptShallBeDisplayed)
