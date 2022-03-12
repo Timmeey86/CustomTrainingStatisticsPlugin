@@ -119,7 +119,7 @@ void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDispla
 					statDisplay->renderOneFrame(canvas);
 				}
 			}
-			else if (_pluginState->RecordingIconShallBeDisplayed)
+			else if (_pluginState->StatsShallBeRecorded && _pluginState->RecordingIconShallBeDisplayed)
 			{
 				// Display a small icon which tells the user that stats are being recorded in background
 				auto xPosition = (int)((float)_gameWrapper->GetScreenSize().X * 10.0 / 1920.0);
