@@ -71,7 +71,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayInitialBallHitsDe
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef = {
-	"customtrainingstatistics_display_total_success_rate",
+	"customtrainingstatistics_display_current_streaks",
 	"Current Miss/Goal Streaks",
 	"Toggle display of current miss and goal streaks in the stat display",
 	.0f,
@@ -79,7 +79,7 @@ const SettingsDefinition GoalPercentageCounterSettings::DisplayCurrentStreaksDef
 	"1.0f"
 };
 const SettingsDefinition GoalPercentageCounterSettings::DisplayTotalSuccessRateDef = {
-	"customtrainingstatistics_display_current_streaks",
+	"customtrainingstatistics_display_total_success_rate",
 	"Total Success Rate",
 	"Toggle display of total success rate in the stat display",
 	.0f,
