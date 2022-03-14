@@ -209,6 +209,9 @@
     <ClCompile Include="external\CBRenderingTools\Extra\WrapperStructsExtensions.cpp">
       <Filter>External\RenderingTools</Filter>
     </ClCompile>
+    <ClCompile Include="Calculation\AllTimePeakHandler.cpp">
+      <Filter>Calculation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Settings\PluginSettingsUI.h">
@@ -450,6 +453,9 @@
     </ClInclude>
     <ClInclude Include="external\CBRenderingTools\Extra\WrapperStructsExtensions.h">
       <Filter>External\RenderingTools</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation\AllTimePeakHandler.h">
+      <Filter>Calculation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

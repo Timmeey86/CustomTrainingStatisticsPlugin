@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../DLLImportExport.h"
+#include "../Data/ShotStats.h"
 
 #include <string>
 
@@ -24,4 +25,7 @@ public:
 	 * Implementers should ask for the shared stats pointer in the constructor.
 	 */
 	virtual void writeData() = 0;
+
+	/** Writes the given shot stats for the training pack as a whole. This could e.g. be all time peak stats. They are identified by the training pack code. */
+	virtual void writeTrainingPackStatistics(const ShotStats& shotStats, const std::string& trainingPackCode) = 0;
 };

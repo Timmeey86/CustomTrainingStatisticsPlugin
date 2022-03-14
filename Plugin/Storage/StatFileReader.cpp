@@ -29,9 +29,7 @@ int indexInVector(const std::vector<T>& vector, T searchValue)
 std::vector<std::string> StatFileReader::getAvailableResourcePaths(const std::string& trainingPackCode)
 {
 	// Read the folder for the current training pack
-	std::ostringstream stringStream;
-	stringStream << _gameWrapper->GetBakkesModPath().u8string() << u8"\\data\\CustomTrainingStatistics\\" << trainingPackCode;
-	auto folderPath = std::filesystem::u8path(stringStream.str());
+	auto folderPath = std::filesystem::u8path(StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode));
 
 	std::vector<std::string> filePaths;
 	if (std::filesystem::exists(folderPath))
@@ -211,6 +209,17 @@ ShotStats StatFileReader::readStats(const std::string& resourcePath, bool statsA
 		if (versionIndex > 2 && !readVersion_1_3_additions(fileStream, statsDataPointer)) { return {}; }
 	}
 	return stats;
+}
+
+ShotStats StatFileReader::readTrainingPackStatistics(const ShotStats& shotStats, const std::string& trainingPackCode)
+{
+	auto trainingPackFilePath = fmt::format("{}\\{}.xml", StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode), trainingPackCode);
+	if (!std::filesystem::exists(trainingPackFilePath))
+	{
+		return ShotStats();
+	}
+	// Read the stats as usual from the training pack file, but skip stuff like heatmap and shot locations
+	return readStats(trainingPackFilePath, false);
 }
 
 bool StatFileReader::readVersion_1_0(std::ifstream& fileStream, StatsData* const statsDataPointer)

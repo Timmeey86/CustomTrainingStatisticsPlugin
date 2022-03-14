@@ -36,22 +36,18 @@ std::string currentDate()
 void StatFileWriter::initializeStorage(const std::string& trainingPackCode)
 {
 	// Create a folder for each training pack
-	std::ostringstream stringStream;
-	stringStream << _gameWrapper->GetBakkesModPath().u8string() << u8"\\data\\CustomTrainingStatistics\\" << trainingPackCode;
-
-	auto folderPath = std::filesystem::u8path(stringStream.str());
-	if (!std::filesystem::exists(folderPath))
+	auto trainingFolder = StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode);
+	auto folderPath = std::filesystem::u8path(trainingFolder);
+	if (!std::filesystem::exists(folderPath) && !std::filesystem::create_directories(folderPath))
 	{
-		if (!std::filesystem::create_directories(folderPath))
-		{
-			// We can't write data => this feature simply won't be supported
-			_currentStats = nullptr;
-			return;
-		}
+		// We can't write data => this feature simply won't be supported
+		_currentStats = nullptr;
+		return;
 	}
-	
+
 	// Create a file for each time initializeStorage() is called
-	stringStream << "\\" << currentDate() << ".txt";
+	std::ostringstream stringStream;
+	stringStream << trainingFolder << "\\" << currentDate() << ".txt";
 	_outputFilePath = std::filesystem::u8path(stringStream.str());
 
 	std::ofstream outputFileStream;
@@ -158,9 +154,16 @@ void StatFileWriter::writeData()
 		return;
 	}
 
+	writeToFile(_outputFilePath, _currentStats.get());
+}
+
+void StatFileWriter::writeToFile(const std::filesystem::path& filePath, const ShotStats* const stats)
+{
+	if (!stats) { return; }
+
 	// Open the file with write access and replace anything that might have been in it
 	std::ofstream outputFileStream;
-	outputFileStream.open(_outputFilePath, std::ios::out | std::ios::trunc);
+	outputFileStream.open(filePath, std::ios::out | std::ios::trunc);
 	if (outputFileStream.fail())
 	{
 		_currentStats = nullptr;
@@ -168,12 +171,18 @@ void StatFileWriter::writeData()
 	}
 
 	writeLine(outputFileStream, StatFileDefs::Version, StatFileDefs::CurrentVersionNumber);
-	writeLine(outputFileStream, StatFileDefs::NumberOfShots, std::to_string(_currentStats->PerShotStats.size()));
+	writeLine(outputFileStream, StatFileDefs::NumberOfShots, std::to_string(stats->PerShotStats.size()));
 
-	writeStatsData(outputFileStream, _currentStats->AllShotStats, true);
+	writeStatsData(outputFileStream, stats->AllShotStats, true);
 
-	for (const auto& shotStats : _currentStats->PerShotStats)
+	for (const auto& shotStats : stats->PerShotStats)
 	{
 		writeStatsData(outputFileStream, shotStats, false);
 	}
+}
+
+void StatFileWriter::writeTrainingPackStatistics(const ShotStats& shotStats, const std::string& trainingPackCode)
+{
+	auto filePath = fmt::format("{}\\{}.xml", StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode), trainingPackCode);
+	writeToFile(filePath, &shotStats);
 }

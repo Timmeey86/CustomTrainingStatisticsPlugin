@@ -93,6 +93,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Calculation\AllTimePeakHandler.cpp" />
     <ClCompile Include="Calculation\AirDribbleAmountCounter.cpp" />
     <ClCompile Include="Calculation\CloseMissCounter.cpp" />
     <ClCompile Include="Calculation\DoubleTapGoalCounter.cpp" />
@@ -190,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calculation\AirDribbleAmountCounter.h" />
+    <ClInclude Include="Calculation\AllTimePeakHandler.h" />
     <ClInclude Include="Calculation\CloseMissCounter.h" />
     <ClInclude Include="Calculation\DoubleTapGoalCounter.h" />
     <ClInclude Include="Calculation\GroundDribbleTimeCounter.h" />

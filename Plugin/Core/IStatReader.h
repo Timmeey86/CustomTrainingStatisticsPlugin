@@ -22,4 +22,10 @@ public:
 
 	/** Peeks into the number of attempts which are stored for the given resource path. */
 	virtual int peekAttemptAmount(const std::string& resourcePath) = 0;
+
+	/** Reads the given shot stats for the training pack as a whole. This could e.g. be all time peak stats. They are identified by the training pack code. 
+	 *
+	 * The returned object will have zero attempts if there are no peak stats for this training pack yet.
+	 */
+	virtual ShotStats readTrainingPackStatistics(const ShotStats& shotStats, const std::string& trainingPackCode) = 0;
 };
