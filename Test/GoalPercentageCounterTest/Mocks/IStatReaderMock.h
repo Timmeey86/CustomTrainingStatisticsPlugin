@@ -9,5 +9,5 @@ public:
 	MOCK_METHOD(std::vector<std::string>, getAvailableResourcePaths, (const std::string&), (override));
 	MOCK_METHOD(ShotStats, readStats, (const std::string&, bool), (override));
 	MOCK_METHOD(int, peekAttemptAmount, (const std::string&), (override));
-	MOCK_METHOD(ShotStats, readTrainingPackStatistics, (const ShotStats& shotStats, const std::string& trainingPackCode), (override));
+	MOCK_METHOD(ShotStats, readTrainingPackStatistics, (const std::string& trainingPackCode), (override));
 };

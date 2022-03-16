@@ -9,11 +9,11 @@ EventListener::EventListener(std::shared_ptr<GameWrapper> gameWrapper, std::shar
 {
 }
 
-void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter)
+void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdater, std::shared_ptr<IStatWriter> statWriter, std::shared_ptr<AllTimePeakHandler> peakHandler)
 {
 	if (!statUpdater) { return; }
 
-	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statWriter, _pluginState);
+	_stateMachine = std::make_shared<CustomTrainingStateMachine>(_cvarManager, statWriter, peakHandler, _pluginState);
 	_stateMachine->hookToEvents(_gameWrapper, _eventReceivers);
 
 	// Allow resetting statistics to zero attempts/goals manually
@@ -122,9 +122,9 @@ void EventListener::registerRenderEvents(std::vector<std::shared_ptr<IStatDispla
 			else if (_pluginState->StatsShallBeRecorded && _pluginState->RecordingIconShallBeDisplayed)
 			{
 				// Display a small icon which tells the user that stats are being recorded in background
-				auto xPosition = (int)((float)_gameWrapper->GetScreenSize().X * 10.0 / 1920.0);
-				auto yPosition = (int)((float)_gameWrapper->GetScreenSize().Y * 150.0 / 1080.0);
-				auto scale = ((float)_gameWrapper->GetScreenSize().X * .5 / 1920.0);
+				auto xPosition = (int)((float)_gameWrapper->GetScreenSize().X * 10.0f / 1920.0f);
+				auto yPosition = (int)((float)_gameWrapper->GetScreenSize().Y * 150.0f / 1080.0f);
+				auto scale = ((float)_gameWrapper->GetScreenSize().X * .5f / 1920.0f);
 				canvas.SetPosition(Vector2{ xPosition, yPosition });
 				canvas.DrawTexture(_recordingIcon.get(), scale);
 			}

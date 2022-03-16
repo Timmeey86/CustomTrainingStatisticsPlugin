@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+#include "IGoalSpeedProvider.h"
 #include "GoalSpeed.h"
 
 /**
@@ -24,35 +26,44 @@ class PlayerStats
 public:
 	PlayerStats() = default;
 
-	int Attempts = 0;					///< Stores the number of attempts made
-	int Goals = 0;						///< Stores the number of goals shot
-	std::vector<bool> Last50Shots;		///< Stores the last 50 shots, where false means a miss and true means a goal
-	int GoalStreakCounter = 0;			///< Stores the amount of goals since the last miss
-	int MissStreakCounter = 0;			///< Stores the amount of misses since the last goal
-	int LongestGoalStreak = 0;			///< Stores the largest amount of consecutively scored goals
-	int LongestMissStreak = 0;			///< Stores the largest amount of consecutively scored misses
-	int InitialHits = 0;				///< Stores the number of times the ball was hit at least once during an attempt.
-	GoalSpeed GoalSpeedStats;			///< Stores statistics about the goal speed
-	int MaxAirDribbleTouches = 0;		///< Stores the maximum amount of air dribble touches made during any attempt.
-	float MaxAirDribbleTime = .0;		///< Stores the maximum air dribble time achieved during any attempt.
-	float MaxGroundDribbleTime = .0;	///< Stores the maximum ground dribble time achieved during any attempt.
-	int DoubleTapGoals = 0;				///< Stores the number of double tap goals scored.
-	int TotalFlipResets = 0;			///< Stores the total number of flip resets made.
-	int MaxFlipResets = 0;				///< Stores the maximum number of flip resets made during any attempt.
-	int FlipResetAttemptsScored = 0;	///< Stores the number of attempts which included at least one flip reset and resulted in a goal
-	int CloseMisses = 0;				///< Stores the number of attempts which almost resulted in a goal.
+	int Attempts = 0;						///< Stores the number of attempts made
+	int Goals = 0;							///< Stores the number of goals shot
+	std::vector<bool> Last50Shots;			///< Stores the last 50 shots, where false means a miss and true means a goal
+	int GoalStreakCounter = 0;				///< Stores the amount of goals since the last miss
+	int MissStreakCounter = 0;				///< Stores the amount of misses since the last goal
+	int LongestGoalStreak = 0;				///< Stores the largest amount of consecutively scored goals
+	int LongestMissStreak = 0;				///< Stores the largest amount of consecutively scored misses
+	int InitialHits = 0;					///< Stores the number of times the ball was hit at least once during an attempt.
+	int MaxAirDribbleTouches = 0;			///< Stores the maximum amount of air dribble touches made during any attempt.
+	float MaxAirDribbleTime = .0;			///< Stores the maximum air dribble time achieved during any attempt.
+	float MaxGroundDribbleTime = .0;		///< Stores the maximum ground dribble time achieved during any attempt.
+	int DoubleTapGoals = 0;					///< Stores the number of double tap goals scored.
+	int TotalFlipResets = 0;				///< Stores the total number of flip resets made.
+	int MaxFlipResets = 0;					///< Stores the maximum number of flip resets made during any attempt.
+	int FlipResetAttemptsScored = 0;		///< Stores the number of attempts which included at least one flip reset and resulted in a goal
+	int CloseMisses = 0;					///< Stores the number of attempts which almost resulted in a goal.
 
-	GoalSpeedDiff GoalSpeedDifference;	///< This is not the best place for these kind of statistics, but it avoids heavy refactoring
+	inline void setGoalSpeedProvider(std::shared_ptr<IGoalSpeedProvider> provider) { _goalSpeedProvider = provider; } ///< Allows replacing the internal goal speed provider.
+
+	inline std::shared_ptr<IGoalSpeedProvider> GoalSpeedStats() const { return _goalSpeedProvider; } ///< Provides statistics about the goal speed
+	GoalSpeedDiff GoalSpeedDifference;		///< This is not the best place for these kind of statistics, but it avoids heavy refactoring
+
+	// These are required for restoring goal speed values of the "all time peak stats". 
+	// This could be made less ugly by moving the GoalSpeedProvider completely out of this class, and have some other class update PlayerStats whenever goal speed values change.
+	float MinGoalSpeedFromFile = .0f;
+	float MaxGoalSpeedFromFile = .0f;
+	float MedianGoalSpeedFromFile = .0f;
+	float MeanGoalSpeedFromFile = .0f;
 
 	/** Compares the goal speed values of this object to other and returns the result as a GoalSpeedDiff instance. */
 	GoalSpeedDiff getGoalSpeedDifferences(const PlayerStats& other) const
 	{
 		GoalSpeedDiff diff;
-		diff.MinValue = GoalSpeedStats.getMin() - other.GoalSpeedStats.getMin();
-		diff.MaxValue = GoalSpeedStats.getMax() - other.GoalSpeedStats.getMax();
-		diff.MedianValue = GoalSpeedStats.getMedian() - other.GoalSpeedStats.getMedian();
-		diff.MeanValue = GoalSpeedStats.getMean() - other.GoalSpeedStats.getMean();
-		diff.StdDevValue = GoalSpeedStats.getStdDev() - other.GoalSpeedStats.getStdDev();
+		diff.MinValue = _goalSpeedProvider->getMin() - other._goalSpeedProvider->getMin();
+		diff.MaxValue = _goalSpeedProvider->getMax() - other._goalSpeedProvider->getMax();
+		diff.MedianValue = _goalSpeedProvider->getMedian() - other._goalSpeedProvider->getMedian();
+		diff.MeanValue = _goalSpeedProvider->getMean() - other._goalSpeedProvider->getMean();
+		diff.StdDevValue = _goalSpeedProvider->getStdDev() - other._goalSpeedProvider->getStdDev();
 		return diff;
 	}
 
@@ -80,4 +91,7 @@ public:
 		// we don't compare close misses since a lower number could be better (more goals scored) or worse (missed the goal completely more often)
 		return diff;
 	}
+
+private:
+	std::shared_ptr<IGoalSpeedProvider> _goalSpeedProvider = std::make_shared<GoalSpeed>();
 };

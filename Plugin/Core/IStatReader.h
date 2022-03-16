@@ -27,5 +27,5 @@ public:
 	 *
 	 * The returned object will have zero attempts if there are no peak stats for this training pack yet.
 	 */
-	virtual ShotStats readTrainingPackStatistics(const ShotStats& shotStats, const std::string& trainingPackCode) = 0;
+	virtual ShotStats readTrainingPackStatistics(const std::string& trainingPackCode) = 0;
 };

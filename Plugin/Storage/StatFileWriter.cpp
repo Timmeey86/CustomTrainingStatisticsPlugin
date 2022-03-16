@@ -101,7 +101,7 @@ std::string shot_location_vector_to_string(const std::vector<Vector>& values)
 	return stream.str();
 }
 
-void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& statsData, bool isSummaryData)
+void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& statsData, bool isSummaryData, bool skipUncomparableStats)
 {
 	stream << StatFileDefs::ShotSeparator << std::endl;
 
@@ -114,11 +114,11 @@ void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& stat
 	writeLine(stream, StatFileDefs::LongestGoalStreak, std::to_string(statsData.Stats.LongestGoalStreak));
 	writeLine(stream, StatFileDefs::LongestMissStreak, std::to_string(statsData.Stats.LongestMissStreak));
 	writeLine(stream, StatFileDefs::LastNShotsPercentage, bool_vector_to_string(statsData.Stats.Last50Shots));
-	writeLine(stream, StatFileDefs::LatestGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMostRecent()));
-	writeLine(stream, StatFileDefs::MaxGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMax()));
-	writeLine(stream, StatFileDefs::MinGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMin()));
-	writeLine(stream, StatFileDefs::MedianGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMedian()));
-	writeLine(stream, StatFileDefs::MeanGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats.getMean()));
+	writeLine(stream, StatFileDefs::LatestGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats()->getMostRecent()));
+	writeLine(stream, StatFileDefs::MaxGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats()->getMax()));
+	writeLine(stream, StatFileDefs::MinGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats()->getMin()));
+	writeLine(stream, StatFileDefs::MedianGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats()->getMedian()));
+	writeLine(stream, StatFileDefs::MeanGoalSpeed, std::to_string(statsData.Stats.GoalSpeedStats()->getMean()));
 
 	// Calculated stats
 	writeLine(stream, StatFileDefs::InitialHitPercentage, std::to_string(statsData.Data.InitialHitPercentage));
@@ -139,12 +139,12 @@ void StatFileWriter::writeStatsData(std::ofstream& stream, const StatsData& stat
 	writeLine(stream, StatFileDefs::CloseMisses, std::to_string(statsData.Stats.CloseMisses));
 	writeLine(stream, StatFileDefs::CloseMissPercentage, std::to_string(statsData.Data.CloseMissPercentage));
 
-	// v1.2 stats - Shot locations are only available once for the training pack rather than for every shot
-	auto shotLocations = isSummaryData ? _shotDistributionTracker->getImpactLocations() : std::vector<Vector>();
+	// v1.2 stats - Shot locations are only available once for the session rather than for every shot. They are also not tracked for the all time peak stats.
+	auto shotLocations = isSummaryData && !skipUncomparableStats ? _shotDistributionTracker->getImpactLocations() : std::vector<Vector>();
 	writeLine(stream, StatFileDefs::ImpactLocations, shot_location_vector_to_string(shotLocations));
 
 	// v1.3 stats
-	writeLine(stream, StatFileDefs::GoalSpeedValues, float_vector_to_string(statsData.Stats.GoalSpeedStats.getAllShotValues()));
+	writeLine(stream, StatFileDefs::GoalSpeedValues, float_vector_to_string(statsData.Stats.GoalSpeedStats()->getAllShotValues()));
 }
 
 void StatFileWriter::writeData()
@@ -154,10 +154,10 @@ void StatFileWriter::writeData()
 		return;
 	}
 
-	writeToFile(_outputFilePath, _currentStats.get());
+	writeToFile(_outputFilePath, _currentStats.get(), false /* do not skip uncomparable stats. */);
 }
 
-void StatFileWriter::writeToFile(const std::filesystem::path& filePath, const ShotStats* const stats)
+void StatFileWriter::writeToFile(const std::filesystem::path& filePath, const ShotStats* const stats, bool skipUncomparableStats)
 {
 	if (!stats) { return; }
 
@@ -173,16 +173,16 @@ void StatFileWriter::writeToFile(const std::filesystem::path& filePath, const Sh
 	writeLine(outputFileStream, StatFileDefs::Version, StatFileDefs::CurrentVersionNumber);
 	writeLine(outputFileStream, StatFileDefs::NumberOfShots, std::to_string(stats->PerShotStats.size()));
 
-	writeStatsData(outputFileStream, stats->AllShotStats, true);
+	writeStatsData(outputFileStream, stats->AllShotStats, true, skipUncomparableStats);
 
 	for (const auto& shotStats : stats->PerShotStats)
 	{
-		writeStatsData(outputFileStream, shotStats, false);
+		writeStatsData(outputFileStream, shotStats, false, skipUncomparableStats);
 	}
 }
 
 void StatFileWriter::writeTrainingPackStatistics(const ShotStats& shotStats, const std::string& trainingPackCode)
 {
-	auto filePath = fmt::format("{}\\{}.xml", StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode), trainingPackCode);
-	writeToFile(filePath, &shotStats);
+	auto filePath = fmt::format("{}\\{}.txt", StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode), trainingPackCode);
+	writeToFile(filePath, &shotStats, true /* skip uncomparable stats. */);
 }

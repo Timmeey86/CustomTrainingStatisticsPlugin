@@ -5,11 +5,13 @@ StatUpdater::StatUpdater(
 	std::shared_ptr<ShotStats> shotStats,
 	std::shared_ptr<ShotStats> differenceStats,
 	std::shared_ptr<PluginState> pluginState,
-	std::shared_ptr<IStatReader> statReader)
+	std::shared_ptr<IStatReader> statReader,
+	std::shared_ptr<AllTimePeakHandler> peakHandler)
 	: _externalShotStats(shotStats)
 	, _differenceStats(differenceStats)
 	, _pluginState(pluginState)
 	, _statReader(statReader)
+	, _peakHandler(peakHandler)
 {
 }
 
@@ -93,6 +95,11 @@ void StatUpdater::processReset(int numberOfShots)
 	// Reset the stats backup (indirectly).
 	updateStatsBackup();
 
+	if (_peakHandler)
+	{
+		_peakHandler->reset();
+	}
+
 	if (_differenceStats)
 	{
 		updateCompareBase(0 /* Do not skip any sessions */);
@@ -171,15 +178,26 @@ void StatUpdater::restoreLastSession()
 	_statsHaveJustBeenRestored = true;
 
 	// Since we restored the previous session, we must now compare against the one before that 
-	if (_differenceStats)
-	{
-		updateCompareBase(1 /* skip one valid session */);
-		*_differenceStats = retrieveSessionDiff();
-	}
+	// TODO
+	//if (_differenceStats)
+	//{
+	//	updateCompareBase(1 /* skip one valid session */);
+	//	*_differenceStats = retrieveSessionDiff();
+	//}
 }
 
 void StatUpdater::updateCompareBase(int numberOfSessionsToBeSkipped)
 {
+	if (!_peakHandler)
+	{
+		return;
+	}
+
+	// TODO: Allow the user to chose between previous session and all time stats
+	_compareBase = _peakHandler->getPeakStats();
+
+	// OLD CODE
+	/*
 	// Retrieve the previous shot stats, unless the current session had been restored from that file already,
 	// in which case we try retrieving the stats before that.
 	_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, numberOfSessionsToBeSkipped);
@@ -190,6 +208,7 @@ void StatUpdater::updateCompareBase(int numberOfSessionsToBeSkipped)
 		// => Try to fallback to use the session we restored from as a diff (better than nothing)
 		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, 0);
 	}
+	*/
 }
 
 ShotStats StatUpdater::retrieveSessionDiff() const
@@ -295,7 +314,7 @@ void StatUpdater::handleGoal(StatsData& statsData)
 		statsData.Stats.LongestGoalStreak = statsData.Stats.GoalStreakCounter;
 	}
 
-	statsData.Stats.GoalSpeedStats.insert(_pluginState->getBallSpeed());
+	statsData.Stats.GoalSpeedStats()->insert(_pluginState->getBallSpeed());
 
 	if (_flipResetOccurredInCurrentAttempt)
 	{

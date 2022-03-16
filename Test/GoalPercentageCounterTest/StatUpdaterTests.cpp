@@ -290,7 +290,7 @@ TEST_F(StatUpdaterTestFixture, togglingLastShot_when_attemptsHaveBeenMade_will_a
 	oneGoalStats.Last50Shots.push_back(true);
 
 	const auto goalSpeed = 100.0f;
-	oneGoalStats.GoalSpeedStats.insert(goalSpeed);
+	oneGoalStats.GoalSpeedStats()->insert(goalSpeed);
 	_pluginState->setBallSpeed(goalSpeed / PluginState::UE_UNITS_TO_KPH); // We need to convert it to Unreal Engine units when setting it
 
 	// Record a miss and then toggle it
@@ -300,7 +300,7 @@ TEST_F(StatUpdaterTestFixture, togglingLastShot_when_attemptsHaveBeenMade_will_a
 	statUpdater->processMiss();
 	statUpdater->updateData();
 
-	ASSERT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getCount(), 0);
+	ASSERT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats()->getCount(), 0);
 
 	statUpdater->toggleLastAttempt();
 
@@ -309,10 +309,10 @@ TEST_F(StatUpdaterTestFixture, togglingLastShot_when_attemptsHaveBeenMade_will_a
 	expectPerShotStats(oneGoalStats, 0);
 	expectPerShotStats(defaultStats, 1);
 
-	EXPECT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getCount(), 1);
-	EXPECT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats.getMax(), goalSpeed);
-	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats.getCount(), 1);
-	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats.getMax(), goalSpeed);
+	EXPECT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats()->getCount(), 1);
+	EXPECT_EQ(_shotStats->AllShotStats.Stats.GoalSpeedStats()->getMax(), goalSpeed);
+	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats()->getCount(), 1);
+	EXPECT_EQ(_shotStats->PerShotStats[0].Stats.GoalSpeedStats()->getMax(), goalSpeed);
 }
 
 // Peak percentage is supposed to not be calculated before 20 attempts have been made

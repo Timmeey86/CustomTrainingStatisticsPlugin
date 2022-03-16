@@ -12,6 +12,11 @@ StatFileReader::StatFileReader(std::shared_ptr<GameWrapper> gameWrapper, std::sh
 {
 }
 
+std::string getTrainingPackFilePath(std::shared_ptr<GameWrapper> gameWrapper, const std::string& trainingPackCode)
+{
+	return fmt::format("{}\\{}.txt", StatFileDefs::getTrainingFolder(gameWrapper, trainingPackCode), trainingPackCode);
+}
+
 template<typename T>
 int indexInVector(const std::vector<T>& vector, T searchValue)
 {
@@ -30,7 +35,7 @@ std::vector<std::string> StatFileReader::getAvailableResourcePaths(const std::st
 {
 	// Read the folder for the current training pack
 	auto folderPath = std::filesystem::u8path(StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode));
-
+	auto trainingPackFilePath = getTrainingPackFilePath(_gameWrapper, trainingPackCode);
 	std::vector<std::string> filePaths;
 	if (std::filesystem::exists(folderPath))
 	{
@@ -38,10 +43,11 @@ std::vector<std::string> StatFileReader::getAvailableResourcePaths(const std::st
 		{
 			for (const auto& entry : std::filesystem::directory_iterator(folderPath))
 			{
-				if (entry.is_regular_file())
+				if (!entry.is_regular_file() || entry.path().u8string() == trainingPackFilePath)
 				{
-					filePaths.emplace_back(entry.path().u8string());
+					continue;
 				}
+				filePaths.emplace_back(entry.path().u8string());
 			}
 		}
 		catch (const std::filesystem::filesystem_error&)
@@ -210,10 +216,9 @@ ShotStats StatFileReader::readStats(const std::string& resourcePath, bool statsA
 	}
 	return stats;
 }
-
-ShotStats StatFileReader::readTrainingPackStatistics(const ShotStats& shotStats, const std::string& trainingPackCode)
+ShotStats StatFileReader::readTrainingPackStatistics(const std::string& trainingPackCode)
 {
-	auto trainingPackFilePath = fmt::format("{}\\{}.xml", StatFileDefs::getTrainingFolder(_gameWrapper, trainingPackCode), trainingPackCode);
+	auto trainingPackFilePath = getTrainingPackFilePath(_gameWrapper, trainingPackCode);
 	if (!std::filesystem::exists(trainingPackFilePath))
 	{
 		return ShotStats();
@@ -245,10 +250,10 @@ bool StatFileReader::readVersion_1_0(std::ifstream& fileStream, StatsData* const
 
 	// We restore goal speed through an additional stat, but these lines were not removed for backwards compatibility
 	if (!std::getline(fileStream, currentLine)) { return false; } // latest speed
-	if (!std::getline(fileStream, currentLine)) { return false; } // max speed
-	if (!std::getline(fileStream, currentLine)) { return false; } // min speed
-	if (!std::getline(fileStream, currentLine)) { return false; } // median speed
-	if (!std::getline(fileStream, currentLine)) { return false; } // mean speed
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MaxGoalSpeedFromFile)) { return false; } // max speed
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MinGoalSpeedFromFile)) { return false; } // min speed
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MedianGoalSpeedFromFile)) { return false; } // median speed
+	if (!readValueIntoField(fileStream, &statsDataPointer->Stats.MeanGoalSpeedFromFile)) { return false; } // mean speed
 
 	if (!readValueIntoField(fileStream, &statsDataPointer->Data.InitialHitPercentage)) { return false; }
 	if (!readValueIntoField(fileStream, &statsDataPointer->Data.SuccessPercentage)) { return false; }
@@ -338,7 +343,12 @@ bool StatFileReader::readVersion_1_3_additions(std::ifstream& fileStream, StatsD
 	if (currentLine.empty()) { return false; }
 
 	auto [key, allGoalSpeeds] = getLineValues(currentLine);
-	if (key.empty() || allGoalSpeeds.empty()) { return false; }
+	if (key.empty()) { return false; }
+
+	if (allGoalSpeeds.empty())
+	{
+		return true; // Apparently no goals were shot, or none were recorded. This is a valid case, but we don't need to process this version further
+	}
 
 	if (key != StatFileDefs::GoalSpeedValues) { return false; }
 
@@ -359,7 +369,7 @@ bool StatFileReader::readVersion_1_3_additions(std::ifstream& fileStream, StatsD
 			if (separatorPos == std::string::npos) { return false; }
 
 			// Register the goal speed value as if the player had taken the shot
-			statsDataPointer->Stats.GoalSpeedStats.insert(std::stof(allGoalSpeeds.substr(offset, separatorPos)));
+			statsDataPointer->Stats.GoalSpeedStats()->insert(std::stof(allGoalSpeeds.substr(offset, separatorPos)));
 			offset = separatorPos + 1;
 		}
 	}
