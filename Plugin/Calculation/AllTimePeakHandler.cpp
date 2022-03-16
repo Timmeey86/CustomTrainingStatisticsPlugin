@@ -161,7 +161,21 @@ void AllTimePeakHandler::updateMaximumStats()
 
 ShotStats AllTimePeakHandler::getPeakStats() const
 {
-	return _allTimePeakStats;
+	auto newStats = ShotStats{ _allTimePeakStats };
+
+	// We don't want the stats to be automatically updated, so we need to replace fake goal speed providers
+	auto fakeProvider = std::make_shared<FakeGoalSpeedProvider>();
+	newStats.AllShotStats.Stats.setGoalSpeedProvider(fakeProvider);
+	copyGoalSpeedStats(_allTimePeakStats.AllShotStats.Stats.GoalSpeedStats(), fakeProvider);
+
+	for (auto shotNumber = 0; shotNumber < newStats.PerShotStats.size(); shotNumber++)
+	{
+		fakeProvider = std::make_shared<FakeGoalSpeedProvider>();
+		newStats.PerShotStats[shotNumber].Stats.setGoalSpeedProvider(fakeProvider);
+		copyGoalSpeedStats(_allTimePeakStats.PerShotStats[shotNumber].Stats.GoalSpeedStats(), fakeProvider);
+	}
+
+	return newStats;
 }
 
 bool AllTimePeakHandler::writeAllStatFile()
