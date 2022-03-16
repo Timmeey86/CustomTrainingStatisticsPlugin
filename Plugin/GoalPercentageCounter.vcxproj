@@ -80,7 +80,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir)external\fmt\include;$(ProjectDir);$(ProjectDir)\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4251</DisableSpecificWarnings>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -207,7 +207,9 @@
     <ClInclude Include="Core\IStatWriter.h" />
     <ClInclude Include="Core\StatUpdaterEventBridge.h" />
     <ClInclude Include="Data\CalculatedData.h" />
+    <ClInclude Include="Data\FakeGoalSpeedProvider.h" />
     <ClInclude Include="Data\GoalSpeed.h" />
+    <ClInclude Include="Data\IGoalSpeedProvider.h" />
     <ClInclude Include="Data\PlayerStats.h" />
     <ClInclude Include="Data\RunningMean.h" />
     <ClInclude Include="Data\RunningMedian.h" />
