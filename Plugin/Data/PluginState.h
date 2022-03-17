@@ -24,6 +24,7 @@ public:
 	bool StatsShallBeRecorded = true;					///< True while statistics are supposed to be recorded.
 	bool StatsShallBeDisplayed = true;					///< True while stats shall be displayed.
 	bool RecordingIconShallBeDisplayed = true;			///< True while a recording icon shall be displayed (only when stats display is of).
+	bool StatsShallBeComparedToAllTimePeak = true;		///< True if comparison shall be done vs all time peak stats rather than the previous session.
 
 	bool IsMetric = true;								///< Whether or not the ball speed is in metric or imperial
 	bool AllShotStatsShallBeDisplayed = true;			///< The overlay for all shot stats will appear while true

@@ -103,6 +103,7 @@ void PluginSettingsUI::RenderSettings()
 		createCheckbox(GoalPercentageCounterSettings::StatsShallBeDisplayedDef);
 		createCheckbox(GoalPercentageCounterSettings::StatsShallBeRecordedDef);
 		createCheckbox(GoalPercentageCounterSettings::RecordingIconShallBeDisplayedDef);
+		createCheckbox(GoalPercentageCounterSettings::StatsShallBeComparedToAllTimePeakDef);
 
 		ImGui::Separator();
 

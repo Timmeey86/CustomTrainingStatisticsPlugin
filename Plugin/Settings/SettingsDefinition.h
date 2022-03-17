@@ -19,9 +19,11 @@ public:
 class GoalPercentageCounterSettings
 {
 public:
-	static const SettingsDefinition StatsShallBeRecordedDef;			///< Definitions for the flag which turns stat recording on or off.
-	static const SettingsDefinition StatsShallBeDisplayedDef;			///< Definitions for the flag which turns stat display on or off.
-	static const SettingsDefinition RecordingIconShallBeDisplayedDef;	///< Definitions for the flag which turns stat display on or off.
+	static const SettingsDefinition StatsShallBeRecordedDef;				///< Definitions for the flag which turns stat recording on or off.
+	static const SettingsDefinition StatsShallBeDisplayedDef;				///< Definitions for the flag which turns stat display on or off.
+	static const SettingsDefinition RecordingIconShallBeDisplayedDef;		///< Definitions for the flag which turns stat display on or off.
+	static const SettingsDefinition StatsShallBeComparedToAllTimePeakDef;	///< Definitions for the flag which switches between comparing to previous session or all time max.
+
 	static const SettingsDefinition DisplayStatDifference;				///< Definitions for the flag which displays the overlay for all shot stats
 	static const SettingsDefinition DisplayAllShotStats;				///< Definitions for the flag which displays the overlay for all shot stats
 	static const SettingsDefinition DisplayPerShotStats;				///< Definitions for the flag which displays the overlay for per shot stats

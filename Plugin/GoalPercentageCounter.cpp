@@ -6,6 +6,7 @@
 #include "Calculation/DoubleTapGoalCounter.h"
 #include "Calculation/CloseMissCounter.h"
 #include "Calculation/ShotDistributionTracker.h"
+#include "Calculation/AllTimePeakHandler.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Core/StatUpdaterEventBridge.h"
@@ -44,10 +45,9 @@ void GoalPercentageCounter::onLoad()
 	// Create handler classes
 	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>(gameWrapper);
 	auto statReader = std::make_shared<StatFileReader>(gameWrapper, shotDistributionTracker);
-	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader);
-
-	// Enable storage of stats on the file system (crash recovery / maybe training trend in future)
 	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats, shotDistributionTracker);
+	auto peakHandler = std::make_shared<AllTimePeakHandler>(statReader, statWriter, _pluginState, _shotStats);
+	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader, peakHandler);
 
 
 	// Set up event registration
@@ -84,7 +84,7 @@ void GoalPercentageCounter::onLoad()
 
 	// Hook into events now 
 	_eventListener->registerGameStateEvents();
-	_eventListener->registerUpdateEvents(statUpdater, statWriter);
+	_eventListener->registerUpdateEvents(statUpdater, statWriter, peakHandler);
 
 
 	// Enable rendering of output

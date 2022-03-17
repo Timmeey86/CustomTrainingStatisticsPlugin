@@ -8,6 +8,7 @@
 
 #include "../DLLImportExport.h"
 #include "../Data/PluginState.h"
+#include "../Calculation/AllTimePeakHandler.h"
 #include "IStatWriter.h"
 #include "CustomTrainingState.h"
 #include "AbstractEventReceiver.h"
@@ -26,6 +27,7 @@ public:
 	CustomTrainingStateMachine(
 		std::shared_ptr<CVarManagerWrapper> cvarManager, 
 		std::shared_ptr<IStatWriter> statWriter,
+		std::shared_ptr<AllTimePeakHandler> peakHandler,
 		std::shared_ptr<PluginState> pluginState);
 
 	/** Hooks to any events whic are related to state transitions 
@@ -73,6 +75,7 @@ private:
 
 	std::shared_ptr<CVarManagerWrapper> _cvarManager; ///< Allows logging.
 	std::shared_ptr<IStatWriter> _statWriter; ///< Stores the object which allows storing stats permanently.
+	std::shared_ptr<AllTimePeakHandler> _peakHandler; ///< Stores the object which reads and writes all time peak stats.
 	std::shared_ptr<PluginState> _pluginState; ///< Stores other state parameters of the plugin, not related to the custom training state
 
 	CustomTrainingState _currentState; ///< Stores the currently active state

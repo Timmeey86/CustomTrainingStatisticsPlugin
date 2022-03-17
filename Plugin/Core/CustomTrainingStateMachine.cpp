@@ -7,9 +7,11 @@
 CustomTrainingStateMachine::CustomTrainingStateMachine(
 	std::shared_ptr<CVarManagerWrapper> cvarManager,
 	std::shared_ptr<IStatWriter> statWriter,
+	std::shared_ptr<AllTimePeakHandler> peakHandler,
 	std::shared_ptr<PluginState> pluginState)
 	: _cvarManager(cvarManager)
 	, _statWriter(statWriter)
+	, _peakHandler(peakHandler)
 	, _pluginState(pluginState)
 {
 	_currentState = CustomTrainingState::NotInCustomTraining;
@@ -319,6 +321,7 @@ void CustomTrainingStateMachine::processEventRoundChanged(TrainingEditorWrapper&
 	{
 		// Store data at the begin of every round so we can try to restore data after a crash
 		_statWriter->writeData();
+		_peakHandler->updateMaximumStats();
 	}
 }
 

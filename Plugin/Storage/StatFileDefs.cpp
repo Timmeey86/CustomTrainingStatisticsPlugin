@@ -1,6 +1,6 @@
 #include <pch.h>
 #include "StatFileDefs.h"
-
+#include <sstream>
 
 const std::vector<std::string> StatFileDefs::SupportedVersionNumbers = {
 	"1.0",
@@ -45,3 +45,13 @@ const std::string StatFileDefs::CloseMissPercentage = "CloseMissPercentage";
 const std::string StatFileDefs::ImpactLocations = "ImpactLocations";
 // V1.3 and beyond
 const std::string StatFileDefs::GoalSpeedValues = "ShotSpeedValues";
+
+
+
+
+std::string StatFileDefs::getTrainingFolder(const std::shared_ptr<GameWrapper>& gameWrapper, const std::string& trainingPackCode)
+{
+	std::ostringstream stringStream;
+	stringStream << gameWrapper->GetBakkesModPath().u8string() << u8"\\data\\CustomTrainingStatistics\\" << trainingPackCode;
+	return stringStream.str();
+}

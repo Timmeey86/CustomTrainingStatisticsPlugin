@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <memory>
+
+#include <bakkesmod/wrappers/GameWrapper.h>
 
 /** Defines strings to be used within the stat files. */
 class StatFileDefs
@@ -47,4 +50,9 @@ public:
 	static const std::string ImpactLocations;
 
 	static const std::string GoalSpeedValues;
+
+
+
+	/** Retrieves the path to the training pack data folder. */
+	static std::string getTrainingFolder(const std::shared_ptr<GameWrapper>& gameWrapper, const std::string& trainingPackCode);
 };

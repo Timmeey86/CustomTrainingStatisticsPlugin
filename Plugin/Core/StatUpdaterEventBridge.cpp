@@ -21,6 +21,10 @@ void StatUpdaterEventBridge::onTogglePreviousAttemptTriggered()
 {
 	_statUpdater->toggleLastAttempt();
 }
+void StatUpdaterEventBridge::onCompareBaseToggled()
+{
+	_statUpdater->updateCompareBase();
+}
 void StatUpdaterEventBridge::onTrainingModeLoaded(TrainingEditorWrapper& trainingWrapper, TrainingEditorSaveDataWrapper* trainingData)
 {
 	(void)trainingWrapper;

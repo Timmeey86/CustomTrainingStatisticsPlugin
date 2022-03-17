@@ -12,6 +12,8 @@ public:
 	std::vector<std::string> getAvailableResourcePaths(const std::string& trainingPackCode) override;
 	ShotStats readStats(const std::string& resourcePath, bool statsAboutToBeRestored) override;
 
+	ShotStats readTrainingPackStatistics(const std::string& trainingPackCode) override;
+
 	int peekAttemptAmount(const std::string& resourcePath) override;
 
 private:

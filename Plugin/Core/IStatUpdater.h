@@ -60,4 +60,7 @@ public:
 
 	/** Processes a close miss. */
 	virtual void processCloseMiss() = 0;
+
+	/** Updates the base for stat comparison. */
+	virtual void updateCompareBase() = 0;
 };

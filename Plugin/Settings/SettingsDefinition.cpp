@@ -25,6 +25,14 @@ const SettingsDefinition GoalPercentageCounterSettings::RecordingIconShallBeDisp
 	1.0f,
 	"1.0f"
 };
+const SettingsDefinition GoalPercentageCounterSettings::StatsShallBeComparedToAllTimePeakDef = {
+	"customtrainingstatistics_compare_to_all_time_peak",
+	"Switch between comparing vs 'all time peak stats' or 'previous session'",
+	"If this is set, stats will be compared to the all time peak statistics. If it isn't, the previous session will be used instead",
+	.0f,
+	1.0f,
+	"1.0f"
+};
 
 const SettingsDefinition GoalPercentageCounterSettings::DisplayStatDifference = {
 	"customtrainingstatistics_display_stat_difference",
