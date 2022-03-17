@@ -178,37 +178,38 @@ void StatUpdater::restoreLastSession()
 	_statsHaveJustBeenRestored = true;
 
 	// Since we restored the previous session, we must now compare against the one before that 
-	// TODO
-	//if (_differenceStats)
-	//{
-	//	updateCompareBase(1 /* skip one valid session */);
-	//	*_differenceStats = retrieveSessionDiff();
-	//}
+	// Only do this if we compare to the previous session rather than the all time peak stats, however.
+	if (_differenceStats && !_pluginState->StatsShallBeComparedToAllTimePeak)
+	{
+		updateCompareBase(1 /* skip one valid session */);
+		*_differenceStats = retrieveSessionDiff();
+	}
 }
 
 void StatUpdater::updateCompareBase(int numberOfSessionsToBeSkipped)
 {
-	if (!_peakHandler)
+	if (_pluginState->StatsShallBeComparedToAllTimePeak)
 	{
-		return;
+		if (!_peakHandler)
+		{
+			return;
+		}
+
+		_compareBase = _peakHandler->getPeakStats();
 	}
-
-	// TODO: Allow the user to chose between previous session and all time stats
-	_compareBase = _peakHandler->getPeakStats();
-
-	// OLD CODE
-	/*
-	// Retrieve the previous shot stats, unless the current session had been restored from that file already,
-	// in which case we try retrieving the stats before that.
-	_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, numberOfSessionsToBeSkipped);
-
-	if (numberOfSessionsToBeSkipped > 0 && !_compareBase.hasAttempts())
+	else
 	{
-		// There seems to be at most one attempt with valid stats, and we skipped it
-		// => Try to fallback to use the session we restored from as a diff (better than nothing)
-		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, 0);
+		// Retrieve the previous shot stats, unless the current session had been restored from that file already,
+		// in which case we try retrieving the stats before that.
+		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, numberOfSessionsToBeSkipped);
+
+		if (numberOfSessionsToBeSkipped > 0 && !_compareBase.hasAttempts())
+		{
+			// There seems to be at most one attempt with valid stats, and we skipped it
+			// => Try to fallback to use the session we restored from as a diff (better than nothing)
+			_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, 0);
+		}
 	}
-	*/
 }
 
 ShotStats StatUpdater::retrieveSessionDiff() const
