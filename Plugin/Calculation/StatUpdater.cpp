@@ -100,10 +100,10 @@ void StatUpdater::processReset(int numberOfShots)
 		_peakHandler->reset();
 	}
 
+	_numberOfSessionsToBeSkipped = 0;
 	if (_differenceStats)
 	{
-		updateCompareBase(0 /* Do not skip any sessions */);
-		*_differenceStats = retrieveSessionDiff();
+		updateCompareBase();
 	}
 }
 
@@ -176,17 +176,17 @@ void StatUpdater::restoreLastSession()
 	// We successfully restored statistics from the last session. The "Toggle last attempt" feature must be disabled until a goal or a miss was recorded
 	// after restoring
 	_statsHaveJustBeenRestored = true;
+	_numberOfSessionsToBeSkipped = 1;
 
 	// Since we restored the previous session, we must now compare against the one before that 
 	// Only do this if we compare to the previous session rather than the all time peak stats, however.
 	if (_differenceStats && !_pluginState->StatsShallBeComparedToAllTimePeak)
 	{
-		updateCompareBase(1 /* skip one valid session */);
-		*_differenceStats = retrieveSessionDiff();
+		updateCompareBase();
 	}
 }
 
-void StatUpdater::updateCompareBase(int numberOfSessionsToBeSkipped)
+void StatUpdater::updateCompareBase()
 {
 	if (_pluginState->StatsShallBeComparedToAllTimePeak)
 	{
@@ -201,15 +201,16 @@ void StatUpdater::updateCompareBase(int numberOfSessionsToBeSkipped)
 	{
 		// Retrieve the previous shot stats, unless the current session had been restored from that file already,
 		// in which case we try retrieving the stats before that.
-		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, numberOfSessionsToBeSkipped);
+		_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, _numberOfSessionsToBeSkipped);
 
-		if (numberOfSessionsToBeSkipped > 0 && !_compareBase.hasAttempts())
+		if (_numberOfSessionsToBeSkipped > 0 && !_compareBase.hasAttempts())
 		{
 			// There seems to be at most one attempt with valid stats, and we skipped it
 			// => Try to fallback to use the session we restored from as a diff (better than nothing)
 			_compareBase = getPreviousShotStats(_statReader, _trainingPackCode, false, 0);
 		}
 	}
+	*_differenceStats = retrieveSessionDiff();
 }
 
 ShotStats StatUpdater::retrieveSessionDiff() const

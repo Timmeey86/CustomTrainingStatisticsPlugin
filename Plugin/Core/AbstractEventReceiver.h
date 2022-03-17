@@ -28,6 +28,9 @@ public:
 	/** This gets called whenever the user toggles the previous attempt between miss and goal. */
 	virtual void onTogglePreviousAttemptTriggered() { /* ignore event unless overridden. */ }
 
+	/** This gets called whenever the user toggles the option for comparing vs all time peak stats or the previous session. */
+	virtual void onCompareBaseToggled() { /* ignore event unless overridden. */ }
+
 	/** This gets called whenever the custom training mode gets loaded (also after reloading training, changing the pack etc). 
 	 * Note that this also gets called when the user leaves training, with an empty training pack code in that case.
 	 *

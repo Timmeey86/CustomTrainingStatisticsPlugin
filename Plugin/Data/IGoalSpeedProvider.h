@@ -4,7 +4,6 @@
 
 #include <vector>
 
-// TODO: No longer compare standard deviation: A low standard deviation for slow shots might be worse than a higher one for fast shots (as long as being fast is even the point)
 /** Defines the interface for a class which provides goal speed statistics. It is an interface since some code paths need to fake these values. */
 class GOALPERCENTAGECOUNTER_IMPORT_EXPORT IGoalSpeedProvider
 {

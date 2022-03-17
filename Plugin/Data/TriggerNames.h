@@ -11,4 +11,5 @@ public:
 	static const char* ToggleLastAttempt;
 	static const char* ToggleHeatmapDisplay;
 	static const char* ToggleImpactLocationDisplay;
+	static const char* CompareBaseChanged;
 };

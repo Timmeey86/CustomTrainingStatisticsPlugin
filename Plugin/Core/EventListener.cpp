@@ -53,6 +53,15 @@ void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdat
 		}
 	}, "Toggle the last attempt to be a goal or a miss", PERMISSION_ALL);
 
+	_cvarManager->registerNotifier(TriggerNames::CompareBaseChanged, [this](const std::vector<std::string>&) {
+		if (!_gameWrapper->IsInCustomTraining()) { return; }
+
+		for (auto eventReceiver : _eventReceivers)
+		{
+			eventReceiver->onCompareBaseToggled();
+		}
+	}, "Toggle between comparing to peak stats or the previous session", PERMISSION_ALL);
+
 	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {

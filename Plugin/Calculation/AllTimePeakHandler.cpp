@@ -14,7 +14,6 @@ AllTimePeakHandler::AllTimePeakHandler(
 	, _currentStats( shotStats )
 
 {
-	// TODO: Maybe only handle maximum values once each shot has been done at least once, or a single shot 20 times?
 }
 
 void copyGoalSpeedStats(const std::shared_ptr<IGoalSpeedProvider>& sourceProvider, const std::shared_ptr<FakeGoalSpeedProvider>& fakeStorage)
@@ -180,7 +179,6 @@ ShotStats AllTimePeakHandler::getPeakStats() const
 
 bool AllTimePeakHandler::writeAllStatFile()
 {
-	// TODO: Do we need to handle StatsShallBeRecorded in here?
 	if (_pluginState->TrainingPackCode.empty()) { return true; }
 
 	auto fileName = _pluginState->TrainingPackCode;
