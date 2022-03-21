@@ -78,7 +78,14 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 		LinearColor diffColor;
 		diffColor.B = .0;
 		diffColor.A = 255.0;
-		if (std::stod(statStrings.DiffValue.value()) >= .0)
+
+		// Switch to OS locale temporarily in order to convert the value string back to double
+		const std::string oldLocale = std::setlocale(LC_NUMERIC, nullptr);
+		std::setlocale(LC_NUMERIC, "");
+		double diffValue = std::stod(statStrings.DiffValue.value());
+		std::setlocale(LC_NUMERIC, oldLocale.c_str());
+
+		if (diffValue >= .0)
 		{
 			diffColor.R = .0;
 			diffColor.G = 255.0;
