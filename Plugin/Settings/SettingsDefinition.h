@@ -72,4 +72,8 @@ public:
 	static const SettingsDefinition ToggleShotLocationKeybindingDef;	///< Definitions for the "Toggle Shot Location" keybinding
 	static constexpr int KeybindingsArraySize{ 127 };					///< Size of array of possible keybindings
 	static const char* KeybindingsArray[];								///< List of possible keybindings
+
+
+	static std::vector<std::string> OrderedSettingsNames; ///< Contains all settings in display order
+	static std::mutex OrderedSettingsMutex; ///< Required for thread safety
 };

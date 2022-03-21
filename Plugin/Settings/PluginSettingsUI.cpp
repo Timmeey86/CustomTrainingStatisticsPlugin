@@ -11,6 +11,35 @@ void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string
 {
 	_sendNotifierFunc = sendNotifierFunc;
 	_cvarManager = cvarManager;
+
+	// Initialize the static list of all settings now
+	// TODO: Figure out a way to store and restore this order
+	GoalPercentageCounterSettings::OrderedSettingsNames = {
+		GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayInitialBallHitsDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayCurrentStreaksDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayTotalSuccessRateDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayLongestStreaksDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayPeakInfoDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayLastNShotPercentageDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayMinGoalSpeedDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayStdDevGoalSpeedDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayAirDribbleTouchesDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayAirDribbleTimeDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayGroundDribbleDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayDoubleTapGoalsDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayDoubleTapPercentageDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayMaxFlipResetsDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayTotalFlipResetsDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayFlipResetPercentageDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayCloseMissesDef.DisplayText,
+		GoalPercentageCounterSettings::DisplayCloseMissPercentageDef.DisplayText
+	};
 }
 
 std::string PluginSettingsUI::GetPluginName()
@@ -225,5 +254,25 @@ void PluginSettingsUI::RenderSettings()
 
 		ImGui::Separator();
 
+	}
+	if (ImGui::CollapsingHeader("Stat Order"))
+	{
+		std::scoped_lock lock(GoalPercentageCounterSettings::OrderedSettingsMutex);
+		for (int n = 0; n < (int)GoalPercentageCounterSettings::OrderedSettingsNames.size(); n++)
+		{
+			auto item = GoalPercentageCounterSettings::OrderedSettingsNames[n];
+			ImGui::Selectable(item.c_str());
+
+			if (ImGui::IsItemActive() && !ImGui::IsItemHovered())
+			{
+				auto n_next = n + (ImGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
+				if (n_next >= 0 && n_next < GoalPercentageCounterSettings::OrderedSettingsNames.size())
+				{
+					GoalPercentageCounterSettings::OrderedSettingsNames[n] = GoalPercentageCounterSettings::OrderedSettingsNames[n_next];
+					GoalPercentageCounterSettings::OrderedSettingsNames[n_next] = item;
+					ImGui::ResetMouseDragDelta();
+				}
+			}
+		}
 	}
 }

@@ -6,6 +6,7 @@
 #include "../Data/ShotStats.h"
 #include "../Data/StatsData.h"
 #include "../Data/PluginState.h"
+#include "../Settings/SettingsDefinition.h"
 
 /** Defines parts of what shall be displyed in a single line in the stat display. */
 struct SingleStatStrings
@@ -46,7 +47,6 @@ private:
 	const std::shared_ptr<const ShotStats> _shotStats;		///< Statistics and data for shots taken in custom training.
 	const std::shared_ptr<const ShotStats> _diffStats;		///< The difference statistics with the previous session, if available.
 	const std::shared_ptr<const PluginState> _pluginState;	///< The state of the plugin.
-
 	float _displayWidth{ 230.0f };
 };
 

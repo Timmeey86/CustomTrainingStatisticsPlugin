@@ -240,7 +240,7 @@ void addTotalSuccessRate(std::list<SingleStatStrings>& statList, const StatsData
 		}
 	}
 }
-void addInitialBallHits(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+void addInitialHitRate(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
 {
 	if (pluginState->InitialBallHitsShallBeDisplayed)
 	{
@@ -384,39 +384,119 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	std::locale::global(std::locale(""));
 	setlocale(LC_ALL, ""); // uses the OS locale
 
-	addAttempts(statNamesAndValues, statsData, pluginState);
-	addGoals(statNamesAndValues, statsData, pluginState);
-	addInitialBallHits(statNamesAndValues, statsData, pluginState);
-	addCurrentGoalStreak(statNamesAndValues, statsData, pluginState);
-	addCurrentMissStreak(statNamesAndValues, statsData, pluginState);
-	addLongestGoalStreak(statNamesAndValues, statsData, pluginState, diffData);
-	addLongestMissStreak(statNamesAndValues, statsData, pluginState, diffData);
-	addAirDribbleTouches(statNamesAndValues, statsData, pluginState, diffData);
-	addAirDribbleTime(statNamesAndValues, statsData, pluginState, diffData);
-	addGroundDribbleTime(statNamesAndValues, statsData, pluginState, diffData);
-	addTotalFlipResets(statNamesAndValues, statsData, pluginState);
-	addMaxFlipResets(statNamesAndValues, statsData, pluginState, diffData);
-	addDoubleTapGoals(statNamesAndValues, statsData, pluginState, diffData);
-	addCloseMisses(statNamesAndValues, statsData, pluginState);
-	addTotalSuccessRate(statNamesAndValues, statsData, pluginState, diffData);
-	addInitialBallHits(statNamesAndValues, statsData, pluginState, diffData);
-	addLastNShotPercentage(statNamesAndValues, statsData, pluginState);
-	addPeakSuccessRate(statNamesAndValues, statsData, pluginState, diffData);
-	addPeakAtShotNumber(statNamesAndValues, statsData, pluginState);
+	// Copy the settings vector to be thread safe
+	std::vector<std::string> orderedSettings;
+	{
+		std::scoped_lock lock(GoalPercentageCounterSettings::OrderedSettingsMutex);
+		orderedSettings = std::vector<std::string>(GoalPercentageCounterSettings::OrderedSettingsNames);
+	}
+	if (orderedSettings.empty()) { return statNamesAndValues; }
 
-	// Goal speed stats
 	std::string speed_units = pluginState->IsMetric ? "km/h" : "mph";
-	addLatestGoalSpeed(statNamesAndValues, statsData, pluginState, speed_units);
-	addMinimumGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
-	addMedianGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
-	addMaximumGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
-	addMeanGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
-	addStdDevGoalSpeed(statNamesAndValues, statsData, pluginState, speed_units);
-
-	addFlipResetsPerAttempt(statNamesAndValues, statsData, pluginState, diffData);
-	addFlipResetPercentage(statNamesAndValues, statsData, pluginState, diffData);
-	addDoubleTapPercentage(statNamesAndValues, statsData, pluginState, diffData);
-	addCloseMissRate(statNamesAndValues, statsData, pluginState);
+	for (auto setting : orderedSettings)
+	{
+		if (setting == GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef.DisplayText)
+		{
+			addAttempts(statNamesAndValues, statsData, pluginState);
+			addGoals(statNamesAndValues, statsData, pluginState);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayInitialBallHitsDef.DisplayText)
+		{
+			addInitialBallHits(statNamesAndValues, statsData, pluginState);
+			addInitialHitRate(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayCurrentStreaksDef.DisplayText)
+		{
+			addCurrentGoalStreak(statNamesAndValues, statsData, pluginState);
+			addCurrentMissStreak(statNamesAndValues, statsData, pluginState);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayLongestStreaksDef.DisplayText)
+		{
+			addLongestGoalStreak(statNamesAndValues, statsData, pluginState, diffData);
+			addLongestMissStreak(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayAirDribbleTouchesDef.DisplayText)
+		{
+			addAirDribbleTouches(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayAirDribbleTimeDef.DisplayText)
+		{
+			addAirDribbleTime(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayGroundDribbleDef.DisplayText)
+		{
+			addGroundDribbleTime(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayTotalFlipResetsDef.DisplayText)
+		{
+			addTotalFlipResets(statNamesAndValues, statsData, pluginState);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayMaxFlipResetsDef.DisplayText)
+		{
+			addMaxFlipResets(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayDoubleTapGoalsDef.DisplayText)
+		{
+			addDoubleTapGoals(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayCloseMissesDef.DisplayText)
+		{
+			addCloseMisses(statNamesAndValues, statsData, pluginState);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayTotalSuccessRateDef.DisplayText)
+		{
+			addTotalSuccessRate(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayLastNShotPercentageDef.DisplayText)
+		{
+			addLastNShotPercentage(statNamesAndValues, statsData, pluginState);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayPeakInfoDef.DisplayText)
+		{
+			addPeakSuccessRate(statNamesAndValues, statsData, pluginState, diffData);
+			addPeakAtShotNumber(statNamesAndValues, statsData, pluginState);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayMostRecentGoalSpeedDef.DisplayText)
+		{
+			addLatestGoalSpeed(statNamesAndValues, statsData, pluginState, speed_units);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayMinGoalSpeedDef.DisplayText)
+		{
+			addMinimumGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayMedianGoalSpeedDef.DisplayText)
+		{
+			addMedianGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayMaxGoalSpeedDef.DisplayText)
+		{
+			addMaximumGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayMeanGoalSpeedDef.DisplayText)
+		{
+			addMeanGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayStdDevGoalSpeedDef.DisplayText)
+		{
+			addStdDevGoalSpeed(statNamesAndValues, statsData, pluginState, speed_units);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayFlipResetsPerAttemptDef.DisplayText)
+		{
+			addFlipResetsPerAttempt(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayFlipResetPercentageDef.DisplayText)
+		{
+			addFlipResetPercentage(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayDoubleTapPercentageDef.DisplayText)
+		{
+			addDoubleTapPercentage(statNamesAndValues, statsData, pluginState, diffData);
+		}
+		else if (setting == GoalPercentageCounterSettings::DisplayCloseMissPercentageDef.DisplayText)
+		{
+			addCloseMissRate(statNamesAndValues, statsData, pluginState);
+		}
+	}
 
 	if (statNamesAndValues.empty())
 	{
@@ -464,7 +544,7 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 	canvas.SetColor(_pluginState->PanelColor);
 
 	canvas.SetPosition(Vector2F{ (float)opts.OverlayXPosition, (float)opts.OverlayYPosition });
-	canvas.FillBox(Vector2F{ _displayWidth * opts.TextWidthFactor, displayHeight  }); // +1 for title
+	canvas.FillBox(Vector2F{ _displayWidth * opts.TextWidthFactor, displayHeight }); // +1 for title
 
 	// Now draw the text on top of it
 	canvas.SetColor(_pluginState->FontColor);
