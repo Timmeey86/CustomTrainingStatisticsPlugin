@@ -277,6 +277,105 @@ void addPeakAtShotNumber(std::list<SingleStatStrings>& statList, const StatsData
 	}
 }
 
+void addLatestGoalSpeed(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const std::string& speed_units)
+{
+	if (pluginState->MostRecentGoalSpeedShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Latest Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMostRecent(pluginState->IsMetric)), speed_units });
+	}
+}
+void addMinimumGoalSpeed(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData, const std::string& speed_units)
+{
+	if (pluginState->MinGoalSpeedShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMin(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MinValue);
+		}
+	}
+}
+void addMedianGoalSpeed(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData, const std::string& speed_units)
+{
+	if (pluginState->MedianGoalSpeedShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Median Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMedian(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MedianValue);
+		}
+	}
+}
+void addMaximumGoalSpeed(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData, const std::string& speed_units)
+{
+	if (pluginState->MaxGoalSpeedShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMax(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MaxValue);
+		}
+	}
+}
+void addMeanGoalSpeed(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData, const std::string& speed_units)
+{
+	if (pluginState->MeanGoalSpeedShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMean(pluginState->IsMetric)), speed_units });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MeanValue);
+		}
+	}
+}
+void addStdDevGoalSpeed(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const std::string& speed_units)
+{
+	if (pluginState->StdDevGoalSpeedShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Std Dev Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getStdDev(pluginState->IsMetric)), speed_units });
+	}
+}
+void addFlipResetsPerAttempt(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->FlipResetsPerAttemptShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "FResets/Attempt:", to_percentage_string(statsData.Data.AverageFlipResetsPerAttempt), "%" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_percentage_string(diffData->Data.AverageFlipResetsPerAttempt);
+		}
+	}
+}
+void addFlipResetPercentage(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->FlipResetPercentageShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "FReset Goal Rate:", to_percentage_string(statsData.Data.FlipResetGoalPercentage), "%" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_percentage_string(diffData->Data.FlipResetGoalPercentage);
+		}
+	}
+}
+void addDoubleTapPercentage(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->DoubleTapPercentageShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Dbl Tap Goal Rate:", to_percentage_string(statsData.Data.DoubleTapGoalPercentage), "%" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_percentage_string(diffData->Data.DoubleTapGoalPercentage);
+		}
+	}
+}
+void addCloseMissRate(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->CloseMissPercentageShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Close Miss Rate:", to_percentage_string(statsData.Data.CloseMissPercentage), "%" });
+	}
+}
+
 std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
 {
 	std::list<SingleStatStrings> statNamesAndValues;
@@ -307,83 +406,25 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 
 	// Goal speed stats
 	std::string speed_units = pluginState->IsMetric ? "km/h" : "mph";
-	if (pluginState->MostRecentGoalSpeedShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Latest Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMostRecent(pluginState->IsMetric)), speed_units });
-	}
-	if (pluginState->MinGoalSpeedShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Min Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMin(pluginState->IsMetric)), speed_units });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MinValue);
-		}
-	}
-	if (pluginState->MedianGoalSpeedShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Median Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMedian(pluginState->IsMetric)), speed_units });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MedianValue);
-		}
-	}
-	if (pluginState->MaxGoalSpeedShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Max Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMax(pluginState->IsMetric)), speed_units });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MaxValue);
-		}
-	}
-	
-	if (pluginState->MeanGoalSpeedShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Mean Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getMean(pluginState->IsMetric)), speed_units });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.GoalSpeedDifference.MeanValue);
-		}
-	}
-	if (pluginState->StdDevGoalSpeedShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Std Dev Goal Speed:", to_float_string(statsData.Stats.GoalSpeedStats()->getStdDev(pluginState->IsMetric)), speed_units });
-	}
-	if (pluginState->FlipResetsPerAttemptShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "FResets/Attempt:", to_percentage_string(statsData.Data.AverageFlipResetsPerAttempt), "%" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.AverageFlipResetsPerAttempt);
-		}
-	}
-	if (pluginState->FlipResetPercentageShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "FReset Goal Rate:", to_percentage_string(statsData.Data.FlipResetGoalPercentage), "%" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.FlipResetGoalPercentage);
-		}
-	}
-	if (pluginState->DoubleTapPercentageShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Dbl Tap Goal Rate:", to_percentage_string(statsData.Data.DoubleTapGoalPercentage), "%" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.DoubleTapGoalPercentage);
-		}
-	}
-	if (pluginState->CloseMissPercentageShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Close Miss Rate:", to_percentage_string(statsData.Data.CloseMissPercentage), "%" });
-	}
+	addLatestGoalSpeed(statNamesAndValues, statsData, pluginState, speed_units);
+	addMinimumGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+	addMedianGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+	addMaximumGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+	addMeanGoalSpeed(statNamesAndValues, statsData, pluginState, diffData, speed_units);
+	addStdDevGoalSpeed(statNamesAndValues, statsData, pluginState, speed_units);
+
+	addFlipResetsPerAttempt(statNamesAndValues, statsData, pluginState, diffData);
+	addFlipResetPercentage(statNamesAndValues, statsData, pluginState, diffData);
+	addDoubleTapPercentage(statNamesAndValues, statsData, pluginState, diffData);
+	addCloseMissRate(statNamesAndValues, statsData, pluginState);
 
 	if (statNamesAndValues.empty())
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "What did you expect?", "  ;-)", "" });
 	}
 
-	// Revert to the defaul locale
-	setlocale(LC_ALL, "en_US.UTF-8"); // uses the OS locale
+	// Revert to the default locale
+	setlocale(LC_ALL, "en_US.UTF-8");
 	std::locale::global(std::locale("en_US.UTF-8"));
 	return statNamesAndValues;
 }
