@@ -373,4 +373,6 @@ bool StatFileReader::readVersion_1_3_additions(std::ifstream& fileStream, StatsD
 			offset = separatorPos + 1;
 		}
 	}
+
+	return true;
 }
