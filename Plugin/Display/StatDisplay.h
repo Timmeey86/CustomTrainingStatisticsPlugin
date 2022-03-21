@@ -39,7 +39,7 @@ public:
 
 private:
 	void drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const;
-	void renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData, const StatsData* const diffData);
+	void renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData, const StatsData* const diffData, bool brandingShallBeDrawn);
 	void renderAllShotStats(CanvasWrapper& canvas);
 	void renderPerShotStats(CanvasWrapper& canvas);
 
