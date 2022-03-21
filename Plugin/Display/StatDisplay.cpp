@@ -1,5 +1,6 @@
 #include <pch.h>
 #include "StatDisplay.h"
+#include "version.h"
 
 #include <sstream>
 #include <iomanip>
@@ -305,7 +306,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	return statNamesAndValues;
 }
 
-void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData, const StatsData* const diffData)
+void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& opts, const StatsData& statsData, const StatsData* const diffData, bool brandingShallBeDrawn)
 {
 	auto statsToBeRendered = GetStatsToBeRendered(statsData, _pluginState, diffData);
 	bool isDisplayingSpeed = _pluginState->MostRecentGoalSpeedShallBeDisplayed ||
@@ -329,11 +330,18 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 		}
 	}
 
+	auto displayHeight = (10.0f + (statsToBeRendered.size() + 1) * 15.0f);
+	if (brandingShallBeDrawn)
+	{
+		displayHeight += 15.0f;
+	}
+	displayHeight *= opts.TextHeightFactor;
+
 	// Draw a panel so we can read the text on all kinds of maps
 	canvas.SetColor(_pluginState->PanelColor);
 
 	canvas.SetPosition(Vector2F{ (float)opts.OverlayXPosition, (float)opts.OverlayYPosition });
-	canvas.FillBox(Vector2F{ _displayWidth * opts.TextWidthFactor, (10.0f + (statsToBeRendered.size() + 1) * 15.0f) * opts.TextHeightFactor }); // +1 for title
+	canvas.FillBox(Vector2F{ _displayWidth * opts.TextWidthFactor, displayHeight  }); // +1 for title
 
 	// Now draw the text on top of it
 	canvas.SetColor(_pluginState->FontColor);
@@ -346,6 +354,22 @@ void StatDisplay::renderStatsData(CanvasWrapper& canvas, const DisplayOptions& o
 		drawStat(canvas, opts, counter, statStrings, diffDataBorder);
 		counter++;
 	}
+
+	if (brandingShallBeDrawn)
+	{
+		// Draw branding info
+		canvas.SetColor(_pluginState->FontColor);
+		auto leftTextBorder = (float)opts.OverlayXPosition + 5.0f * opts.TextWidthFactor;
+		auto topTextBorder = (float)opts.OverlayYPosition + displayHeight - 15.0f * opts.TextHeightFactor;
+
+		canvas.SetPosition(Vector2F{ leftTextBorder, topTextBorder });
+		canvas.DrawString(
+			fmt::format("Custom Training Statistics v{}.{}.{}.{}", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD),
+			opts.TextWidthFactor,
+			opts.TextHeightFactor,
+			false
+		);
+	}
 }
 
 void StatDisplay::renderAllShotStats(CanvasWrapper& canvas)
@@ -353,7 +377,7 @@ void StatDisplay::renderAllShotStats(CanvasWrapper& canvas)
 	if (_pluginState->AllShotStatsShallBeDisplayed)
 	{
 		auto diffStats = (_pluginState->PreviousSessionDiffShallBeDisplayed && _diffStats->hasAttempts() ? &_diffStats->AllShotStats : nullptr);
-		renderStatsData(canvas, _pluginState->AllShotsOpts, _shotStats->AllShotStats, diffStats);
+		renderStatsData(canvas, _pluginState->AllShotsOpts, _shotStats->AllShotStats, diffStats, true);
 	}
 }
 
@@ -366,7 +390,7 @@ void StatDisplay::renderPerShotStats(CanvasWrapper& canvas)
 		{
 			const auto& statsData = _shotStats->PerShotStats.at(_pluginState->CurrentRoundIndex);
 			auto diffStats = (_pluginState->PreviousSessionDiffShallBeDisplayed && _diffStats->hasAttempts() ? &_diffStats->PerShotStats[_pluginState->CurrentRoundIndex] : nullptr);
-			renderStatsData(canvas, _pluginState->PerShotOpts, statsData, diffStats);
+			renderStatsData(canvas, _pluginState->PerShotOpts, statsData, diffStats, !_pluginState->AllShotStatsShallBeDisplayed);
 		}
 	}
 }
