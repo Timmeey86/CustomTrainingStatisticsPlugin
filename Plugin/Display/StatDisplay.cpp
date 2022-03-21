@@ -103,6 +103,180 @@ void drawStat(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowN
 	}
 }
 
+void addAttempts(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->AttemptsAndGoalsShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Attempts:", std::to_string(statsData.Stats.Attempts), "" });
+	}
+}
+void addGoals(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->AttemptsAndGoalsShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Goals:", std::to_string(statsData.Stats.Goals), "" });
+	}
+}
+void addInitialBallHits(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->InitialBallHitsShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Initial Hits:", std::to_string(statsData.Stats.InitialHits), "" });
+	}
+}
+void addCurrentGoalStreak(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->CurrentStreaksShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Current Goal Streak:", std::to_string(statsData.Stats.GoalStreakCounter), "" });
+	}
+}
+void addCurrentMissStreak(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->CurrentStreaksShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Current Miss Streak:", std::to_string(statsData.Stats.MissStreakCounter), "" });
+	}
+}
+void addLongestGoalStreak(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->LongestStreaksShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Longest Goal Streak:", std::to_string(statsData.Stats.LongestGoalStreak), "" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.LongestGoalStreak);
+		}
+	}
+}
+void addLongestMissStreak(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->LongestStreaksShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Longest Miss Streak:", std::to_string(statsData.Stats.LongestMissStreak), "" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.LongestMissStreak);
+		}
+	}
+}
+void addAirDribbleTouches(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->AirDribbleTouchesShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Max. Air Dribbles:", std::to_string(statsData.Stats.MaxAirDribbleTouches), "" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTouches);
+		}
+	}
+}
+void addAirDribbleTime(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->AirDribbleTimeShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Max. ADribble Time:", to_float_string(statsData.Stats.MaxAirDribbleTime), "" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTime);
+		}
+	}
+}
+void addGroundDribbleTime(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->GroundDribbleTimeShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Max. GDribble Time:", to_float_string(statsData.Stats.MaxGroundDribbleTime), "" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
+		}
+	}
+}
+void addTotalFlipResets(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->TotalFlipResetsShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Total Flip Resets:", std::to_string(statsData.Stats.TotalFlipResets), "" });
+	}
+}
+void addMaxFlipResets(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->GroundDribbleTimeShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Max. GDribble Time:", to_float_string(statsData.Stats.MaxGroundDribbleTime), "" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
+		}
+	}
+}
+void addDoubleTapGoals(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->DoubleTapGoalsShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Double Tap Goals:", std::to_string(statsData.Stats.DoubleTapGoals), "" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_value_string(diffData->Stats.DoubleTapGoals);
+		}
+	}
+}
+void addCloseMisses(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->CloseMissesShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Close Misses:", std::to_string(statsData.Stats.CloseMisses), "" });
+	}
+}
+void addTotalSuccessRate(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->TotalSuccessRateShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "%" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_percentage_string(diffData->Data.SuccessPercentage);
+		}
+	}
+}
+void addInitialBallHits(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->InitialBallHitsShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage), "%" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_percentage_string(diffData->Data.InitialHitPercentage);
+		}
+	}
+}
+void addLastNShotPercentage(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->LastNShotPercentageShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage), "%" });
+	}
+}
+void addPeakSuccessRate(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+{
+	if (pluginState->PeakInfoShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Peak Success Rate:", to_percentage_string(statsData.Data.PeakSuccessPercentage), "%" });
+		if (diffData)
+		{
+			statList.back().DiffValue = to_diff_percentage_string(diffData->Data.PeakSuccessPercentage);
+		}
+	}
+}
+void addPeakAtShotNumber(std::list<SingleStatStrings>& statList, const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState)
+{
+	if (pluginState->PeakInfoShallBeDisplayed)
+	{
+		statList.emplace_back(SingleStatStrings{ "Peak At Shot#:", std::to_string(statsData.Data.PeakShotNumber), "" });
+	}
+}
+
 std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
 {
 	std::list<SingleStatStrings> statNamesAndValues;
@@ -111,117 +285,25 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	std::locale::global(std::locale(""));
 	setlocale(LC_ALL, ""); // uses the OS locale
 
-	if (pluginState->AttemptsAndGoalsShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Attempts:", std::to_string(statsData.Stats.Attempts), "" });
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Goals:", std::to_string(statsData.Stats.Goals), "" });
-	}
-	if (pluginState->InitialBallHitsShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hits:", std::to_string(statsData.Stats.InitialHits), "" });
-	}
-	if (pluginState->CurrentStreaksShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Current Goal Streak:", std::to_string(statsData.Stats.GoalStreakCounter), "" });
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Current Miss Streak:", std::to_string(statsData.Stats.MissStreakCounter), "" });
-	}
-	if (pluginState->LongestStreaksShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Longest Goal Streak:", std::to_string(statsData.Stats.LongestGoalStreak), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.LongestGoalStreak);
-		}
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Longest Miss Streak:", std::to_string(statsData.Stats.LongestMissStreak), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.LongestMissStreak);
-		}
-	}
-	if (pluginState->AirDribbleTouchesShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Air Dribbles:", std::to_string(statsData.Stats.MaxAirDribbleTouches), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTouches);
-		}
-	}
-	if (pluginState->AirDribbleTimeShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. ADribble Time:", to_float_string(statsData.Stats.MaxAirDribbleTime), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxAirDribbleTime);
-		}
-	}
-	if (pluginState->GroundDribbleTimeShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. GDribble Time:", to_float_string(statsData.Stats.MaxGroundDribbleTime), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxGroundDribbleTime);
-		}
-	}
-	if (pluginState->TotalFlipResetsShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Flip Resets:", std::to_string(statsData.Stats.TotalFlipResets), "" });
-		if (diffData)
-		{
-			//statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.TotalFlipResets);
-		}
-	}
-	if (pluginState->MaxFlipResetsShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Max. Flip Resets:", std::to_string(statsData.Stats.MaxFlipResets), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.MaxFlipResets);
-		}
-	}
-	if (pluginState->DoubleTapGoalsShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Double Tap Goals:", std::to_string(statsData.Stats.DoubleTapGoals), "" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_value_string(diffData->Stats.DoubleTapGoals);
-		}
-	}
-	if (pluginState->CloseMissesShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Close Misses:", std::to_string(statsData.Stats.CloseMisses), "" });
-	}
-
-
-	// Calculated percentages and averages
-	if (pluginState->TotalSuccessRateShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Total Success Rate:", to_percentage_string(statsData.Data.SuccessPercentage), "%" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.SuccessPercentage);
-		}
-	}
-	if (pluginState->InitialBallHitsShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Initial Hit Rate:", to_percentage_string(statsData.Data.InitialHitPercentage), "%" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.InitialHitPercentage);
-		}
-	}
-	if (pluginState->LastNShotPercentageShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Last 50 Shots", to_percentage_string(statsData.Data.Last50ShotsPercentage), "%" });
-	}
-	if (pluginState->PeakInfoShallBeDisplayed)
-	{
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak Success Rate:", to_percentage_string(statsData.Data.PeakSuccessPercentage), "%" });
-		if (diffData)
-		{
-			statNamesAndValues.back().DiffValue = to_diff_percentage_string(diffData->Data.PeakSuccessPercentage);
-		}
-		statNamesAndValues.emplace_back(SingleStatStrings{ "Peak At Shot#:", std::to_string(statsData.Data.PeakShotNumber), "" });
-	}
+	addAttempts(statNamesAndValues, statsData, pluginState);
+	addGoals(statNamesAndValues, statsData, pluginState);
+	addInitialBallHits(statNamesAndValues, statsData, pluginState);
+	addCurrentGoalStreak(statNamesAndValues, statsData, pluginState);
+	addCurrentMissStreak(statNamesAndValues, statsData, pluginState);
+	addLongestGoalStreak(statNamesAndValues, statsData, pluginState, diffData);
+	addLongestMissStreak(statNamesAndValues, statsData, pluginState, diffData);
+	addAirDribbleTouches(statNamesAndValues, statsData, pluginState, diffData);
+	addAirDribbleTime(statNamesAndValues, statsData, pluginState, diffData);
+	addGroundDribbleTime(statNamesAndValues, statsData, pluginState, diffData);
+	addTotalFlipResets(statNamesAndValues, statsData, pluginState);
+	addMaxFlipResets(statNamesAndValues, statsData, pluginState, diffData);
+	addDoubleTapGoals(statNamesAndValues, statsData, pluginState, diffData);
+	addCloseMisses(statNamesAndValues, statsData, pluginState);
+	addTotalSuccessRate(statNamesAndValues, statsData, pluginState, diffData);
+	addInitialBallHits(statNamesAndValues, statsData, pluginState, diffData);
+	addLastNShotPercentage(statNamesAndValues, statsData, pluginState);
+	addPeakSuccessRate(statNamesAndValues, statsData, pluginState, diffData);
+	addPeakAtShotNumber(statNamesAndValues, statsData, pluginState);
 
 	// Goal speed stats
 	std::string speed_units = pluginState->IsMetric ? "km/h" : "mph";
