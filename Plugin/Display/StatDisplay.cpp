@@ -385,15 +385,15 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	setlocale(LC_ALL, ""); // uses the OS locale
 
 	// Copy the settings vector to be thread safe
-	std::vector<std::string> orderedSettings;
+	std::vector<std::string> OrderedStats;
 	{
-		std::scoped_lock lock(GoalPercentageCounterSettings::OrderedSettingsMutex);
-		orderedSettings = std::vector<std::string>(GoalPercentageCounterSettings::OrderedSettingsNames);
+		std::scoped_lock lock(GoalPercentageCounterSettings::OrderedStatsMutex);
+		OrderedStats = std::vector<std::string>(GoalPercentageCounterSettings::OrderedStatsNames);
 	}
-	if (orderedSettings.empty()) { return statNamesAndValues; }
+	if (OrderedStats.empty()) { return statNamesAndValues; }
 
 	std::string speed_units = pluginState->IsMetric ? "km/h" : "mph";
-	for (auto setting : orderedSettings)
+	for (auto setting : OrderedStats)
 	{
 		if (setting == GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef.DisplayText)
 		{

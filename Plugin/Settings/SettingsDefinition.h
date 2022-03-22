@@ -2,6 +2,7 @@
 
 #include <string>
 #include <optional>
+#include <sstream>
 
 /** Defines parameters related to a user configurable setting. */
 class SettingsDefinition
@@ -74,6 +75,11 @@ public:
 	static const char* KeybindingsArray[];								///< List of possible keybindings
 
 
-	static std::vector<std::string> OrderedSettingsNames; ///< Contains all settings in display order
-	static std::mutex OrderedSettingsMutex; ///< Required for thread safety
+	static std::vector<std::string> OrderedStatsNames; ///< Contains all settings in display order
+	static std::mutex OrderedStatsMutex; ///< Required for thread safety
+	static const std::string OrderedStatsCVarName; ///< Name of the CVar for storing the display order
 };
+
+
+std::string vector_to_string(const std::vector<std::string>& values);
+std::vector<std::string> string_to_vector(const std::string& vectorAsString);
