@@ -372,3 +372,46 @@ const SettingsDefinition GoalPercentageCounterSettings::ToggleShotLocationKeybin
 const char* GoalPercentageCounterSettings::KeybindingsArray[] = { "None","F1","F3","F4","F5","F7","F8","F9","F10","F11","F12","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","Escape","Tab","Tilde","ScrollLock","Pause","one","two","three","four","five","six","seven","eight","nine","zero","Underscore","Equals","Backslash","LeftBracket","RightBracket","Enter","CapsLock","Semicolon","Quote","LeftShift","Comma","Period","Slash","RightShift","LeftControl","LeftAlt","SpaceBar","RightAlt","RightControl","Left","Up","Down","Right","Home","End","Insert","PageUp","Delete","PageDown","NumLock","Divide","Multiply","Subtract","Add","NumPadOne","NumPadTwo","NumPadThree","NumPadFour","NumPadFive","NumPadSix","NumPadSeven","NumPadEight","NumPadNine","NumPadZero","Decimal","LeftMouseButton","RightMouseButton","ThumbMouseButton","ThumbMouseButton2","MouseScrollUp","MouseScrollDown","MouseX","MouseY","XboxTypeS_LeftThumbStick","XboxTypeS_RightThumbStick","XboxTypeS_DPad_Up","XboxTypeS_DPad_Left","XboxTypeS_DPad_Right","XboxTypeS_DPad_Down","XboxTypeS_Back","XboxTypeS_Start","XboxTypeS_Y","XboxTypeS_X","XboxTypeS_B","XboxTypeS_A","XboxTypeS_LeftShoulder","XboxTypeS_RightShoulder","XboxTypeS_LeftTrigger","XboxTypeS_RightTrigger","XboxTypeS_LeftTriggerAxis","XboxTypeS_RightTriggerAxis","XboxTypeS_LeftX","XboxTypeS_LeftY","XboxTypeS_RightX","XboxTypeS_RightY" };
 
 
+// This is initialized later on in order to make sure every setting has been initialized
+std::vector<std::string> GoalPercentageCounterSettings::OrderedStatsNames;
+std::mutex GoalPercentageCounterSettings::OrderedStatsMutex;
+const std::string GoalPercentageCounterSettings::OrderedStatsCVarName = "customtrainingstatistics_stats_order";
+
+
+std::string vector_to_string(const std::vector<std::string>& values)
+{
+	std::ostringstream stream;
+	auto separator = '|';
+	stream << values.size() << separator;
+	for (auto value : values)
+	{
+		stream << value << separator;
+	}
+	return stream.str();
+}
+std::vector<std::string> string_to_vector(const std::string& vectorAsString)
+{
+	if (vectorAsString.empty()) { return {}; }
+
+	const char separator = '|';
+
+	// read until the first separator
+	auto separatorPos = vectorAsString.find(separator);
+	if (separatorPos == std::string::npos) { return {}; }
+
+	// Try to read the size of the vector	
+	std::vector<std::string> result;
+	if (auto size = std::stoi(vectorAsString.substr(0, separatorPos)); size > 0)
+	{
+		size_t offset = separatorPos + 1;
+		for (auto index = 0; index < size; index++)
+		{
+			auto valueSeparatorPos = vectorAsString.find(separator, offset);
+			if (valueSeparatorPos == std::string::npos) { return {}; }
+
+			result.push_back(vectorAsString.substr(offset, valueSeparatorPos - offset));
+			offset = valueSeparatorPos + 1;
+		}
+	}
+	return result;
+}

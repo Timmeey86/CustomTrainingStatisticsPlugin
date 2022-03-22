@@ -1,7 +1,7 @@
 #include <pch.h>
 #include "PersistentStorage.h"
 #include <fstream>
-
+#include "SettingsDefinition.h"
 
 PersistentStorage::PersistentStorage(
 	BakkesMod::Plugin::BakkesModPlugin* plugin,
@@ -46,6 +46,29 @@ void PersistentStorage::Load()
 {
 	cv_->log("PersistentStorage: Loading the persistent storage cfg");
 	cv_->loadCfg(storage_file_.string());
+
+	// We need to restore the order of stats to be displayed, but only once while being loaded.
+	// The order is a vector encoded as a readable string
+	if (auto settingsOrderCvar = cv_->getCvar(GoalPercentageCounterSettings::OrderedStatsCVarName))
+	{
+		auto potentialSettingsOrder = string_to_vector(settingsOrderCvar.getStringValue());
+		std::scoped_lock lock(GoalPercentageCounterSettings::OrderedStatsMutex);
+		if (potentialSettingsOrder.size() == GoalPercentageCounterSettings::OrderedStatsNames.size())
+		{
+			// The stats are valid and may be applied
+			GoalPercentageCounterSettings::OrderedStatsNames = potentialSettingsOrder;
+		}
+		else
+		{
+			// The stats are from an older version or empty => apply current defaults
+			settingsOrderCvar.setValue(vector_to_string(GoalPercentageCounterSettings::OrderedStatsNames));
+			cv_->log("PersistentStorage: Could not restore stat order, applying default.");
+		}
+	}
+	else
+	{
+		// Shouldn't happen
+	}
 	loaded_ = true;
 }
 

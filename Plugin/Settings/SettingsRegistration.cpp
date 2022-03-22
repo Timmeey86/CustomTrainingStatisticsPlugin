@@ -3,6 +3,8 @@
 #include "../Data/TriggerNames.h"
 #include "Summary/SummaryUI.h"
 
+#include <sstream>
+
 // These macros just remove the syntactic overhead of extremely similar lambda function definitions
 // If you are a lowlevel template expert and you know a better solution, feel free to propose a pull request ;-)
 #define SET_BOOL_VALUE_FUNC(propertyName) [pluginState](bool value) { pluginState->propertyName = value; }
@@ -142,6 +144,15 @@ void SettingsRegistration::registerCVars(
 	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::ToggleShotLocationKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
 		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::ToggleImpactLocationDisplay } + ";");
 	});
+
+	{
+		std::scoped_lock lock(GoalPercentageCounterSettings::OrderedStatsMutex);
+		persistentStorage->RegisterPersistentCvar(
+			GoalPercentageCounterSettings::OrderedStatsCVarName,
+			vector_to_string(GoalPercentageCounterSettings::OrderedStatsNames),
+			"The order of stats"
+		);
+	}
 }
 
 #undef SET_BOOL_VALUE_FUNC
