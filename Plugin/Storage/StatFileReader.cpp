@@ -312,19 +312,19 @@ bool StatFileReader::readVersion_1_2_additions(std::ifstream& fileStream, bool s
 			if (valueSeparatorPos == std::string::npos) { return false; }
 
 			Vector vector;
-			vector.X = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			vector.X = std::stof(allShotLocations.substr(offset, valueSeparatorPos - offset));
 			offset = valueSeparatorPos + 1;
 
 			valueSeparatorPos = allShotLocations.find(",", offset);
 			if (valueSeparatorPos == std::string::npos) { return false; }
 
-			vector.Y = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			vector.Y = std::stof(allShotLocations.substr(offset, valueSeparatorPos - offset));
 			offset = valueSeparatorPos + 1;
 
 			valueSeparatorPos = allShotLocations.find(separator, offset);
 			if (valueSeparatorPos == std::string::npos) { return false; }
 
-			vector.Z = std::stof(allShotLocations.substr(offset, valueSeparatorPos));
+			vector.Z = std::stof(allShotLocations.substr(offset, valueSeparatorPos - offset));
 			offset = valueSeparatorPos + 1;
 
 			// restore both impact locations and heatmap by simulating the impacts in the same order
@@ -369,7 +369,7 @@ bool StatFileReader::readVersion_1_3_additions(std::ifstream& fileStream, StatsD
 			if (separatorPos == std::string::npos) { return false; }
 
 			// Register the goal speed value as if the player had taken the shot
-			statsDataPointer->Stats.GoalSpeedStats()->insert(std::stof(allGoalSpeeds.substr(offset, separatorPos)));
+			statsDataPointer->Stats.GoalSpeedStats()->insert(std::stof(allGoalSpeeds.substr(offset, separatorPos - offset)));
 			offset = separatorPos + 1;
 		}
 	}
