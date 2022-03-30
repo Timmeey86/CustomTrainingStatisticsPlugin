@@ -125,6 +125,10 @@ void PluginSettingsUI::createDropdownMenu(const SettingsDefinition& settingsDefi
 //  f2 -> plugins -> GoalPercentageCounter
 void PluginSettingsUI::RenderSettings()
 {
+	// Enforce the english locale, otherwise entering values by ctrl+clicking into float sliders will not work
+	setlocale(LC_ALL, "en_US.UTF-8");
+	std::locale::global(std::locale("en_US.UTF-8"));
+
 	ImGui::TextUnformatted("Plugin settings");
 
 	if (ImGui::CollapsingHeader("General"))

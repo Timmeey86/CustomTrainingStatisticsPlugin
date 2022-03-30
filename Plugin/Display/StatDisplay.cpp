@@ -376,7 +376,7 @@ void addCloseMissRate(std::list<SingleStatStrings>& statList, const StatsData& s
 	}
 }
 
-std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
+std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(StatsData statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData)
 {
 	std::list<SingleStatStrings> statNamesAndValues;
 
@@ -393,7 +393,7 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	if (OrderedStats.empty()) { return statNamesAndValues; }
 
 	std::string speed_units = pluginState->IsMetric ? "km/h" : "mph";
-	for (auto setting : OrderedStats)
+	for (const auto& setting : OrderedStats)
 	{
 		if (setting == GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef.DisplayText)
 		{
@@ -502,10 +502,6 @@ std::list<SingleStatStrings> StatDisplay::GetStatsToBeRendered(const StatsData& 
 	{
 		statNamesAndValues.emplace_back(SingleStatStrings{ "What did you expect?", "  ;-)", "" });
 	}
-
-	// Revert to the default locale
-	setlocale(LC_ALL, "en_US.UTF-8");
-	std::locale::global(std::locale("en_US.UTF-8"));
 	return statNamesAndValues;
 }
 

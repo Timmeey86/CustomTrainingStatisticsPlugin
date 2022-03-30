@@ -34,9 +34,10 @@ public:
 
 	/** Builds a list of stats to be rendered, based on the current plugin state.
 	 *
+	 * \param		statsData		the object providing the stats which can possibly be rendered. Intentional copy due to waiting for a mutex.
 	 * \returns		A list of SingleStatStrings, consisting of a label, value, and unit string. These will be displayed in three columns.
 	 */
-	static std::list<SingleStatStrings> GetStatsToBeRendered(const StatsData& statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData = nullptr);
+	static std::list<SingleStatStrings> GetStatsToBeRendered(StatsData statsData, const std::shared_ptr<const PluginState> pluginState, const StatsData* const diffData = nullptr);
 
 private:
 	void drawCenter(CanvasWrapper& canvas, const DisplayOptions& displayOpts, int rowNumber, const std::string& label) const;
