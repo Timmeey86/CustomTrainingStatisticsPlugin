@@ -94,7 +94,6 @@ void GoalPercentageCounter::onLoad()
 	// Initialize the stats summary page
 	_summaryUi->initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
 	initPluginWindowManager(_summaryUi, cvarManager, gameWrapper);
-	gameWrapper->Execute([this](GameWrapper*) { cvarManager->executeCommand(fmt::format("togglemenu {};", GetMenuName())); });
 
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 }

@@ -42,11 +42,6 @@ namespace ItsBranK
 
 	bool ImInterface::ShouldRender()
 	{
-		if (!Render)
-		{
-			SetShouldRender(false);
-		}
-
 		return (IsAttached() && Render);
 	}
 
@@ -67,11 +62,15 @@ namespace ItsBranK
 
 	void ImInterface::SetShouldRender(bool bShouldRender)
 	{
-		Render = bShouldRender;
-
-		if (ToggleCallback)
+		auto valueChanged = (Render != bShouldRender);
+		if (valueChanged)
 		{
-			ToggleCallback(WindowName, Render);
+			Render = bShouldRender;
+
+			if (ToggleCallback)
+			{
+				ToggleCallback(WindowName, Render);
+			}
 		}
 	}
 

@@ -20,9 +20,6 @@ public:
 	/** Do ImGui rendering here */
 	void Render();
 
-	/** Name of the menu that is used to toggle the window. */
-	std::string GetMenuName();
-
 	/** Title to give the menu */
 	std::string GetMenuTitle();
 
@@ -49,6 +46,8 @@ public:
 
 
 	static const std::string MenuName;
+
+	inline bool isWindowOpen() const { return _isWindowOpen; }
 
 private:
 	void renderSummary();

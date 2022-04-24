@@ -16,7 +16,6 @@ public:
 		std::shared_ptr<CVarManagerWrapper> cvarManager,
 		std::shared_ptr<GameWrapper> gameWrapper);
 
-
 	/** Do ImGui rendering here */
 	void Render() override;
 
@@ -42,8 +41,16 @@ public:
 	void OnClose() override;
 
 private:
+
+	void onNotificationToggled();
+	void toggleMenuIfNecessary(bool notificationActiveStateChanged);
+
+	void toggleMenu();
+
 	bool _statSummaryShallBeShown = false;
 	bool _notificationsShallBeShown = true;
+	bool _notificationsAreActive = false;
+	bool _menuIsVisible = false;
 
 
 	std::unique_ptr<ItsBranK::ImNotificationManager> _notificationManager;

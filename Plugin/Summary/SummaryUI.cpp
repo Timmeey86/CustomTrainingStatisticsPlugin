@@ -10,7 +10,7 @@
 #include <IMGUI/imgui.h>
 
 
-const std::string SummaryUI::MenuName = "custom_training_statistics_summary";
+const std::string SummaryUI::MenuName = "customtrainingstatistics_window_manager";
 
 void SummaryUI::initSummaryUi(
 	const std::shared_ptr<CVarManagerWrapper> cvarManager,
@@ -144,11 +144,6 @@ void SummaryUI::Render()
 	// End GUI
 	_shouldBlockInput = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
 	ImGui::End();
-}
-
-std::string SummaryUI::GetMenuName()
-{
-	return MenuName;
 }
 
 std::string SummaryUI::GetMenuTitle()

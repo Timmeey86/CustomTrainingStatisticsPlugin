@@ -4,7 +4,7 @@
 
 namespace ItsBranK
 {
-	ImNotification::ImNotification(const std::string& title, const std::string& name) : ImInterface(title, name, NULL, false) {}
+	ImNotification::ImNotification(const std::string& title, const std::string& name, std::function<void(std::string, bool)> toggleCallback) : ImInterface(title, name, toggleCallback, false) {}
 
 	ImNotification::~ImNotification() { OnDetatch(); }
 

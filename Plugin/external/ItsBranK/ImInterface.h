@@ -17,7 +17,6 @@ namespace ItsBranK
 		bool Attached; // If the interface is attached/created or not.
 		bool Render; // If the window should be rendered or not inside ImGui.
 		bool Focused; // If the window is focused or not inside ImGui.
-		std::function<void(std::string, bool)> ToggleCallback; // Callback function that is called when the render status has changed (open/closing).
 
 	public:
 		ImInterface(const std::string& title, const std::string& name, std::function<void(std::string, bool)> toggleCallback, bool bShowCursor);
@@ -38,5 +37,8 @@ namespace ItsBranK
 		virtual void OnAttach(); // Should be called when the interface is first created and hooked to ImGui, do any initializing here like memset or assigning default values.
 		virtual void OnDetatch(); // Can be called by the deconstructor or manually, if you have any pointers allocated you should free them here.
 		virtual void OnRender(); // Called each render tick, depends on what version of DirectX you're using.
+
+	protected:
+		std::function<void(std::string, bool)> ToggleCallback; // Callback function that is called when the render status has changed (open/closing).
 	};
 }

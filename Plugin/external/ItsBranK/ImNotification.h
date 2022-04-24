@@ -32,7 +32,7 @@ namespace ItsBranK
 		bool FadeOut;
 
 	public:
-		ImNotification(const std::string& title, const std::string& name);
+		ImNotification(const std::string& title, const std::string& name, std::function<void(std::string, bool)> toggleCallbac);
 		~ImNotification() override;
 
 		void OnAttach() override;

@@ -35,9 +35,10 @@ namespace ItsBranK
 		}
 	}
 
-	void ImNotificationManager::OnRender()
+	void ImNotificationManager::updateNotificationState()
 	{
-		if (!ActiveNotifications.empty())
+		auto notificationsWereEmpty = ActiveNotifications.empty();
+		if (!notificationsWereEmpty)
 		{
 			for (auto notificationIt = ActiveNotifications.begin(); notificationIt != ActiveNotifications.end();)
 			{
@@ -74,6 +75,15 @@ namespace ItsBranK
 			}
 		}
 
+		if (notificationsWereEmpty != ActiveNotifications.empty() && ToggleCallback)
+		{
+			ToggleCallback(GetTitle(), !ActiveNotifications.empty());
+		}
+	}
+
+	void ImNotificationManager::OnRender()
+	{
+		updateNotificationState();
 		if (!ActiveNotifications.empty())
 		{
 			for (size_t i = 0; i < ActiveNotifications.size(); i++)
@@ -104,6 +114,8 @@ namespace ItsBranK
 		{
 			notification->ToggleRender();
 		}
+		// Dirty hack: Render once to update the internal maps and send a callback if necessary
+		updateNotificationState();
 	}
 
 	std::shared_ptr<ImNotification> ImNotificationManager::GetNotification(const std::string& windowName)
