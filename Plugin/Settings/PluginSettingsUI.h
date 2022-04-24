@@ -10,6 +10,7 @@
 #include "SettingsDefinition.h"
 #include "../Data/PluginState.h"
 
+
 /** Implements methods which create a settings UI. */
 class PluginSettingsUI : public BakkesMod::Plugin::PluginSettingsWindow
 {

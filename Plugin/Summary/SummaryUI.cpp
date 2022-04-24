@@ -7,6 +7,8 @@
 #include <sstream>
 #include <locale>
 #include <codecvt>
+#include <IMGUI/imgui.h>
+
 
 const std::string SummaryUI::MenuName = "custom_training_statistics_summary";
 

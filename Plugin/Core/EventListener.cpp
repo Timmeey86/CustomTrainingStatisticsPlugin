@@ -62,6 +62,7 @@ void EventListener::registerUpdateEvents(std::shared_ptr<IStatUpdater> statUpdat
 		}
 	}, "Toggle between comparing to peak stats or the previous session", PERMISSION_ALL);
 
+
 	// Happens when custom taining mode is loaded or restarted
 	_gameWrapper->HookEventWithCallerPost<ActorWrapper>("Function GameEvent_TrainingEditor_TA.WaitingToPlayTest.OnTrainingModeLoaded",
 		[this, statUpdater](ActorWrapper caller, void*, const std::string&) {

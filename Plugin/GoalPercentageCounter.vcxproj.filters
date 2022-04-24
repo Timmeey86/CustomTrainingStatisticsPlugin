@@ -42,6 +42,9 @@
     <Filter Include="External\IMGUI">
       <UniqueIdentifier>{24b4634d-dd15-4baa-a552-94adfe68f570}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External\ItsBranK">
+      <UniqueIdentifier>{ca522a2f-c80f-4fb7-b3d5-a31dd50b3868}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounter.cpp">
@@ -211,6 +214,21 @@
     </ClCompile>
     <ClCompile Include="Calculation\AllTimePeakHandler.cpp">
       <Filter>Calculation</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ItsBranK\ImExtensions.cpp">
+      <Filter>External\ItsBranK</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ItsBranK\ImNotificationManager.cpp">
+      <Filter>External\ItsBranK</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ItsBranK\ImNotification.cpp">
+      <Filter>External\ItsBranK</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ItsBranK\ImInterface.cpp">
+      <Filter>External\ItsBranK</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginWindowManager.cpp">
+      <Filter>Plugin Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -457,8 +475,30 @@
     <ClInclude Include="Calculation\AllTimePeakHandler.h">
       <Filter>Calculation</Filter>
     </ClInclude>
-    <ClInclude Include="Data\IGoalSpeedProvider.h" />
-    <ClInclude Include="Data\FakeGoalSpeedProvider.h" />
+    <ClInclude Include="external\ItsBranK\ImEnums.h">
+      <Filter>External\ItsBranK</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ItsBranK\ImInterface.h">
+      <Filter>External\ItsBranK</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ItsBranK\ImNotification.h">
+      <Filter>External\ItsBranK</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ItsBranK\ImNotificationManager.h">
+      <Filter>External\ItsBranK</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ItsBranK\ImExtensions.h">
+      <Filter>External\ItsBranK</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginWindowManager.h">
+      <Filter>Plugin Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\FakeGoalSpeedProvider.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\IGoalSpeedProvider.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GoalPercentageCounter.rc">

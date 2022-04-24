@@ -5,6 +5,7 @@
 #include "bakkesmod/plugin/PluginSettingsWindow.h"
 
 #include "version.h"
+#include "PluginWindowManager.h"
 
 #include "Settings/PluginSettingsUI.h"
 #include "Summary/SummaryUI.h"
@@ -14,7 +15,7 @@
 
 constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_MINOR) "." stringify(VERSION_PATCH) "." stringify(VERSION_BUILD);
 
-class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public PluginSettingsUI, public SummaryUI
+class GoalPercentageCounter: public BakkesMod::Plugin::BakkesModPlugin, public PluginSettingsUI, public PluginWindowManager
 {
 
 	//Boilerplate
@@ -26,5 +27,7 @@ private:
 	std::shared_ptr<ShotStats> _shotStats = std::make_shared<ShotStats>();
 	std::shared_ptr<PluginState> _pluginState = std::make_shared<PluginState>();
 	std::shared_ptr<EventListener> _eventListener;
+	std::shared_ptr<SummaryUI> _summaryUi = std::make_shared<SummaryUI>();
+
 };
 

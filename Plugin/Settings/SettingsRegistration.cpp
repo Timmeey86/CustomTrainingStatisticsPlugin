@@ -126,7 +126,7 @@ void SettingsRegistration::registerCVars(
 	registerCheckboxSetting(persistentStorage, GoalPercentageCounterSettings::DisplayStatDifference, SET_BOOL_VALUE_FUNC(PreviousSessionDiffShallBeDisplayed));
 
 	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::SummaryKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {
-		handleBindingChange(cvarManager, oldValue, cvar, "togglemenu " + SummaryUI::MenuName + ";");
+		handleBindingChange(cvarManager, oldValue, cvar, std::string{ TriggerNames::ToggleSummaryDisplay } + ";");
 		});
 
 	registerDropdownMenuSetting(persistentStorage, GoalPercentageCounterSettings::RestoreLastSessionKeybindingDef, [persistentStorage, cvarManager](const std::string& oldValue, CVarWrapper cvar) {

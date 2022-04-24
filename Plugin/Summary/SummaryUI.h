@@ -2,13 +2,12 @@
 
 #include <memory>
 
-#include "bakkesmod/plugin/pluginwindow.h"
 #include "bakkesmod/wrappers/cvarmanagerwrapper.h"
 
 #include "Data/ShotStats.h"
 #include "Data/PluginState.h"
 
-class SummaryUI : public BakkesMod::Plugin::PluginWindow
+class SummaryUI
 {
 public:
 	/** Initializes the stats summary UI. */
@@ -19,28 +18,28 @@ public:
 		const std::shared_ptr<const PluginState> pluginState);
 
 	/** Do ImGui rendering here */
-	void Render() override;
+	void Render();
 
 	/** Name of the menu that is used to toggle the window. */
-	std::string GetMenuName() override;
+	std::string GetMenuName();
 
 	/** Title to give the menu */
-	std::string GetMenuTitle() override;
+	std::string GetMenuTitle();
 
 	/** Don't call this yourself, BM will call this function with a pointer to the current ImGui context */
-	void SetImGuiContext(uintptr_t ctx) override;
+	void SetImGuiContext(uintptr_t ctx);
 
 	/** Should events such as mouse clicks/key inputs be blocked so they won't reach the game */
-	bool ShouldBlockInput() override;
+	bool ShouldBlockInput();
 
 	/** Return true if overlay which isn't interacted with */
-	bool IsActiveOverlay() override;
+	bool IsActiveOverlay();
 
 	/** Called when window is opened */
-	void OnOpen() override;
+	void OnOpen();
 
 	/** Called when window is closed */
-	void OnClose() override;
+	void OnClose();
 
 	void ToggleMenu();
 	

@@ -39,8 +39,6 @@ void GoalPercentageCounter::onLoad()
 
 	auto differenceData = std::make_shared<ShotStats>(); // will store the difference between the previous session and the current one
 
-	// Initialize the stats summary page
-	initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
 
 	// Create handler classes
 	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>(gameWrapper);
@@ -90,6 +88,13 @@ void GoalPercentageCounter::onLoad()
 	// Enable rendering of output
 	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, differenceData, _pluginState);
 	_eventListener->registerRenderEvents({ statDisplay, shotDistributionTracker });
+
+	// Enable notifications and the summary UI
+
+	// Initialize the stats summary page
+	_summaryUi->initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
+	initPluginWindowManager(_summaryUi, cvarManager, gameWrapper);
+	gameWrapper->Execute([this](GameWrapper*) { cvarManager->executeCommand(fmt::format("togglemenu {};", GetMenuName())); });
 
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 }

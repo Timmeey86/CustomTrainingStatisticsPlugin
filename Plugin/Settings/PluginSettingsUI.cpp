@@ -5,15 +5,12 @@
 #include "bakkesmod/plugin/pluginwindow.h"
 #include "bakkesmod/plugin/bakkesmodplugin.h"
 
-#include <IMGUI/imgui.h>
-
 void PluginSettingsUI::initPluginSettingsUi(std::function<void(const std::string&)> sendNotifierFunc, std::shared_ptr<CVarManagerWrapper> cvarManager)
 {
 	_sendNotifierFunc = sendNotifierFunc;
 	_cvarManager = cvarManager;
 
 	// Initialize the static list of all settings now
-	// TODO: Figure out a way to store and restore this order
 	GoalPercentageCounterSettings::OrderedStatsNames = {
 		GoalPercentageCounterSettings::DisplayAttemptsAndGoalsDef.DisplayText,
 		GoalPercentageCounterSettings::DisplayInitialBallHitsDef.DisplayText,
@@ -124,7 +121,8 @@ void PluginSettingsUI::createDropdownMenu(const SettingsDefinition& settingsDefi
 // This will show up in bakkesmod when the plugin is loaded at
 //  f2 -> plugins -> GoalPercentageCounter
 void PluginSettingsUI::RenderSettings()
-{
+{	
+
 	// Enforce the english locale, otherwise entering values by ctrl+clicking into float sliders will not work
 	setlocale(LC_ALL, "en_US.UTF-8");
 	std::locale::global(std::locale("en_US.UTF-8"));
