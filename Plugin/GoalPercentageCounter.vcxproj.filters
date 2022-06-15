@@ -45,6 +45,9 @@
     <Filter Include="External\ItsBranK">
       <UniqueIdentifier>{ca522a2f-c80f-4fb7-b3d5-a31dd50b3868}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Notifications">
+      <UniqueIdentifier>{7205e5bc-a50e-455b-b368-100086723304}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GoalPercentageCounter.cpp">
@@ -498,6 +501,9 @@
     </ClInclude>
     <ClInclude Include="Data\IGoalSpeedProvider.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Notifications\INotificationDisplay.h">
+      <Filter>Notifications</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

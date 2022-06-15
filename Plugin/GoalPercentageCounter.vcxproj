@@ -272,6 +272,7 @@
     <ClInclude Include="external\CBRenderingTools\Objects\Sphere.h" />
     <ClInclude Include="external\CBRenderingTools\Objects\Triangle.h" />
     <ClInclude Include="external\CBRenderingTools\Objects\VisualCamera.h" />
+    <ClInclude Include="Notifications\INotificationDisplay.h" />
     <ClInclude Include="PluginWindowManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="GoalPercentageCounter.h" />
