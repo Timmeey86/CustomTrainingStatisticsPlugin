@@ -2,6 +2,7 @@
 
 #include <functional>
 #include "../Core/AbstractEventReceiver.h"
+#include "../Notifications/StatNotificationManager.h"
 
 /** Defines states of air dribbling. */
 enum class AirDribbleState
@@ -36,7 +37,8 @@ public:
 	AirDribbleAmountCounter(
 		std::function<void(int)> setMaxTouchAmountFunc,
 		std::function<void(float)> setMaxAirDribbleTimeFunc,
-		std::function<void(int)> setMaxFlipResetsFunc);
+		std::function<void(int)> setMaxFlipResetsFunc,
+		std::shared_ptr<StatNotificationManager> notificationManager);
 
 	// Resets the touch counter whenever a new attempt starts, and treats the car as being on the ground.
 	void onAttemptStarted() override;
@@ -53,10 +55,14 @@ public:
 	void onCarLandingOnBall(TrainingEditorWrapper& trainingWrapper, CarWrapper& car, BallWrapper& ball) override;
 	// Actually increments the flip reset counter: Only count the flip reset if a flip comes later
 	void onCarFlipped() override;
+	// Displays a notification of the most recent air dribble from the previous attempt.
+	void onAttemptFinished(TrainingEditorWrapper& trainingWrapper) override;
 
 private:
 	/** Resets the current touch amount and transitions back to WaitingForTakeoff state. */
 	void finishShot();
+	/** Displays a notification in case the player had at least three air dribble touches. */
+	void displayNotificationIfNecessary();
 
 	int _currentAmountOfTouches = 0; ///< The current amount of ball touches after lifting off the ground.
 	int _maximumAmountOfTouches = 0; ///< The maximum amount of touches during the current attempt.
@@ -73,4 +79,6 @@ private:
 
 	FlipResetState _flipResetState = FlipResetState::None;
 	AirDribbleState _currentState = AirDribbleState::WaitingForTakeoff;
+
+	std::shared_ptr<StatNotificationManager> _notificationManager; ///< Used for displaying notifications on successfull air dribbles
 };

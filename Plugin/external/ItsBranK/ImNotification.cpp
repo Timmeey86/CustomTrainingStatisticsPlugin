@@ -10,7 +10,7 @@ namespace ItsBranK
 
 	void ImNotification::OnAttach()
 	{
-		WindowPadding = 10.0f;
+		WindowPadding = 5.0f;
 		WindowOffset = 0.0f;
 		Corner = CornerPositions::TopLeft;
 		WindowFlags = (ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
@@ -69,7 +69,7 @@ namespace ItsBranK
 			window_pos.y += WindowOffset;
 
 			ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
-			ImGui::SetNextWindowSize(ImVec2(325.0f, 75.0f), ImGuiCond_Always);
+			ImGui::SetNextWindowSize(ImVec2(350.0f, 100.0f), ImGuiCond_Always);
 
 			if (FadeOut)
 			{
@@ -90,9 +90,10 @@ namespace ItsBranK
 					TitleColor.w = LastAlpha;
 					DescriptionColor.w = LastAlpha;
 										
-					ImExtensions::TextStyled(Title.c_str(), TitleColor, ImFontMap[TextStyles::Bold]);
+					ImExtensions::TextStyled(Title.c_str(), TitleColor, Test::ImFontMap[TextStyles::Bold]);
 					ImGui::PushTextWrapPos(ImGui::GetWindowWidth() - 1.0f);
-					ImExtensions::TextStyled(Description.c_str(), DescriptionColor, ImFontMap[TextStyles::Regular]);
+					auto font = Test::ImFontMap.at(TextStyles::Regular);
+					ImExtensions::TextStyled(Description.c_str(), DescriptionColor, font);
 					ImGui::PopTextWrapPos();
 				}
 				ImGui::EndChild();

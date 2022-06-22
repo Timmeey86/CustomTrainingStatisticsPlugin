@@ -92,6 +92,11 @@ void PluginWindowManager::displayNotification(const std::string& uniqueName, con
 	}
 }
 
+bool PluginWindowManager::hasNotification(const std::string& uniqueName)
+{
+	return _notifications.count(uniqueName) > 0;
+}
+
 void PluginWindowManager::Render()
 {
 	_notificationManager->OnRender();

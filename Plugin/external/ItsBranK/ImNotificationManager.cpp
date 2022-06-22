@@ -7,6 +7,12 @@ namespace ItsBranK
 	ImNotificationManager::ImNotificationManager(const std::string& title, const std::string& name, std::function<void(std::string, bool)> toggleCallback)
 		: ImInterface(title, name, toggleCallback, false) 
 	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto regularFont = io.Fonts->AddFontDefault(nullptr, 20.0f);
+		auto notReallyBoldFont = io.Fonts->AddFontDefault(nullptr, 24.0f);
+		Test::ImFontMap[TextStyles::Regular] = regularFont;
+		Test::ImFontMap[TextStyles::Bold] = notReallyBoldFont;
+		io.Fonts->Build();
 	}
 
 	ImNotificationManager::~ImNotificationManager() { OnDetatch(); }
@@ -15,7 +21,7 @@ namespace ItsBranK
 	{
 		SetAttached(true);
 	}
-
+	
 	void ImNotificationManager::OnDetatch()
 	{
 		if (IsAttached())
@@ -96,7 +102,7 @@ namespace ItsBranK
 
 					if (i != 0)
 					{
-						offset = (i * 85.0f); // 85 being the notification's window height (75) plus padding (10).
+						offset = (i * 105.0f); // 85 being the notification's window height (75) plus padding (10).
 					}
 
 					notification->SetOffset(offset);

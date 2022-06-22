@@ -60,9 +60,9 @@ namespace ItsBranK
 		{ TextColors::Pink, ImVec4(1.0f, 0.12941f, 1.0f, 1.0f) },						// #FF21FF
 	};
 
-	static std::map<TextStyles, ImFont*> ImFontMap = {
-		{ TextStyles::Regular, nullptr },
-		{ TextStyles::Italic, nullptr },
-		{ TextStyles::Bold, nullptr }
+	class Test
+	{
+	public:
+		static std::map<TextStyles, ImFont*> ImFontMap;
 	};
 }

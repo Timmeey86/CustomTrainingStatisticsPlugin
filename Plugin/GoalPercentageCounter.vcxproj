@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|x64">
@@ -108,6 +108,7 @@
     <ClCompile Include="Data\RunningMedian.cpp" />
     <ClCompile Include="Data\TriggerNames.cpp" />
     <ClCompile Include="Display\StatDisplay.cpp" />
+    <ClCompile Include="external\ItsBranK\ImEnums.cpp" />
     <ClCompile Include="external\ItsBranK\ImExtensions.cpp" />
     <ClCompile Include="external\ItsBranK\ImInterface.cpp" />
     <ClCompile Include="external\ItsBranK\ImNotification.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="external\CBRenderingTools\Objects\VisualCamera.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="Notifications\StatNotificationManager.cpp" />
     <ClCompile Include="PluginWindowManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -201,6 +203,7 @@
     <ClInclude Include="Calculation\DoubleTapGoalCounter.h" />
     <ClInclude Include="Calculation\GroundDribbleTimeCounter.h" />
     <ClInclude Include="Calculation\ShotDistributionTracker.h" />
+    <ClInclude Include="Notifications\StatNotificationManager.h" />
     <ClInclude Include="Calculation\StatUpdater.h" />
     <ClInclude Include="Core\AbstractEventReceiver.h" />
     <ClInclude Include="Core\CustomTrainingStateMachine.h" />

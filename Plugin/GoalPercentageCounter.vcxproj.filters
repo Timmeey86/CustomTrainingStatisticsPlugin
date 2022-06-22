@@ -233,6 +233,12 @@
     <ClCompile Include="PluginWindowManager.cpp">
       <Filter>Plugin Files</Filter>
     </ClCompile>
+    <ClCompile Include="Notifications\StatNotificationManager.cpp">
+      <Filter>Notifications</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ItsBranK\ImEnums.cpp">
+      <Filter>External\ItsBranK</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Settings\PluginSettingsUI.h">
@@ -503,6 +509,9 @@
       <Filter>Data</Filter>
     </ClInclude>
     <ClInclude Include="Notifications\INotificationDisplay.h">
+      <Filter>Notifications</Filter>
+    </ClInclude>
+    <ClInclude Include="Notifications\StatNotificationManager.h">
       <Filter>Notifications</Filter>
     </ClInclude>
   </ItemGroup>

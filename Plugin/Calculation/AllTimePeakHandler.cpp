@@ -7,11 +7,13 @@ AllTimePeakHandler::AllTimePeakHandler(
 	std::shared_ptr<IStatReader> statReader, 
 	std::shared_ptr<IStatWriter> statWriter, 
 	std::shared_ptr<PluginState> pluginState, 
-	std::shared_ptr<ShotStats> shotStats) 
+	std::shared_ptr<ShotStats> shotStats,
+	std::shared_ptr<StatNotificationManager> notificationManager)
 	: _statReader( statReader )
 	, _statWriter( statWriter)
 	, _pluginState( pluginState )
 	, _currentStats( shotStats )
+	, _notificationManager( notificationManager )
 
 {
 }
@@ -27,20 +29,26 @@ void copyGoalSpeedStats(const std::shared_ptr<IGoalSpeedProvider>& sourceProvide
 void copyGoalSpeedStatsIfHigher(const std::shared_ptr<IGoalSpeedProvider>& sourceProvider, const std::shared_ptr<FakeGoalSpeedProvider>& fakeStorage)
 {
 	if (fakeStorage->getMin() < sourceProvider->getMin()) { fakeStorage->setFakeMin(sourceProvider->getMin()); }
-	if (fakeStorage->getMax() < sourceProvider->getMax()) { fakeStorage->setFakeMax(sourceProvider->getMax()); }
+	if (fakeStorage->getMax() < sourceProvider->getMax()) 
+	{
+		fakeStorage->setFakeMax(sourceProvider->getMax()); 
+		// TODO Notification
+	}
 	if (fakeStorage->getMean() < sourceProvider->getMean()) { fakeStorage->setFakeMean(sourceProvider->getMean()); }
 	if (fakeStorage->getMedian() < sourceProvider->getMedian()) { fakeStorage->setFakeMedian(sourceProvider->getMedian()); }
 }
 
 template<typename T>
-void copyIfHigher(const T& newValue, T& localValue)
+bool copyIfHigher(const T& newValue, T& localValue)
 {
 	if (newValue > localValue)
 	{
 		localValue = newValue;
+		return true;
 	}
+	return false;
 }
-void copyMaxStats(const StatsData& source, StatsData& localStats, std::shared_ptr<FakeGoalSpeedProvider> localGoalSpeed)
+void AllTimePeakHandler::copyMaxStats(const StatsData& source, StatsData& localStats, std::shared_ptr<FakeGoalSpeedProvider> localGoalSpeed)
 {
 	// Do not modify stats where comparing doesn't make much sense / would produce conflicting results
 	// - Attempts
@@ -58,21 +66,54 @@ void copyMaxStats(const StatsData& source, StatsData& localStats, std::shared_pt
 	// - LongestMissStreak (If the user does 5 shots with zero misses, and then 200 shots with one miss, is that really worse?)
 
 	// Copy over any other stats
-	copyIfHigher(source.Stats.LongestGoalStreak, localStats.Stats.LongestGoalStreak);
+	if (copyIfHigher(source.Stats.LongestGoalStreak, localStats.Stats.LongestGoalStreak))
+	{
+		_notificationManager->displayPeakChange("Longest goal streak", std::to_string(source.Stats.LongestGoalStreak));
+	}
 	copyGoalSpeedStatsIfHigher(source.Stats.GoalSpeedStats(), localGoalSpeed);
-	copyIfHigher(source.Stats.MaxAirDribbleTouches, localStats.Stats.MaxAirDribbleTouches);
-	copyIfHigher(source.Stats.MaxAirDribbleTime, localStats.Stats.MaxAirDribbleTime);
-	copyIfHigher(source.Stats.MaxGroundDribbleTime, localStats.Stats.MaxGroundDribbleTime);
+	if (copyIfHigher(source.Stats.MaxAirDribbleTouches, localStats.Stats.MaxAirDribbleTouches))
+	{
+		_notificationManager->displayPeakChange("Maximum air dribble touches", std::to_string(source.Stats.MaxAirDribbleTouches));
+	}
+	if(copyIfHigher(source.Stats.MaxAirDribbleTime, localStats.Stats.MaxAirDribbleTime))
+	{
+		_notificationManager->displayPeakChange("Maximum air dribble time", fmt::format("{:.2f} s", source.Stats.MaxAirDribbleTime));
+	}
+	if(copyIfHigher(source.Stats.MaxGroundDribbleTime, localStats.Stats.MaxGroundDribbleTime))
+	{
+
+		// TODO notification
+	}
 	copyIfHigher(source.Stats.DoubleTapGoals, localStats.Stats.DoubleTapGoals);
 	copyIfHigher(source.Stats.MaxFlipResets, localStats.Stats.MaxFlipResets);
 	copyIfHigher(source.Stats.FlipResetAttemptsScored, localStats.Stats.FlipResetAttemptsScored);
 
 	// Copy over calculated data
-	copyIfHigher(source.Data.AverageFlipResetsPerAttempt, localStats.Data.AverageFlipResetsPerAttempt);
-	copyIfHigher(source.Data.DoubleTapGoalPercentage, localStats.Data.DoubleTapGoalPercentage);
-	copyIfHigher(source.Data.FlipResetGoalPercentage, localStats.Data.FlipResetGoalPercentage);
-	copyIfHigher(source.Data.InitialHitPercentage, localStats.Data.InitialHitPercentage);
-	copyIfHigher(source.Data.PeakSuccessPercentage, localStats.Data.PeakSuccessPercentage);
+	if(copyIfHigher(source.Data.AverageFlipResetsPerAttempt, localStats.Data.AverageFlipResetsPerAttempt))
+	{
+
+		// TODO notification
+	}
+	if(copyIfHigher(source.Data.DoubleTapGoalPercentage, localStats.Data.DoubleTapGoalPercentage))
+	{
+
+		// TODO notification
+	}
+	if(copyIfHigher(source.Data.FlipResetGoalPercentage, localStats.Data.FlipResetGoalPercentage))
+	{
+
+		// TODO notification
+	}
+	if(copyIfHigher(source.Data.InitialHitPercentage, localStats.Data.InitialHitPercentage))
+	{
+
+		// TODO notification
+	}
+	if(copyIfHigher(source.Data.PeakSuccessPercentage, localStats.Data.PeakSuccessPercentage))
+	{
+
+		// TODO notification
+	}
 	copyIfHigher(source.Data.SuccessPercentage, localStats.Data.SuccessPercentage);
 }
 

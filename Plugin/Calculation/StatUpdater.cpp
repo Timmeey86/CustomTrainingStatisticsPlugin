@@ -6,12 +6,14 @@ StatUpdater::StatUpdater(
 	std::shared_ptr<ShotStats> differenceStats,
 	std::shared_ptr<PluginState> pluginState,
 	std::shared_ptr<IStatReader> statReader,
-	std::shared_ptr<AllTimePeakHandler> peakHandler)
+	std::shared_ptr<AllTimePeakHandler> peakHandler,
+	std::shared_ptr<StatNotificationManager> notificationManager)
 	: _externalShotStats(shotStats)
 	, _differenceStats(differenceStats)
 	, _pluginState(pluginState)
 	, _statReader(statReader)
 	, _peakHandler(peakHandler)
+	, _notificationManager(notificationManager)
 {
 }
 
@@ -459,6 +461,8 @@ void StatUpdater::processCloseMiss()
 		auto&& currStatsData = _internalShotStats.PerShotStats.at(_pluginState->CurrentRoundIndex);
 		handleCloseMiss(currStatsData);
 	}
+
+
 
 	_statsHaveJustBeenRestored = false;
 }

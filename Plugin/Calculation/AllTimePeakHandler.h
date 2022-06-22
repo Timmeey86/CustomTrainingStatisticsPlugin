@@ -4,6 +4,7 @@
 #include "../Core/IStatWriter.h"
 #include "../Data/PluginState.h"
 #include "../Data/FakeGoalSpeedProvider.h"
+#include "../Notifications/StatNotificationManager.h"
 
 #include <memory>
 
@@ -19,8 +20,10 @@ public:
 		std::shared_ptr<IStatReader> statReader,
 		std::shared_ptr<IStatWriter> statWriter,
 		std::shared_ptr<PluginState> pluginState,
-		std::shared_ptr<ShotStats> shotStats
+		std::shared_ptr<ShotStats> shotStats,
+		std::shared_ptr<StatNotificationManager> notificationManager
 	);
+
 
 	/** Resets, e.g. after switching to a new training pack. */
 	void reset();
@@ -33,6 +36,7 @@ public:
 private:
 
 	void copyStats(const ShotStats& source, bool statsWereRestoredFromFile);
+	void copyMaxStats(const StatsData& source, StatsData& localStats, std::shared_ptr<FakeGoalSpeedProvider> localGoalSpeed);
 	bool writeAllStatFile();
 	bool readAllStatFile();
 
@@ -43,4 +47,5 @@ private:
 	ShotStats _allTimePeakStats;	///< The current best stats for a pack. Note that for some stats, a lower value might be better.
 	std::shared_ptr<FakeGoalSpeedProvider> _allStatGoalSpeedProvider = std::make_shared<FakeGoalSpeedProvider>(); ///< Allows setting fake values for min, max, median and mean goal speed.
 	std::vector<std::shared_ptr<FakeGoalSpeedProvider>> _perShotGoalSpeedProviders; ///< Allows setting fake values for min, max, median and mean goal speed for single shots.
+	std::shared_ptr<StatNotificationManager> _notificationManager;
 };

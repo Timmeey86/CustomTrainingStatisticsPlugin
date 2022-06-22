@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 /** Allows using multiple plugin windows like the stat summary and notifications, for example. */
-class PluginWindowManager : public BakkesMod::Plugin::PluginWindow, INotificationDisplay
+class PluginWindowManager : public BakkesMod::Plugin::PluginWindow, public INotificationDisplay
 {
 public:
 	void initPluginWindowManager(
@@ -47,6 +47,7 @@ public:
 	// Inherited via INotificationDisplay
 	void registerNotification(const std::string& uniqueName, const std::string& title) override;
 	void displayNotification(const std::string& uniqueName, const std::string& detailedInfo) override;
+	bool hasNotification(const std::string& uniqueName) override;
 
 private:
 

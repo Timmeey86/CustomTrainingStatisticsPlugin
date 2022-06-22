@@ -4,10 +4,12 @@
 AirDribbleAmountCounter::AirDribbleAmountCounter(
 	std::function<void(int)> setMaxTouchAmountFunc, 
 	std::function<void(float)> setMaxAirDribbleTimeFunc,
-	std::function<void(int)> setMaxFlipResetsFunc)
+	std::function<void(int)> setMaxFlipResetsFunc,
+	std::shared_ptr<StatNotificationManager> notificationManager)
 	: _setMaxTouchAmountFunc(setMaxTouchAmountFunc)
 	, _setMaxAirDribbleTimeFunc(setMaxAirDribbleTimeFunc)
 	, _setMaxFlipResetsFunc(setMaxFlipResetsFunc)
+	, _notificationManager(notificationManager)
 {
 }
 
@@ -118,9 +120,28 @@ void AirDribbleAmountCounter::onCarFlipped()
 
 void AirDribbleAmountCounter::finishShot()
 {
+	// The player landed before resetting the shot => Display a notification now, before resetting the values
+	displayNotificationIfNecessary();
+
 	_currentAmountOfTouches = 0;
 	_firstBallTouchGameTime = -1.0f;
 	_lastBallTouchGameTime = -1.0f;
 	_currentAmountOfFlipResets = 0;
 	_currentState = AirDribbleState::WaitingForTakeoff;
+}
+
+void AirDribbleAmountCounter::onAttemptFinished(TrainingEditorWrapper&)
+{
+	// Display a notification (will do nothing if it has been shown already)
+	displayNotificationIfNecessary();
+}
+
+void AirDribbleAmountCounter::displayNotificationIfNecessary()
+{
+	if (_notificationManager && _currentAmountOfTouches > 2)
+	{
+		_notificationManager->displayAirDribbleResult((double)_lastBallTouchGameTime - (double)_firstBallTouchGameTime, _currentAmountOfTouches);
+		_notificationManager->displayPeakChange("DUMMY TEST ONE", "25.0 s");
+		_notificationManager->displayPeakChange("DUMMY TEST TWO", "50");
+	}
 }

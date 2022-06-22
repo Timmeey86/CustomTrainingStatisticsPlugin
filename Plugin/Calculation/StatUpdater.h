@@ -8,6 +8,7 @@
 #include "../Core/IStatReader.h"
 #include "../Data/ShotStats.h"
 #include "../Data/PluginState.h"
+#include "../Notifications/StatNotificationManager.h"
 #include "AllTimePeakHandler.h"
 
 /** This class currently:
@@ -27,7 +28,8 @@ public:
 		std::shared_ptr<ShotStats> differenceStats,
 		std::shared_ptr<PluginState> pluginState,
 		std::shared_ptr<IStatReader> statReader,
-		std::shared_ptr<AllTimePeakHandler> peakHandler
+		std::shared_ptr<AllTimePeakHandler> peakHandler,
+		std::shared_ptr<StatNotificationManager> notificationManager
 	);
 
 	// Inherited via IStatUpdater
@@ -81,6 +83,7 @@ private:
 	std::shared_ptr<PluginState> _pluginState;	///< The current state of the plugin
 	std::shared_ptr<IStatReader> _statReader; ///< Used for restoring previous state
 	std::shared_ptr<AllTimePeakHandler> _peakHandler; ///< The handler for peak stats.
+	std::shared_ptr<StatNotificationManager> _notificationManager; ///< The handler for notifications.
 	std::string _trainingPackCode; ///< The code of the currently active training pack
 
 	bool _statsHaveJustBeenRestored = false; ///< This prevents the "toggle last attempt" feature from being used after restoring the last session

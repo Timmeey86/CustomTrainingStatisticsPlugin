@@ -7,6 +7,7 @@
 #include "Calculation/CloseMissCounter.h"
 #include "Calculation/ShotDistributionTracker.h"
 #include "Calculation/AllTimePeakHandler.h"
+#include "Notifications/StatNotificationManager.h"
 #include "Display/StatDisplay.h"
 #include "Core/EventListener.h"
 #include "Core/StatUpdaterEventBridge.h"
@@ -40,12 +41,20 @@ void GoalPercentageCounter::onLoad()
 	auto differenceData = std::make_shared<ShotStats>(); // will store the difference between the previous session and the current one
 
 
+
+	// Initialize the stats summary page
+	_summaryUi->initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
+	initPluginWindowManager(_summaryUi, cvarManager, gameWrapper);
+
+	// Enable notifications
+	auto notificationHandler = std::make_shared<StatNotificationManager>(this);
+
 	// Create handler classes
 	auto shotDistributionTracker = std::make_shared<ShotDistributionTracker>(gameWrapper);
 	auto statReader = std::make_shared<StatFileReader>(gameWrapper, shotDistributionTracker);
 	auto statWriter = std::make_shared<StatFileWriter>(gameWrapper, _shotStats, shotDistributionTracker);
-	auto peakHandler = std::make_shared<AllTimePeakHandler>(statReader, statWriter, _pluginState, _shotStats);
-	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader, peakHandler);
+	auto peakHandler = std::make_shared<AllTimePeakHandler>(statReader, statWriter, _pluginState, _shotStats, notificationHandler);
+	auto statUpdater = std::make_shared<StatUpdater>(_shotStats, differenceData, _pluginState, statReader, peakHandler, notificationHandler);
 
 
 	// Set up event registration
@@ -57,7 +66,8 @@ void GoalPercentageCounter::onLoad()
 	auto airDribbleCounter = std::make_shared<AirDribbleAmountCounter>(
 		[this, statUpdater](int amount) { statUpdater->processAirDribbleTouches(amount); },
 		[this, statUpdater](float time) { statUpdater->processAirDribbleTime(time); },
-		[this, statUpdater](int amount) { statUpdater->processFlipReset(amount); }
+		[this, statUpdater](int amount) { statUpdater->processFlipReset(amount); },
+		notificationHandler
 	);
 	_eventListener->addEventReceiver(airDribbleCounter);
 
@@ -88,21 +98,6 @@ void GoalPercentageCounter::onLoad()
 	// Enable rendering of output
 	auto statDisplay = std::make_shared<StatDisplay>(_shotStats, differenceData, _pluginState);
 	_eventListener->registerRenderEvents({ statDisplay, shotDistributionTracker });
-
-	// Enable notifications and the summary UI
-
-	// Initialize the stats summary page
-	_summaryUi->initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
-	initPluginWindowManager(_summaryUi, cvarManager, gameWrapper);
-
-
-	 // TEMP
-	registerNotification("TEMP TEST", "My Notification");
-
-	cvarManager->registerNotifier("gpc_test", [this](const std::vector<std::string>&) {
-		displayNotification("TEMP TEST", "My notification details");
-	}, "Temporary test", PERMISSION_ALL);
-
 
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 }
