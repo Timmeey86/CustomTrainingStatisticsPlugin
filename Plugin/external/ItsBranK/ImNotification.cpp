@@ -157,4 +157,11 @@ namespace ItsBranK
 		WindowOffset = offset;
 		return this;
 	}
+
+	void ImNotification::ResetRenderTimeDelta()
+	{
+		DeltaTime = .0f;
+		LastAlpha = BaseAlpha;
+		FadeOut = false;
+	}
 }

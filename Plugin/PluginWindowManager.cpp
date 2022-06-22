@@ -20,13 +20,6 @@ void PluginWindowManager::initPluginWindowManager(
 		_statSummaryShallBeShown = !_statSummaryShallBeShown;
 		toggleMenuIfNecessary(false);
 	}, "Toggles display of the stat summary", PERMISSION_ALL);
-
-	auto notification = new ItsBranK::ImNotification("unused", "Notification Name", nullptr);
-	_notificationManager->CreateNotification(notification)->SetInformation("Woop Woop", "BranK's da best!", ItsBranK::TextColors::Orange, ItsBranK::CornerPositions::TopRight);
-	_cvarManager->registerNotifier("gpc_test", [this](const std::vector<std::string>&) {
-		_notificationManager->ToggleNotification("Notification Name");
-	}, "Temporary test", PERMISSION_ALL);
-
 }
 
 void PluginWindowManager::onNotificationToggled()
@@ -69,6 +62,36 @@ void PluginWindowManager::toggleMenu()
 	_cvarManager->executeCommand(fmt::format("togglemenu {};", GetMenuName()));
 }
 
+void PluginWindowManager::registerNotification(const std::string& uniqueName, const std::string& title)
+{
+	auto notification = _notificationManager->CreateNotification(new ItsBranK::ImNotification("unused", uniqueName, nullptr));
+	_notifications.try_emplace(uniqueName, notification);
+	notification->SetInformation(title, "", ItsBranK::TextColors::Orange, ItsBranK::CornerPositions::TopRight);
+}
+
+void PluginWindowManager::displayNotification(const std::string& uniqueName, const std::string& detailedInfo)
+{
+	if (_notifications.count(uniqueName) == 0)
+	{
+		_cvarManager->log(fmt::format("Unknown notification ID: {}", uniqueName));
+		return;
+	}
+
+	auto notification = _notifications.at(uniqueName);
+
+	notification->SetDescription(detailedInfo);
+	if (notification->ShouldRender())
+	{
+		_cvarManager->log(fmt::format("Resetting duration of notification '{}'", uniqueName));
+		notification->ResetRenderTimeDelta();
+	}
+	else
+	{
+		_cvarManager->log(fmt::format("Displaying notification '{}'", uniqueName));
+		_notificationManager->ToggleNotification(uniqueName);
+	}
+}
+
 void PluginWindowManager::Render()
 {
 	_notificationManager->OnRender();
@@ -105,7 +128,6 @@ bool PluginWindowManager::IsActiveOverlay()
 
 void PluginWindowManager::OnOpen()
 {
-	_cvarManager->log("OnOpen");
 	_summaryUi->OnOpen();
 	_menuIsVisible = _summaryUi->isWindowOpen();
 	toggleMenuIfNecessary(false);
@@ -114,7 +136,6 @@ void PluginWindowManager::OnOpen()
 void PluginWindowManager::OnClose()
 {
 	_statSummaryShallBeShown = false; // No matter if the last notification closed, or the summary window was closed: At this point, the user does not want to see the stat summary window any longer (or still not).
-	_cvarManager->log("OnClose");
 	_summaryUi->OnClose();
 	_menuIsVisible = _summaryUi->isWindowOpen();
 	toggleMenuIfNecessary(false);

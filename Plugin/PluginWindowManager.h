@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Notifications/INotificationDisplay.h>
+
 #include "bakkesmod/plugin/pluginwindow.h"
 #include "bakkesmod/wrappers/cvarmanagerwrapper.h"
 #include "bakkesmod/wrappers/gamewrapper.h"
@@ -7,8 +9,10 @@
 #include <external/ItsBranK/ImNotificationManager.h>
 #include <Summary/SummaryUI.h>
 
+#include <unordered_map>
+
 /** Allows using multiple plugin windows like the stat summary and notifications, for example. */
-class PluginWindowManager : public BakkesMod::Plugin::PluginWindow
+class PluginWindowManager : public BakkesMod::Plugin::PluginWindow, INotificationDisplay
 {
 public:
 	void initPluginWindowManager(
@@ -40,6 +44,10 @@ public:
 	/** Called when window is closed */
 	void OnClose() override;
 
+	// Inherited via INotificationDisplay
+	void registerNotification(const std::string& uniqueName, const std::string& title) override;
+	void displayNotification(const std::string& uniqueName, const std::string& detailedInfo) override;
+
 private:
 
 	void onNotificationToggled();
@@ -57,4 +65,5 @@ private:
 	std::shared_ptr<SummaryUI> _summaryUi;
 	std::shared_ptr<CVarManagerWrapper> _cvarManager;
 	std::shared_ptr<GameWrapper> _gameWrapper;
+	std::unordered_map<std::string, std::shared_ptr<ItsBranK::ImNotification>> _notifications;
 };

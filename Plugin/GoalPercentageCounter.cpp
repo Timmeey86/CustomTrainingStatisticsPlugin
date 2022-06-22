@@ -95,6 +95,15 @@ void GoalPercentageCounter::onLoad()
 	_summaryUi->initSummaryUi(cvarManager, _shotStats, differenceData, _pluginState);
 	initPluginWindowManager(_summaryUi, cvarManager, gameWrapper);
 
+
+	 // TEMP
+	registerNotification("TEMP TEST", "My Notification");
+
+	cvarManager->registerNotifier("gpc_test", [this](const std::vector<std::string>&) {
+		displayNotification("TEMP TEST", "My notification details");
+	}, "Temporary test", PERMISSION_ALL);
+
+
 	cvarManager->log("Loaded GoalPercentageCounter plugin");
 }
 

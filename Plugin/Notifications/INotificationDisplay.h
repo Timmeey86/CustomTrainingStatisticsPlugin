@@ -15,5 +15,5 @@ protected:
 	virtual void registerNotification(const std::string& uniqueName, const std::string& title) = 0;
 
 	/** Display a registered notification using the given information. */
-	virtual void displayNotification(const std::string& uniqueName, const std::string& titleLine, const std::string& detailedInfo) = 0;
+	virtual void displayNotification(const std::string& uniqueName, const std::string& detailedInfo) = 0;
 };

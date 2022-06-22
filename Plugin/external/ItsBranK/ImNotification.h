@@ -46,5 +46,11 @@ namespace ItsBranK
 		ImNotification* SetColor(TextColors color);
 		ImNotification* SetPosition(CornerPositions corner);
 		ImNotification* SetOffset(float offset);
+
+		/* Added by Timmeey86: Allows "Refreshing" a notification, e.g. in case of a minor change. 
+		 *
+		 * This causes the notification to be visible for the full duration after this call, rather than after the initial render start time.
+		 */
+		void ResetRenderTimeDelta();
 	};
 }
